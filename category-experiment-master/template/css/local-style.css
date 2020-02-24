@@ -1,0 +1,21 @@
+.slider {
+  /* default is width 400 and margin 10 */
+	width: 400;
+	margin: 10px;
+}
+
+.classroom {
+    text-align: center;
+}
+
+#paper {
+    width: 600;
+}
+
+#paper, #teacher {
+    display: inline;
+}
+
+#notebookInstruction {
+    font-size: 10pt;
+}

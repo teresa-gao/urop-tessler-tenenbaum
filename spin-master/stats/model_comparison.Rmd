@@ -1,0 +1,165 @@
+---
+title: "Model Comparison"
+output: html_document
+---
+
+```{r}
+library(tidyverse)
+library(readxl)
+library(matrixStats)
+library(data.table)
+
+
+estimate_mode <- function(s) {
+  d <- density(s)
+  return(d$x[which.max(d$y)])
+}
+
+
+hdi_upper<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","upper"])
+}
+
+hdi_lower<- function(s){
+  m <- HPDinterval(mcmc(s))
+  return(m["var1","lower"])
+}
+```
+# Data 
+
+```{r}
+data_comb_pre <- read_csv("../data/combination.csv") 
+
+aoa_ratings_all <- read_xlsx(path = "../data/words_aoa_ratings.xlsx", sheet = 1)
+
+aoa_ratings <- aoa_ratings_all %>%
+  filter(Word %in% data_comb_pre$item )%>%
+  mutate(mean_aoa = as.numeric(Rating.Mean),
+         item = Word)%>%
+  select(item,mean_aoa)
+
+data_comb <- data_comb_pre%>%
+  left_join(aoa_ratings)%>%
+  ungroup()%>%
+  mutate(item = fct_reorder(factor(item), mean_aoa), 
+         source = "Data")
+
+d_model_comp <- data_comb%>%
+  select(-age)%>%
+  mutate(age = round(age_month,2),
+         item = as.character(item))%>%
+  select(alignment, item, age, correct)
+
+```
+
+# Model comparison prediction
+
+
+```{r}
+
+d_model_comp.summarized <- d_model_comp %>% 
+  group_by(alignment, item, age) %>% 
+  summarize(n=n(), k = sum(correct))
+
+
+# join predictions with the data 
+
+model_comp <- bind_rows(
+  
+  readRDS("../saves/model_pred_prag.rds") %>%
+    right_join(d_model_comp.summarized) %>%
+    select(model,chain,iteration, age, alignment,item,pred, n, k),
+   
+  readRDS("../saves/model_pred_global.rds") %>%
+    right_join(d_model_comp.summarized)%>%
+    select(model,chain,iteration, age, alignment,item,pred, n, k),
+  
+   readRDS("../saves/model_pred_flat.rds") %>%
+    right_join(d_model_comp.summarized)%>%
+    select(model,chain,iteration, age, alignment,item,pred, n, k),
+  
+  readRDS("../saves/model_pred_prior.rds") %>%
+    right_join(d_model_comp.summarized)%>%
+    select(model,chain,iteration, age, alignment,item,pred, n, k)
+) %>%
+  mutate(
+    log_like = dbinom(x = k, size = n, prob = pred, log = TRUE)
+  ) %>%
+  group_by(chain, model, iteration) %>%
+  summarize(total_likelihood_sample = sum(log_like)) %>%
+  group_by(chain, model) %>%
+  summarize(marginal_likelihood = matrixStats::logSumExp(total_likelihood_sample)) %>%
+  spread(model, marginal_likelihood)%>%
+  mutate(prag_vs_global = pragmatic - global, # subtract likelihood for each predictions and model
+         prag_vs_flat= pragmatic - flat,
+         prag_vs_prior= pragmatic - prior,
+         global_vs_flat = global - flat,
+         global_vs_prior = global - prior,
+         flat_vs_prior = flat - prior) %>%
+  select(-pragmatic, -global, -flat, - prior) %>%
+  gather(model, logBF, -chain)
+
+```
+
+# Model comparison explanation
+
+
+```{r}
+
+d_model_comp.summarized <- d_model_comp %>% 
+  group_by(alignment, item, age) %>% 
+  summarize(n=n(), k = sum(correct))
+
+
+model_like <- bind_rows(
+  
+  readRDS("../saves/model_pred_prag.rds") %>%
+    right_join(d_model_comp.summarized) %>%
+    select(model,chain,iteration, age, alignment,item,pred, n, k),
+   
+  readRDS("../saves/model_pred_prag_fb.rds") %>%
+    mutate(model = "fullBayes")%>%
+    right_join(d_model_comp.summarized)%>%
+    select(model,chain,iteration, age, alignment,item,pred, n, k)
+  
+    ,readRDS("../saves/model_pred_mm.rds") %>%
+    mutate(model = "mixture")%>%
+    right_join(d_model_comp.summarized)%>%
+    select(model,chain,iteration, age, alignment,item,pred, n, k)
+) %>%
+  mutate(
+    log_like = dbinom(x = k, size = n, prob = pred, log = TRUE)
+  ) %>%
+  group_by(chain, model, iteration) %>%
+  summarize(total_likelihood_sample = sum(log_like))
+
+
+# variation across chains
+
+model_by_chain <- model_like %>%
+  na.omit(chain)%>%
+  group_by(model, chain) %>%
+  summarize(marginal_likelihood = matrixStats::logSumExp(total_likelihood_sample)) %>%
+  spread(model, marginal_likelihood)
+
+saveRDS(model_by_chain, "../saves/expl_model_likelihood_chain.rds")
+
+# compare models
+model_comp <- model_like %>%
+  na.omit(chain)%>%
+  group_by(model) %>%
+  summarize(marginal_likelihood = matrixStats::logSumExp(total_likelihood_sample)) %>%
+  spread(model, marginal_likelihood)%>%
+  mutate(fb_vs_free = fullBayes - pragmatic
+          ,fb_vs_mixture= fullBayes - mixture,
+          free_vs_mixture = pragmatic - mixture
+         ) %>%
+  select(-pragmatic, -fullBayes, -mixture) %>%
+  gather(model, logBF)
+
+saveRDS(model_comp, "../saves/expl_model_comparison.rds")
+
+```
+
+

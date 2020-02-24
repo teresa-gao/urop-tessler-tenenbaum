@@ -1,0 +1,281 @@
+---
+title: "Analysis of pilot data 6 for genex"
+output: github_document
+---
+
+[Link to expt](https://www.mit.edu/~karengu//category-experiment/template/template.html)
+[Other condition](https://www.mit.edu/~karengu/category-experiment2/category-experiment/template/template.html)
+
+```{r, echo = F}
+knitr::opts_chunk$set(echo = F, warning = F, fig.width = 6,
+                      fig.height =4, fig.asp = 0.5)
+library(knitr)
+library(ggthemes)
+library(tidyboot)
+library(jsonlite)
+library(tidyverse)
+theme_set(theme_few())
+results.path <- "../results/anon_results_v6/"
+# fig.path <- "~/projects/negant/"
+```
+
+```{r, echo=F, warning=F}
+
+anon_results = list.files(results.path)
+
+i = 0
+df.subject <- data.frame()
+df.trials <- data.frame()
+df.attention <- data.frame()
+for (anon_result in anon_results) {
+  
+  result_json = fromJSON(paste(results.path, anon_result, sep =""))
+
+  df.attention = bind_rows(
+    df.attention, 
+    data.frame(
+      workerid = i,
+      sound_check = result_json$answers$sound_check,
+      attention_check = result_json$answers$attention_check,
+      utterance = result_json$answers$trials$utteranceType,
+      notebook = result_json$answers$trials$notebook
+    )
+  )
+  
+  df.subject = bind_rows(
+    df.subject, 
+    data.frame(result_json$answers$subject_information) %>% mutate(workerid = i)
+  )
+  
+  df.trials = bind_rows(
+    df.trials, 
+    result_json$answers$trials %>% select(-events, -testResults, -notebook) %>% mutate(workerid = i)
+  )
+
+  i = i + 1
+}
+```
+
+
+
+```{r}
+# "all": 1, 52, 119, 121, 129, 149
+# no mention of ringing: 4, 8, 24, 91
+# no mention of squeaking: 35, 66, 90, 124, 140
+# specific to generic: 0, 7, 11, 28, 33, 70, 123, 135, 148
+# did not attempt to remember utterance: 47, 92, 130, 160
+# only specific: 2, 9, 67, 98, 128, 150
+# failed sound check: 15, 154
+# do not ring: 17, 63, 117
+# "if it squeaks, it rings": 16
+# "blickets buzz and ring": 44
+# "some": 96, 142
+failed.attention <- c(0, 1, 2, 4, 7, 8, 9, 11, 15, 16, 17, 24, 28, 33, 35, 44, 47, 52, 63, 66, 67, 70, 90, 91, 92, 96, 98, 117, 119, 121, 123, 124, 128, 129, 130, 135, 140, 142, 148, 149, 150, 154, 160)
+# wrong: 23, 25, 32, 37, 42, 52, 59, 76, 80, 87, 92, 141, 154, 161
+# confused: 0, 40, 57, 63, 66, 73, 81, 91, 132, 160
+wrong.or.confused <- c(0, 23, 25, 32, 37, 40, 42, 52, 57, 59, 62, 66, 76, 80, 81, 87, 91, 92, 132, 141, 154, 160, 161)
+
+# 15: special.conditions and bad.blickets
+# 21: bad.blickets and speaker.error
+# 34: bad.blickets and special.blicket
+# 39: bad.blickets and speaker.error
+# 46: speaker.error and bad.blickets
+# 48: speaker.error and bad.blickets
+# 49: confused static with ringing
+# 53: low.probability and bad.blickets
+# 90: special.blicket and low.probability
+# 108: always.appeal and bad.blickets
+# 132: wasn't able to do task
+# 155: generic.appeal and speaker.error
+# 158: bad.blickets and speaker.error
+bad.reasoning <- c(49, 132)
+special.blicket <- c(5, 6, 10, 13, 16, 29, 30, 34, 45, 64, 90, 91, 94, 124, 135, 137, 142, 143, 153)
+low.probability <- c(0, 1, 9, 12, 14, 20, 27, 31, 33, 37, 52, 53, 65, 67, 69, 70, 83, 86, 88, 90, 93, 97, 115, 119, 126, 136, 139, 141, 144, 149)
+special.conditions <- c(15)
+bad.blickets <- c(15, 21, 34, 39, 41, 46, 48, 50, 53, 68, 81, 82, 87, 108, 134, 158, 159) # blickets in box defective or not really blickets or of a different type
+speaker.error <- c(2, 11, 18, 19, 21, 26, 39, 44, 46, 48, 73, 76, 85, 109, 111, 117, 131, 140, 146, 155, 157, 158)
+definition <- c(4, 23, 28, 35, 54, 55, 56, 57, 58, 59, 62, 72, 74, 77, 78, 101, 102, 106, 123, 125, 148) # "it's what they do" or similar
+said.so <- c(61, 96, 161) # because the speaker said so
+generic.appeal <- c(63, 66, 75, 79, 80, 84, 105, 107, 110, 113, 114, 116, 155) # responds with generic statement
+always.appeal <- c(99, 103, 108, 120, 127, 128) # above, but with always
+good.box <- c(118, 129, 147, 150, 151, 152) # the box contained blickets that rang
+not.explanation <- c(3, 8, 17, 22, 24, 32, 36, 38, 42, 47, 60, 92, 100, 112, 121, 122, 145, 154) # restated answer to above or didn't answer question or similar
+dont.know <- c(7, 25, 40, 43, 51, 71, 89, 98, 130, 138, 156, 160)
+other <- c(95, 104, 133)
+
+# spanish/french: 108
+# no language: 123, 126, 137
+# spanish: 99, 131
+# "united states": 75, 76
+non.english <- c(75, 76, 81, 99, 108, 123, 126, 131, 137)
+
+# did not fill out last slide at all: 123, 126
+```
+
+```{r}
+df.trials <- df.trials %>%
+  mutate(fail_attention = workerid %in% failed.attention,
+         non_english = workerid %in% non.english,
+         wrong_confused = workerid %in% wrong.or.confused,
+         pass = !(workerid %in% c(failed.attention, non.english)))
+df.trials <- df.trials %>% mutate(genericEndorsement = ifelse(genericEndorsement == "Yes", 1, 0),
+         utteranceType = ifelse(utteranceType == "barePlural", 
+                                "generic", "specific")) %>%
+  rename(trialNum = id)
+```
+
+
+#### Number of subjects
+
+```{r echo = T}
+num.subjects <- df.trials %>%
+  group_by(utteranceType, proportionSuccess,pass) %>%
+  count()
+
+num.subjects %>%
+  spread(pass, n) %>%
+  kable()
+
+df.trials %>%
+  ggplot(aes(x = pass)) +
+  geom_bar() +
+  facet_grid(utteranceType ~ proportionSuccess) +
+  xlab("included")
+  ggtitle("Included participants")
+```
+
+### Reasoning type
+
+```{r}
+df.trials <- df.trials %>%
+  mutate(reasoningType = ifelse(workerid %in% special.blicket, "specialBlicket",
+                                ifelse(workerid %in% low.probability, "lowProb",
+                                       ifelse(workerid %in% special.conditions, "specialCond",
+                                              ifelse(workerid %in% speaker.error, "speakerErr", "other")))))
+reasoning <- df.trials %>%
+  group_by(utteranceType, reasoningType, proportionSuccess) %>%
+  count() %>%
+  spread(reasoningType, n)
+reasoning %>%
+  kable()
+```
+
+
+## Free response data (with other data)
+
+
+Explanation of columns:
+
+- pass = passed attention checks
+- worked = did the blickets you tested squeak?
+- reasoning = why or why not?
+- n = number of items tested
+- t = time exploring (in minutes)
+- prob = probability that next blicket will squeak
+- gen = "Blickets squeak" true or false?
+- teach = what would you tell the children?
+
+```{r, echo = F}
+df.trials.pretty <- df.trials %>%
+  select(workerid, utteranceType, pass, featureAgreement, reasoning, itemsTested, timeExploring,  probabilityOfFeature, genericEndorsement, freeResponse) %>%
+  rename( utterance = utteranceType,
+          subj = workerid,
+          worked = featureAgreement,
+          teach = freeResponse,
+          prob = probabilityOfFeature,
+         gen = genericEndorsement,
+         n = itemsTested, 
+         t = timeExploring) %>%
+    mutate(t = round(t, 2))
+df.trials.pretty %>%
+  kable()
+```
+
+
+```{r eval = F}
+df.trials %>%
+  filter(pass) %>%
+  ggplot(., aes( x = timeExploring))+
+  geom_histogram( bins = 30)
+```
+
+## Time exploring
+
+```{r}
+df.trials %>%
+  filter(pass) %>%
+  ggplot(., aes( x = timeExploring)) +
+  geom_histogram( bins = 30) +
+  facet_grid(utteranceType ~ proportionSuccess)
+  #xlim(0, 2)
+
+#ggsave(paste(fig.path, "time_exploring_alt.pdf", sep = ""), width = 5, height = 3.5)
+
+```
+
+## Objects tested
+
+```{r}
+fig.obj <- df.trials %>%
+  filter(pass) %>%
+  ggplot(., aes( x = itemsTested))+
+  geom_bar()+
+  facet_grid(utteranceType ~ proportionSuccess)
+fig.obj
+#ggsave(fig.obj, paste(fig.path, "obj_tested_alt.pdf", sep = ""), width = 5, height = 3.5)
+```
+
+## Probability judgment
+
+```{r}
+df.trials %>%
+  filter(pass) %>%
+  ggplot(., aes( x = probabilityOfFeature))+
+  geom_histogram()+
+  facet_grid(utteranceType ~ .)+
+  xlab("Probability judgment")
+
+#ggsave(paste(fig.path, "prob_judgment_alt.pdf", sep = ""), width = 5, height = 3.5)
+```
+
+## Items tested vs. probability judgment
+
+```{r}
+df.trials %>%
+  filter(pass) %>%
+  ggplot(., aes( x = itemsTested, y = probabilityOfFeature, color = utteranceType,
+                 label = workerid))+
+  geom_point()+
+  #geom_text()+
+  scale_color_solarized()+
+  ylab("Probability judgment")+
+  xlab("number of items tested")+
+  coord_fixed(ratio = 30)
+
+#ggsave(paste(fig.path, "prob_vs_nItems_alt.pdf", sep = ""), width = 5, height = 4)
+```
+
+```{r}
+df.bs <- df.trials %>%
+  filter(pass) %>%
+  #select(-freeResponse) %>%
+  gather(key, val, itemsTested, timeExploring, probabilityOfFeature, genericEndorsement) %>%
+  group_by(key, utteranceType, proportionSuccess) %>%
+  tidyboot_mean(column = val)
+```
+
+## All measures (means and 95% CI)
+
+```{r}
+df.bs %>% 
+  ggplot(., aes( x = factor(proportionSuccess), fill = utteranceType,
+                 y = mean, ymin = ci_lower, ymax = ci_upper))+
+  geom_col(position = position_dodge(1), color = 'black')+
+  geom_errorbar(position = position_dodge(1), width =0.5)+
+  scale_fill_solarized()+
+  facet_wrap(~key, scales = 'free')+
+  xlab("true probability")
+
+#ggsave(paste(fig.path, "bootstrapped_measures_alt.pdf", sep = ""), width = 6, height = 4)
+
+```
