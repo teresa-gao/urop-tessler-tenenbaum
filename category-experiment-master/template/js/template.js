@@ -41,7 +41,7 @@ function make_slides(f) {
 	    $("#error_1more").hide();
 	    this.listener = listener, this.speaker = speaker
 	},
-	button:  function() {
+	button: function() {
             response = $("#listener-response").val().replace(" ","");
 
             // response correct

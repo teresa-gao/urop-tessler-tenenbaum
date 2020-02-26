@@ -1,77 +1,89 @@
+// Given array, returns shuffled array
+function shuffle(array) {
+    for (var i = array.length - 1; i > 0; i--) {
+        var j = Math.floor(Math.random() * (i + 1));
+        var temp = array[i];
+        array[i] = array[j];
+        array[j] = temp;
+    }
+    return array;
+}
+
+// Constructs "slideshow" (presentation) given slides
 function make_slides(f) {
     var slides = {};
 
     slides.i0 = slide({
-         name : "i0",
-         start: function() {
+        name : "i0",
+        start: function() {
             exp.startT = Date.now();
-         }
+        }
     });
 
     // simple language comprehension check to include at beginning of experiment
     slides.botcaptcha = slide({
-         name : "botcaptcha",
-         bot_trials : 0,
-         start: function() {
-             $("#error").hide();
-             $("#error_incorrect").hide();
-             $("#error_2more").hide();
-             $("#error_1more").hide();
-             // list of speaker names to be sampled from
-             speaker = _.sample(["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles"]);
-             // list of listener names to be sampled from
-             listener = _.sample(["Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica", "Sarah", "Margaret"]);
-             // create the utterance
-             this.bot_utterance = speaker + " says to " + listener + ": It's a beautiful day, isn't it?"
-             // creat ethe question
-             this.bot_question = "Who is " + speaker + " talking to?"
-             // append the utterance and the question to the view
-             var bot_sentence = document.createElement("p");
-             var bot_question = document.createElement("p");
-             var content = document.createTextNode(this.bot_utterance);
-             var q_content = document.createTextNode(this.bot_question);
-             bot_sentence.name = "bot_sentence";
-             bot_question.name = "bot_question";
-             bot_sentence.appendChild(content);
-             bot_question.appendChild(q_content);
-             document.getElementById('bot_context').appendChild(bot_sentence);
-             document.getElementById('bot_context').appendChild(document.createElement("br"));
-             document.getElementById('bot_context').appendChild(bot_question);
-             document.getElementById('bot_context').appendChild(document.createElement("br"));
+        name : "botcaptcha",
+        bot_trials : 0,
+        start: function() {
+            $("#error").hide();
+            $("#error_incorrect").hide();
+            $("#error_2more").hide();
+            $("#error_1more").hide();
+            // list of speaker names to be sampled from
+            speaker = _.sample(["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles"]);
+            // list of listener names to be sampled from
+            listener = _.sample(["Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica", "Sarah", "Margaret"]);
+            // create the utterance
+            this.bot_utterance = speaker + " says to " + listener + ": It's a beautiful day, isn't it?"
+            // creat ethe question
+            this.bot_question = "Who is " + speaker + " talking to?"
+            // append the utterance and the question to the view
+            var bot_sentence = document.createElement("p");
+            var bot_question = document.createElement("p");
+            var content = document.createTextNode(this.bot_utterance);
+            var q_content = document.createTextNode(this.bot_question);
+            bot_sentence.name = "bot_sentence";
+            bot_question.name = "bot_question";
+            bot_sentence.appendChild(content);
+            bot_question.appendChild(q_content);
+            document.getElementById('bot_context').appendChild(bot_sentence);
+            document.getElementById('bot_context').appendChild(document.createElement("br"));
+            document.getElementById('bot_context').appendChild(bot_question);
+            document.getElementById('bot_context').appendChild(document.createElement("br"));
 
          },
          button: function() {
-             // get the participants' input
-             bot_response = $("#botresponse").val();
-             // append data if response correct
-             if (bot_response.toLowerCase() == listener.toLowerCase()) {
-                 exp.catch_trials.push({
-                     condition: "botcaptcha",
-                     n_fails: this.bot_trials,
-                     response: bot_response,
-                     bot_sentence: this.bot_utterance,
-                     bot_question: this.bot_question
-                 });
-                 exp.go();
-                 // gives participant two more trials if the response was incorrect
-             } else {
-                 this.bot_trials++;
-                 $("#error_incorrect").show();
-                 if (this.bot_trials == 1) {
-                         $("#error_2more").show();
-                 } else if (this.bot_trials == 2) {
-                         $("#error_2more").hide();
-                         $("#error_1more").show();
-                 } else {
-                     // if participant fails, they cannot proceed
-                         $("#error_incorrect").hide();
-                         $("#error_1more").hide();
-                         $("#bot_button").hide();
-                         $('#botresponse').prop("disabled", true);
-                         $("#error").show();
-                 };
-             }
-         }
+            // get the participants' input
+            bot_response = $("#botresponse").val();
+            // append data if response correct
+            if (bot_response.toLowerCase() == listener.toLowerCase()) {
+                exp.catch_trials.push({
+                    condition: "botcaptcha",
+                    n_fails: this.bot_trials,
+                    response: bot_response,
+                    bot_sentence: this.bot_utterance,
+                    bot_question: this.bot_question
+                });
+                exp.go();
+                // gives participant two more trials if the response was incorrect
+            } else {
+                this.bot_trials++;
+                $("#error_incorrect").show();
+                if (this.bot_trials == 1) {
+                        $("#error_2more").show();
+                } else if (this.bot_trials == 2) {
+                        $("#error_2more").hide();
+                        $("#error_1more").show();
+                } else {
+                    // if participant fails, they cannot proceed
+                        $("#error_incorrect").hide();
+                        $("#error_1more").hide();
+                        $("#bot_button").hide();
+                        $('#botresponse').prop("disabled", true);
+                        $("#error").show();
+                };
+            }
+        }
     });
 
     slides.sound_check = slide({
@@ -122,11 +134,44 @@ function make_slides(f) {
         }
     });
 
+    slides.trials = slide({
+        name : "trials",
+        start : function() {
+            var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
+            background("../_shared/images/back" + back[0] + ".jpg");
+        },
+        button : function() {
+            exp.go();
+        }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     slides.thanks = slide({
         name : "thanks",
         start : function() {
             exp.data= {
-                    "trials" : exp.data_trials,
+                    "trials" : exp.trials_data,
                     "catch_trials" : exp.catch_trials,
                     "system" : exp.system,
                     "condition" : exp.condition,
@@ -138,6 +183,10 @@ function make_slides(f) {
     });
 
     return slides;
+}
+
+function background(x) {
+    document.getElementById("background").src = x;
 }
 
 /// init ///
@@ -173,11 +222,12 @@ function init() {
         "botcaptcha",
         "sound_check",
         "introduction",
+        "trials",
         "subj_info",
         "thanks"
     ];
 
-    exp.data_trials = [];
+    exp.trials_data = [];
     //make corresponding slides:
     exp.slides = make_slides(exp);
 
