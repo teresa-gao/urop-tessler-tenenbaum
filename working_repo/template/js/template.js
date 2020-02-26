@@ -1,4 +1,13 @@
-// Given array, returns shuffled array
+// Experiment variables and randomization
+var testAgents = shuffle(["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"]);
+
+function showAgent(id, orient) {
+    $(".agent").hide();
+    $(".point_agent_l").hide();
+    $(".point_agent_r").hide();
+    $("#"+id+"_"+orient).show();
+}
+
 function shuffle(array) {
     for (var i = array.length - 1; i > 0; i--) {
         var j = Math.floor(Math.random() * (i + 1));
@@ -9,7 +18,7 @@ function shuffle(array) {
     return array;
 }
 
-// Constructs "slideshow" (presentation) given slides
+// MAIN PART OF PROGRAM BEGINS HERE! :)
 function make_slides(f) {
     var slides = {};
 
@@ -34,7 +43,7 @@ function make_slides(f) {
             // list of listener names to be sampled from
             listener = _.sample(["Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica", "Sarah", "Margaret"]);
             // create the utterance
-            this.bot_utterance = speaker + " says to " + listener + ": It's a beautiful day, isn't it?"
+            this.bot_utterance = speaker + " says to " + listener + ": \"It's a beautiful day, isn't it?\""
             // creat ethe question
             this.bot_question = "Who is " + speaker + " talking to?"
             // append the utterance and the question to the view
@@ -145,28 +154,6 @@ function make_slides(f) {
         }
     });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
     slides.thanks = slide({
         name : "thanks",
         start : function() {
@@ -179,6 +166,8 @@ function make_slides(f) {
                     "time_in_minutes" : (Date.now() - exp.startT)/60000
             };
             setTimeout(function() {turk.submit(exp.data);}, 1000);
+
+            // TO-DO: PICK UP AT LINE 451 OF kids_combination.js for agents
         }
     });
 
