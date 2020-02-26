@@ -3,102 +3,102 @@ var preObjects = ["duck.png","car.png","bear.png","ball.png","t01.png", "t02.png
 //for critical trials and fillers
 var images = new Array();
 for (i = 0; i < preObjects.length; i++) {
-	images[i] = new Image();
-	images[i].src = "images/" + preObjects[i];
-    images[i].id = preObjects[i];
+    images[i] = new Image();
+    images[i].src = "images/" + preObjects[i];
+        images[i].id = preObjects[i];
 }
 
 var preSounds = ["Frog_choice.mp3", "Mouse_choice.mp3", "Bear_choice.mp3", "Beaver_choice.mp3", "Monkey_choice.mp3", "Dog_choice.mp3", "Cat_choice.mp3", "Bunny_choice.mp3", "Tiger_choice.mp3", "Sheep_choice.mp3","Pig_choice.mp3","Pig_train.mp3","Elephant_choice.mp3","Frog_hello.mp3", "Mouse_hello.mp3", "Bear_hello.mp3", "Monkey_hello.mp3", "Dog_hello.mp3", "Cat_hello.mp3", "Bunny_hello.mp3", "Tiger_hello.mp3", "Sheep_hello.mp3","Pig_hello.mp3","Elephant_hello.mp3", "Beaver_hello.mp3", ];
 //for critical trials and fillers
 var sound = new Array();
 for (i = 0; i < preSounds.length; i++) {
-	sound[i] = new Audio();
-	sound[i].src = "sound/" + preSounds[i];
+    sound[i] = new Audio();
+    sound[i].src = "sound/" + preSounds[i];
 }
 
 // ## Helper functions
 function showSlide(id) {
-  // Hide all slides
-	$(".slide").hide();
-	// Show just the slide we want to show
-	$("#"+id).show();
+    // Hide all slides
+    $(".slide").hide();
+    // Show just the slide we want to show
+    $("#"+id).show();
 }
 
 function showText(id) {
-  // Hide all slides
-	$(".text").hide();
-	// Show just the slide we want to show
-	$("#"+id).show();
+    // Hide all slides
+    $(".text").hide();
+    // Show just the slide we want to show
+    $("#"+id).show();
 }
 
 
 function showAgent(id, orient) {
-	$(".agent").hide();
-    $(".point_agent_l").hide();
-    $(".point_agent_r").hide();
-	$("#"+id+"_"+orient).show();
+    $(".agent").hide();
+        $(".point_agent_l").hide();
+        $(".point_agent_r").hide();
+    $("#"+id+"_"+orient).show();
 }
 
 function hideAgent() {
-  // Hide all slides
-	$(".agent").hide();
+    // Hide all slides
+    $(".agent").hide();
 }
 
 function choiceAgent(id) {
-  // Hide all slides
-	$(".agent").hide();
-	// Show just the agent we want to show
-	$("#"+id+"_straight").show();
+    // Hide all slides
+    $(".agent").hide();
+    // Show just the agent we want to show
+    $("#"+id+"_straight").show();
 }
 
 function sourceRightObject(a) {
-        document.getElementById("object_r").src=a;
-    };
+    document.getElementById("object_r").src=a;
+};
 
 function sourceLeftObject(b) {
-        document.getElementById("object_l").src=b;
-    };
+    document.getElementById("object_l").src=b;
+};
 
 
 function showRightObject() {
     document.getElementById('object_r').style.visibility='visible';
-      };
+};
 
 function hideRightObject() {
     document.getElementById('object_r').style.visibility='hidden';
-      };
+};
 
 function showLeftObject() {
     document.getElementById('object_l').style.visibility='visible';
-      };
+};
 
 
 function hideLeftObject() {
-    document.getElementById('object_l').style.visibility='hidden';
-      };
+        document.getElementById('object_l').style.visibility='hidden';
+            };
 
 function showEat(id) {
-	$(".agent_eat").hide();
-	$("#"+id+"_eat").show();
+    $(".agent_eat").hide();
+    $("#"+id+"_eat").show();
 };
 
 function choiceLeftObject(a) {
-        document.getElementById("choiceObject_l").src=a;
-    };
+                document.getElementById("choiceObject_l").src=a;
+        };
 
 
 function choiceRightObject(a) {
-        document.getElementById("choiceObject_r").src=a;
-    };
+    document.getElementById("choiceObject_r").src=a;
+        };
 
 
 function background(x) {
-        document.getElementById("background").src=x;
-    };
+    document.getElementById("background").src=x;
+        };
 
 function background2(x) {
-        document.getElementById("background2").src=x;
-    };
+    document.getElementById("background2").src=x;
+        };
 
 function getTime1() {
     return startTime = (new Date()).getTime();
@@ -106,11 +106,11 @@ function getTime1() {
 
 // Get a random integer less than n.
 function randomInteger(n) {
-	return Math.floor(Math.random()*n);
+    return Math.floor(Math.random()*n);
 };
 
 function randomElement(array) {
-  return array[randomInteger(array.length)];
+    return array[randomInteger(array.length)];
 };
 
 function shuffle(array) {
@@ -125,20 +125,20 @@ function shuffle(array) {
 
 
 function sourceSound(c) {
-        document.getElementById("sound").src=c;
-    };
+    document.getElementById("sound").src=c;
+};
 function playSound() {
     document.getElementById("sound").play();
-      };
+};
 
 
 
-  function pause(id,time){
-      $("#"+id).hide();
-      setTimeout(function() {
-           $("#"+id).show();    
-       }, time); 
-    };
+function pause(id,time){
+    $("#"+id).hide();
+    setTimeout(function() {
+             $("#"+id).show();    
+     }, time); 
+};
 
 
 
@@ -185,31 +185,31 @@ var agentOrient = trainAgentOrientations.concat(testAgentOrientations)
 // conditions
 
 var trainCond = [
-    ["train","me_novel_left", "dis_novel_left"],
-    ["train","me_novel_right", "dis_novel_right"]];
+        ["train","me_novel_left", "dis_novel_left"],
+        ["train","me_novel_right", "dis_novel_right"]];
 var testCond1 = shuffle([
-    ["congruent", "me_novel_left", "dis_novel_left"],
-    ["congruent", "me_novel_right", "dis_novel_right"],
-    ["congruent", "me_novel_left", "dis_novel_left"],
-    ["incongruent", "me_novel_right", "dis_novel_left"],
-    ["incongruent", "me_novel_left", "dis_novel_right"],
-    ["incongruent", "me_novel_left", "dis_novel_right"]])
+        ["congruent", "me_novel_left", "dis_novel_left"],
+        ["congruent", "me_novel_right", "dis_novel_right"],
+        ["congruent", "me_novel_left", "dis_novel_left"],
+        ["incongruent", "me_novel_right", "dis_novel_left"],
+        ["incongruent", "me_novel_left", "dis_novel_right"],
+        ["incongruent", "me_novel_left", "dis_novel_right"]])
 
 var testCond2 = shuffle([
-    ["congruent", "me_novel_left", "dis_novel_left"],
-    ["congruent", "me_novel_right", "dis_novel_right"],
-    ["congruent", "me_novel_right", "dis_novel_right"],
-    ["incongruent", "me_novel_right", "dis_novel_left"],
-    ["incongruent", "me_novel_right", "dis_novel_left"],
-    ["incongruent", "me_novel_left", "dis_novel_right"]]);
+        ["congruent", "me_novel_left", "dis_novel_left"],
+        ["congruent", "me_novel_right", "dis_novel_right"],
+        ["congruent", "me_novel_right", "dis_novel_right"],
+        ["incongruent", "me_novel_right", "dis_novel_left"],
+        ["incongruent", "me_novel_right", "dis_novel_left"],
+        ["incongruent", "me_novel_left", "dis_novel_right"]]);
 
 if (shuffle([1, 2])[0] == 1) {
 
-    var condition = trainCond.concat(testCond1.concat(testCond2))
+        var condition = trainCond.concat(testCond1.concat(testCond2))
 
 } else {
 
-    var condition = trainCond.concat(testCond2.concat(testCond1))
+        var condition = trainCond.concat(testCond2.concat(testCond1))
 
 }
 
@@ -223,133 +223,131 @@ showSlide("instructions");
 
 // the actual experiment
 var experiment = {
-  // Parameters for this sequence.
-  trial: trial,
-  agents: agents,
-  agentOrient:agentOrient,
-  condition:condition,
-  novelObjects: novelObjects,
-  familiarObjects: familiarObjects,
-  back: back,
-  data: [],
-    
-  checkInput: function() {
-		//subject ID
-		if (document.getElementById("subjectID").value.length < 1) {
-			$("#checkMessage").html('<font color="red">You must input a subject ID</font>');
-			return;
-		}
-        if (document.getElementById("subjectAge").value.length < 1) {
-			$("#checkMessage").html('<font color="red">You must input a subject age</font>');
-			return;
-		}
-		experiment.subid = document.getElementById("subjectID").value
-        experiment.subage = document.getElementById("subjectAge").value
-        experiment.trainingDot()
-      }, 
-    
+    // Parameters for this sequence.
+    trial: trial,
+    agents: agents,
+    agentOrient:agentOrient,
+    condition:condition,
+    novelObjects: novelObjects,
+    familiarObjects: familiarObjects,
+    back: back,
+    data: [],
+        
+    checkInput: function() {
+        //subject ID
+        if (document.getElementById("subjectID").value.length < 1) {
+            $("#checkMessage").html('<font color="red">You must input a subject ID</font>');
+            return;
+        }
+                if (document.getElementById("subjectAge").value.length < 1) {
+            $("#checkMessage").html('<font color="red">You must input a subject age</font>');
+            return;
+        }
+        experiment.subid = document.getElementById("subjectID").value
+                experiment.subage = document.getElementById("subjectAge").value
+                experiment.trainingDot()
+            }, 
+        
 // end of the experiment
-  end: function() {
-    // Show the finish slide.
-    showSlide("finished");
-    setTimeout(function() { turk.submit(experiment) }, 1000);
-  },
+    end: function() {
+        // Show the finish slide.
+        showSlide("finished");
+        setTimeout(function() { turk.submit(experiment) }, 1000);
+    },
+        
+     endTraining: function() {
+        showSlide("training2");
+    }, 
     
-   endTraining: function() {
-    showSlide("training2");
-  }, 
-  
 // what happens between trials - display agent from previous trial and click on it to move on to the next trial    
-   eat: function(event) {
-    
-    setTimeout(function() {experiment.eat2() }, 1500);
-       
-    showSlide("choice");  
-       
-    event.target.style.border = '5px solid blue';
-    
-    sourceSound("sound/end.mp3");
-    playSound();
-    
-       
-    $(".object_r").unbind("click");
-    $(".object_l").unbind("click");
+    eat: function(event) {
+        
+        setTimeout(function() {experiment.eat2() }, 1500);
+             
+        showSlide("choice");  
+             
+        event.target.style.border = '5px solid blue';
+        
+        sourceSound("sound/end.mp3");
+        playSound();
+        
+             
+        $(".object_r").unbind("click");
+        $(".object_l").unbind("click");
 
-      var pick_src = event.target.src;   
-    // get time for reaction time
-    var endTime = (new Date()).getTime();    
-    // select correct object
-      
-       
-    // Code correct: does name of chosen object contain the name of the correct object
-    
-    if (pick_src.indexOf(novelObjects[0]) > -1) {
-        var correct =1
-        var pick = novelObjects[0]
-        } else {
-        var correct = 0
-        var pick = familiarObjects[0]
+            var pick_src = event.target.src;   
+        // get time for reaction time
+        var endTime = (new Date()).getTime();    
+        // select correct object
+            
+             
+        // Code correct: does name of chosen object contain the name of the correct object
+        
+        if (pick_src.indexOf(novelObjects[0]) > -1) {
+            var correct =1
+            var pick = novelObjects[0]
+            } else {
+            var correct = 0
+            var pick = familiarObjects[0]
         };
-       
-    var subid = experiment.subid; 
-    var subage = experiment.subage;
-    
-    // data collected  
-      data = {
-        subid: subid,
-        subage: subage,
-        condition: "combination_dis_me",
-        trial: trial[0],
-        agent: agents[0],
-        condition:condition[0][0],
-        discourseNovel: condition[0][2],
-        mutExNovel: condition[0][1],
-        pick: pick,
-        novelObject: novelObjects[0],
-        familiarObject: familiarObjects[0],
-        pick_src: pick_src,
-        correct: correct,
-        rt: endTime - startTime,
-            };
-      experiment.data.push(data);
-       
-  },
+             
+        var subid = experiment.subid; 
+        var subage = experiment.subage;
+        
+        // data collected  
+        data = {
+            subid: subid,
+            subage: subage,
+            condition: "combination_dis_me",
+            trial: trial[0],
+            agent: agents[0],
+            condition:condition[0][0],
+            discourseNovel: condition[0][2],
+            mutExNovel: condition[0][1],
+            pick: pick,
+            novelObject: novelObjects[0],
+            familiarObject: familiarObjects[0],
+            pick_src: pick_src,
+            correct: correct,
+            rt: endTime - startTime,
+                    };
+        experiment.data.push(data);         
+    },
  
 eat2: function(event) {
-    
+        
     showSlide("eat");
-    
-   background("images/back"+back[0]+".jpg");
-    
-    sourceSound("sound/end.mp3");
-    playSound();
-   
-    showEat(agents[0])
-   
-    $(".agent_eat").click(experiment.newtrial);     
-  
+        
+    background("images/back"+back[0]+".jpg");
+        
+        sourceSound("sound/end.mp3");
+        playSound();
+     
+        showEat(agents[0])
+     
+        $(".agent_eat").click(experiment.newtrial); 
 },
-    
+        
 
-    
+        
 // unbind and shift variables between trials      
- newtrial: function() {
-    
+newtrial: function() {
+        
     $(".object_l").css("border","none")
 
     $(".object_r").css("border","none")
 
      
     $(".agent_eat").unbind("click"); 
-   
-   
+ 
+ 
     sourceLeftObject("images/empty.png");
-            showLeftObject(); 
+                    showLeftObject(); 
     sourceRightObject("images/empty.png");
-            showRightObject();
+                    showRightObject();
 
- 
- 
+
+
     experiment.trial.shift();   
     experiment.agentOrient.shift();   
     experiment.agents.shift();
@@ -358,370 +356,370 @@ eat2: function(event) {
     experiment.familiarObjects.shift();
     experiment.back.shift();
  
-   experiment.next();
-  },
+    experiment.next();
+},
 
 
 pause: function () {
 
-    showSlide("pause");
+        showSlide("pause");
 
 },
-    
+        
 // recording the choice 
-  choice: function(event) {
-    
-    showSlide("choice"); 
-    
-    background2("images/back"+back[0]+".jpg");
-   
-
-      showAgent(agents[0],"choice");
-
-   
-    // animate agent in test trials
-     if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2"){
-    } else {     
-    $("#"+agents[0]+"_choice").animate({height: "450px",opacity: '0.3', queue: false, duration: "slow"});
-    $("#"+agents[0]+"_choice").animate({height: "350px",opacity: '1', queue: false, duration: "slow"});
-     };  
+    choice: function(event) {
         
-    // specify what is shown on the tables depending on training and test condition
-    if (experiment.condition[0][1] == "me_novel_left"){
-
-        choiceLeftObject("images/"+novelObjects[0]+".png");
-      
-        choiceRightObject("images/"+familiarObjects[0]+".png");     
+        showSlide("choice"); 
         
-        } else {
-
-        choiceLeftObject("images/"+familiarObjects[0]+".png");
-      
-        choiceRightObject("images/"+novelObjects[0]+".png");   
-        
-        } 
-          
-        
-  
-    // play choice sound
-    if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2") {
-        sourceSound("sound/" + agents[0] + "_train.mp3");
-        playSound();
-    } else {
-        setTimeout(function () {
-            sourceSound("sound/" + agents[0] + "_choice.mp3");
-            playSound();
-        }, 700);
-    };
-    
-    
-    // choice can be made by clicking the objects after - possible after 5s
-    setTimeout(function() {
-        $(".object_l").click(experiment.eat);
-
-        $(".object_r").click(experiment.eat);
-
-    }, 5000);
-  },
-        
-// moving on within a trial
-    
-  next: function() {
-  // when training is over show sinished training slide 
-    if (experiment.trial[0] == "finTrain"){
-        experiment.endTraining();
-        experiment.trial.shift();
-        return;
-    };
-   // when no more trials are left, end experiment    
-    if (experiment.trial.length == 0){
-        setTimeout(function() {experiment.end() }, 0);
-      return;
-    };  
-      
-  // after exposure is finished, switch to choice      
-    if (experiment.agentOrient[0][0] == "down") {
-      setTimeout(function() {experiment.choice() }, 0);
-      return;
-    };  
-    
-    showSlide("stage");  
+        background2("images/back"+back[0]+".jpg");
      
-    background("images/back"+back[0]+".jpg")
-      
-    // show agent
-    showAgent(agents[0],experiment.agentOrient[0][0]);
-    
-   
 
-  // display obejcts on table depending on training and test condition
+            showAgent(agents[0],"choice");
 
-         
-// after the animal has commented on both tables and leaves, the novel object appears
-      if (experiment.agentOrient[0][0] == "gone") {
-          pause("next",3000);
-      };
-  
-      
-      if (experiment.trial[0] == "train1") {
-          
-        sourceLeftObject("images/" +novelObjects[0] + ".png");
-        showLeftObject();
-
-        sourceRightObject("images/" + familiarObjects[0] + ".png");
-        showRightObject();
-      
-      } else if (experiment.trial[0] == "train2") {
-        
-        sourceLeftObject("images/" + familiarObjects[0] + ".png");
-        showLeftObject();
-
-        sourceRightObject("images/" + novelObjects[0] + ".png");
-        showRightObject();
-          
-      } else if (experiment.trial[0] == "pause") {
-          experiment.pause();
-          experiment.trial.shift();
-          return;
-    
-    } else if (experiment.condition[0][2] == "dis_novel_left"){
-        
-            if (experiment.agentOrient[0][0] == "gone"){
+     
+        // animate agent in test trials
+         if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2"){
+        } else {     
+        $("#"+agents[0]+"_choice").animate({height: "450px",opacity: '0.3', queue: false, duration: "slow"});
+        $("#"+agents[0]+"_choice").animate({height: "350px",opacity: '1', queue: false, duration: "slow"});
+         };  
                 
+        // specify what is shown on the tables depending on training and test condition
+        if (experiment.condition[0][1] == "me_novel_left"){
+
+                choiceLeftObject("images/"+novelObjects[0]+".png");
+            
+                choiceRightObject("images/"+familiarObjects[0]+".png");     
                 
-                 if (experiment.condition[0][1] == "me_novel_left") {
-                     sourceLeftObject("images/" + novelObjects[0] + ".png");
-                     showLeftObject();
-
-                     sourceRightObject("images/" + familiarObjects[0] + ".png");
-                     showRightObject();
-
-                 } else {
-                     sourceLeftObject("images/" + familiarObjects[0] + ".png");
-                     showLeftObject();
-
-                     sourceRightObject("images/" + novelObjects[0] + ".png");
-                     showRightObject();
-                 }
-                
-                    $("#object_l").css("bottom", "460px");     
-                    $("#object_l").animate({bottom: "295px"},{duration: 1500});
-                    
-                    setTimeout(function() { 
-                        $("#object_r").animate({width: "200px", opacity: '0.3'});
-                        $("#object_l").animate({width: "200px",opacity: '0.3'});
-                        $("#object_l").animate({width: "150px",opacity: '1'});
-                        $("#object_r").animate({width: "150px",opacity: '1'})}, 2500)
-              
                 } else {
-                    
-                     if (experiment.condition[0][1] == "me_novel_left") {
-                         sourceLeftObject("images/empty.png");
-                         showLeftObject();
 
-                         sourceRightObject("images/" + familiarObjects[0] + ".png");
-                         showRightObject();
-
-                     } else {
-                         sourceLeftObject("images/empty.png");
-                         showLeftObject();
-
-                         sourceRightObject("images/" + novelObjects[0] + ".png");
-                         showRightObject();
-                     } 
-    
+                choiceLeftObject("images/"+familiarObjects[0]+".png");
+            
+                choiceRightObject("images/"+novelObjects[0]+".png");   
+                
                 } 
-                      
-              
+                    
+                
+    
+        // play choice sound
+        if (experiment.trial[0] == "train1" || experiment.trial[0] == "train2") {
+                sourceSound("sound/" + agents[0] + "_train.mp3");
+                playSound();
         } else {
-                   
-            if (experiment.agentOrient[0][0] == "gone"){
-                
-                
-                if (experiment.condition[0][1] == "me_novel_left") {
-                     sourceLeftObject("images/" + novelObjects[0] + ".png");
-                     showLeftObject();
+                setTimeout(function () {
+                        sourceSound("sound/" + agents[0] + "_choice.mp3");
+                        playSound();
+                }, 700);
+        };
+        
+        
+        // choice can be made by clicking the objects after - possible after 5s
+        setTimeout(function() {
+                $(".object_l").click(experiment.eat);
 
-                     sourceRightObject("images/" + familiarObjects[0] + ".png");
-                     showRightObject();
+                $(".object_r").click(experiment.eat);
 
-                 } else {
-                     sourceLeftObject("images/" + familiarObjects[0] + ".png");
-                     showLeftObject();
-
-                     sourceRightObject("images/" + novelObjects[0] + ".png");
-                     showRightObject();
-                 }
+        }, 5000);
+    },
                 
-                    $("#object_r").css("bottom", "460px");     
-                    $("#object_r").animate({bottom: "295px"},{duration: 1500});
+// moving on within a trial
+        
+    next: function() {
+    // when training is over show sinished training slide 
+        if (experiment.trial[0] == "finTrain"){
+                experiment.endTraining();
+                experiment.trial.shift();
+                return;
+        };
+     // when no more trials are left, end experiment    
+        if (experiment.trial.length == 0){
+                setTimeout(function() {experiment.end() }, 0);
+            return;
+        };  
+            
+    // after exposure is finished, switch to choice      
+        if (experiment.agentOrient[0][0] == "down") {
+            setTimeout(function() {experiment.choice() }, 0);
+            return;
+        };  
+        
+        showSlide("stage");  
+         
+        background("images/back"+back[0]+".jpg")
+            
+        // show agent
+        showAgent(agents[0],experiment.agentOrient[0][0]);
+        
+     
+
+    // display obejcts on table depending on training and test condition
+
+                 
+// after the animal has commented on both tables and leaves, the novel object appears
+            if (experiment.agentOrient[0][0] == "gone") {
+                    pause("next",3000);
+            };
+    
+            
+            if (experiment.trial[0] == "train1") {
                     
-                    setTimeout(function() { 
-                        $("#object_r").animate({width: "200px", opacity: '0.3'});
-                        $("#object_l").animate({width: "200px",opacity: '0.3'});
-                        $("#object_l").animate({width: "150px",opacity: '1'});
-                        $("#object_r").animate({width: "150px",opacity: '1'})}, 2500)
-              
+                sourceLeftObject("images/" +novelObjects[0] + ".png");
+                showLeftObject();
+
+                sourceRightObject("images/" + familiarObjects[0] + ".png");
+                showRightObject();
+            
+            } else if (experiment.trial[0] == "train2") {
+                
+                sourceLeftObject("images/" + familiarObjects[0] + ".png");
+                showLeftObject();
+
+                sourceRightObject("images/" + novelObjects[0] + ".png");
+                showRightObject();
+                    
+            } else if (experiment.trial[0] == "pause") {
+                    experiment.pause();
+                    experiment.trial.shift();
+                    return;
+        
+        } else if (experiment.condition[0][2] == "dis_novel_left"){
+                
+                        if (experiment.agentOrient[0][0] == "gone"){
+                                
+                                
+                                 if (experiment.condition[0][1] == "me_novel_left") {
+                                         sourceLeftObject("images/" + novelObjects[0] + ".png");
+                                         showLeftObject();
+
+                                         sourceRightObject("images/" + familiarObjects[0] + ".png");
+                                         showRightObject();
+
+                                 } else {
+                                         sourceLeftObject("images/" + familiarObjects[0] + ".png");
+                                         showLeftObject();
+
+                                         sourceRightObject("images/" + novelObjects[0] + ".png");
+                                         showRightObject();
+                                 }
+                                
+                                        $("#object_l").css("bottom", "460px");     
+                                        $("#object_l").animate({bottom: "295px"},{duration: 1500});
+                                        
+                                        setTimeout(function() { 
+                                                $("#object_r").animate({width: "200px", opacity: '0.3'});
+                                                $("#object_l").animate({width: "200px",opacity: '0.3'});
+                                                $("#object_l").animate({width: "150px",opacity: '1'});
+                                                $("#object_r").animate({width: "150px",opacity: '1'})}, 2500)
+                            
+                                } else {
+                                        
+                                         if (experiment.condition[0][1] == "me_novel_left") {
+                                                 sourceLeftObject("images/empty.png");
+                                                 showLeftObject();
+
+                                                 sourceRightObject("images/" + familiarObjects[0] + ".png");
+                                                 showRightObject();
+
+                                         } else {
+                                                 sourceLeftObject("images/empty.png");
+                                                 showLeftObject();
+
+                                                 sourceRightObject("images/" + novelObjects[0] + ".png");
+                                                 showRightObject();
+                                         } 
+        
+                                } 
+                                            
+                            
                 } else {
-                    
-                    if (experiment.condition[0][1] == "me_novel_left") {
-                         sourceLeftObject("images/" + novelObjects[0] + ".png");
-                         showLeftObject();
+                                     
+                        if (experiment.agentOrient[0][0] == "gone"){
+                                
+                                
+                                if (experiment.condition[0][1] == "me_novel_left") {
+                                         sourceLeftObject("images/" + novelObjects[0] + ".png");
+                                         showLeftObject();
 
-                         sourceRightObject("images/empty.png");
-                         showRightObject();
+                                         sourceRightObject("images/" + familiarObjects[0] + ".png");
+                                         showRightObject();
+
+                                 } else {
+                                         sourceLeftObject("images/" + familiarObjects[0] + ".png");
+                                         showLeftObject();
+
+                                         sourceRightObject("images/" + novelObjects[0] + ".png");
+                                         showRightObject();
+                                 }
+                                
+                                        $("#object_r").css("bottom", "460px");     
+                                        $("#object_r").animate({bottom: "295px"},{duration: 1500});
+                                        
+                                        setTimeout(function() { 
+                                                $("#object_r").animate({width: "200px", opacity: '0.3'});
+                                                $("#object_l").animate({width: "200px",opacity: '0.3'});
+                                                $("#object_l").animate({width: "150px",opacity: '1'});
+                                                $("#object_r").animate({width: "150px",opacity: '1'})}, 2500)
+                            
+                                } else {
+                                        
+                                        if (experiment.condition[0][1] == "me_novel_left") {
+                                                 sourceLeftObject("images/" + novelObjects[0] + ".png");
+                                                 showLeftObject();
+
+                                                 sourceRightObject("images/empty.png");
+                                                 showRightObject();
+
+                                         } else {
+                                                 sourceLeftObject("images/" + familiarObjects[0] + ".png");
+                                                 showLeftObject();
+
+                                                 sourceRightObject("images/empty.png");
+                                                 showRightObject();
+                                         }  
+        
+                                } 
+
+        };
+            
+            
+     // play hello sound and write name of agent
+            if (experiment.agentOrient[0][0] == "straight") {
+                    pause("next", 1600);
+                    sourceSound("sound/" + agents[0] + "_hello.mp3");
+                    playSound();
+
+            }
+        
+            if (experiment.agentOrient[0][0] == "point_l") {
+
+                    pause("next", 2300);
+
+                    if (experiment.condition[0][2] == "dis_novel_left") {
+
+                            sourceSound("sound/" + agents[0] + "_point_nothing.mp3");
+                            playSound();
+
+                    } else {
+
+                            sourceSound("sound/" + agents[0] + "_point_old1.mp3");
+                            playSound();
+
+                    }
+            }
+             
+             if (experiment.agentOrient[0][0] == "point_r") {
+
+                     pause("next", 2300);
+
+                     if (experiment.condition[0][2] == "dis_novel_right") {
+
+                             sourceSound("sound/" + agents[0] + "_point_nothing.mp3");
+                             playSound();
 
                      } else {
-                         sourceLeftObject("images/" + familiarObjects[0] + ".png");
-                         showLeftObject();
 
-                         sourceRightObject("images/empty.png");
-                         showRightObject();
-                     }  
-    
-                } 
+                             sourceSound("sound/" + agents[0] + "_point_old1.mp3");
+                             playSound();
 
-    };
-      
-      
-   // play hello sound and write name of agent
-      if (experiment.agentOrient[0][0] == "straight") {
-          pause("next", 1600);
-          sourceSound("sound/" + agents[0] + "_hello.mp3");
-          playSound();
-
-      }
-    
-      if (experiment.agentOrient[0][0] == "point_l") {
-
-          pause("next", 2300);
-
-          if (experiment.condition[0][2] == "dis_novel_left") {
-
-              sourceSound("sound/" + agents[0] + "_point_nothing.mp3");
-              playSound();
-
-          } else {
-
-              sourceSound("sound/" + agents[0] + "_point_old1.mp3");
-              playSound();
-
-          }
-      }
-       
-       if (experiment.agentOrient[0][0] == "point_r") {
-
-           pause("next", 2300);
-
-           if (experiment.condition[0][2] == "dis_novel_right") {
-
-               sourceSound("sound/" + agents[0] + "_point_nothing.mp3");
-               playSound();
-
-           } else {
-
-               sourceSound("sound/" + agents[0] + "_point_old1.mp3");
-               playSound();
-
-           }
-       }
-           
-           
-        if (experiment.agentOrient[0][0] == "disappear") {
-            showAgent(agents[0], "straight")
-            sourceSound("sound/ring.mp3")
-            playSound();
-            setTimeout(function () {
-                showAgent(agents[0], "disappear")
-            }, 1000);
-            pause("next", 2000);
-            setTimeout(function () {
-                hideAgent()
-            }, 2000);
-        };
-      
-      
-    // move on to next phase of exposure
-    experiment.agentOrient[0].shift(); 
-  },
-    
+                     }
+             }
+                     
+                     
+                if (experiment.agentOrient[0][0] == "disappear") {
+                        showAgent(agents[0], "straight")
+                        sourceSound("sound/ring.mp3")
+                        playSound();
+                        setTimeout(function () {
+                                showAgent(agents[0], "disappear")
+                        }, 1000);
+                        pause("next", 2000);
+                        setTimeout(function () {
+                                hideAgent()
+                        }, 2000);
+                };
+            
+            
+        // move on to next phase of exposure
+        experiment.agentOrient[0].shift(); 
+    },
+        
 trainingDot: function() {
-		
-    function createDot(dotx, doty, i) {
-	   var dots = [1, 2, 3, 4, 5];
+        
+        function createDot(dotx, doty, i) {
+         var dots = [1, 2, 3, 4, 5];
 
-	   var dot = document.createElement("img");
-	   dot.setAttribute("class", "dot");
-	   dot.id = "dot_" + dots[i];
-	   dot.src = "dots/dot_" + dots[i] + ".jpg";
+         var dot = document.createElement("img");
+         dot.setAttribute("class", "dot");
+         dot.id = "dot_" + dots[i];
+         dot.src = "dots/dot_" + dots[i] + ".jpg";
 
-	   var x = Math.floor(Math.random() * 850);
-	   var y = Math.floor(Math.random() * 550);
+         var x = Math.floor(Math.random() * 850);
+         var y = Math.floor(Math.random() * 550);
 
-	   var invalid = "true";
-	//make sure dots do not overlap
-	   while (true) {  
-		invalid = "true";
-		for (j = 0; j < dotx.length; j++) {
-			if (Math.abs(dotx[j] - x) + Math.abs(doty[j] - y) < 200) {
-				var invalid = "false";
-				break;
-			}
-		}
-		if (invalid === "true") {
-			dotx.push(x);
-			doty.push(y);
-			break;
-		}
-		x = Math.floor(Math.random() * 400);
-		y = Math.floor(Math.random() * 400);
-	}
+         var invalid = "true";
+    //make sure dots do not overlap
+         while (true) {  
+        invalid = "true";
+        for (j = 0; j < dotx.length; j++) {
+            if (Math.abs(dotx[j] - x) + Math.abs(doty[j] - y) < 200) {
+                var invalid = "false";
+                break;
+            }
+        }
+        if (invalid === "true") {
+            dotx.push(x);
+            doty.push(y);
+            break;
+        }
+        x = Math.floor(Math.random() * 400);
+        y = Math.floor(Math.random() * 400);
+    }
 
-	dot.setAttribute("style", "position:absolute;left:" + x + "px;top:" + y + "px;");
+    dot.setAttribute("style", "position:absolute;left:" + x + "px;top:" + y + "px;");
 
-	trainingDot.appendChild(dot);
+    trainingDot.appendChild(dot);
 };
 
-        
-        var allDots = ["dot_1", "dot_2", "dot_3", "dot_4", "dot_5"];
+                
+                var allDots = ["dot_1", "dot_2", "dot_3", "dot_4", "dot_5"];
 
-		var xcounter = 0;
-		var dotCount = 5;
+        var xcounter = 0;
+        var dotCount = 5;
 
-		var dotx = [];
-		var doty = [];
+        var dotx = [];
+        var doty = [];
 
-		for (i = 0; i < dotCount; i++) {
-			createDot(dotx, doty, i, "");
-		}
+        for (i = 0; i < dotCount; i++) {
+            createDot(dotx, doty, i, "");
+        }
 
-		showSlide("trainingDot");
-		$('.dot').bind('click touchstart', function(event) {
+        showSlide("trainingDot");
+        $('.dot').bind('click touchstart', function(event) {
 
-			var dotID = $(event.currentTarget).attr('id');
+            var dotID = $(event.currentTarget).attr('id');
 
-			//only count towards completion clicks on dots that have not yet been clicked
-			if (allDots.indexOf(dotID) === -1) {
-				return;
-			}
-			allDots.splice(allDots.indexOf(dotID), 1);
-			document.getElementById(dotID).src = "dots/x.jpg";
-			xcounter++
-			if (xcounter === dotCount) {
-				trainingDot.removeChild(dot_1);
-				trainingDot.removeChild(dot_2);
-				trainingDot.removeChild(dot_3);
-				trainingDot.removeChild(dot_4);
-				trainingDot.removeChild(dot_5);
+            //only count towards completion clicks on dots that have not yet been clicked
+            if (allDots.indexOf(dotID) === -1) {
+                return;
+            }
+            allDots.splice(allDots.indexOf(dotID), 1);
+            document.getElementById(dotID).src = "dots/x.jpg";
+            xcounter++
+            if (xcounter === dotCount) {
+                trainingDot.removeChild(dot_1);
+                trainingDot.removeChild(dot_2);
+                trainingDot.removeChild(dot_3);
+                trainingDot.removeChild(dot_4);
+                trainingDot.removeChild(dot_5);
 
-				setTimeout(function() {
-					$("#trainingDot").hide();
-					setTimeout(function() {
-						showSlide("dotGame");
-					}, 500);
-				}, 500);
-			}
-		});
-	}    
+                setTimeout(function() {
+                    $("#trainingDot").hide();
+                    setTimeout(function() {
+                        showSlide("dotGame");
+                    }, 500);
+                }, 500);
+            }
+        });
+    }    
 };
 
