@@ -1,5 +1,61 @@
-.slider {
-  /* default is width 400 and margin 10 */
-	width: 400;
-	margin: 10px;
+.slide {
+	width: 600px;
+	margin-top: 50px;
+	margin-left: auto;
+	margin-right: auto;
+	margin-bottom: none;
+	border: 0;
+}
+
+.agent {
+    position: absolute;
+    bottom: 315px;
+    left: 320px;
+    width: 350px;
+}
+
+.point_agent_r {
+    position: absolute;
+    bottom: 315px;
+    left: 320px;
+    width: 350px;
+}
+
+.point_agent_l {
+    position: absolute;
+    bottom: 315px;
+    left: 320px;
+    width: 350px;
+}
+
+.object_r {
+    position: absolute;
+    bottom: 295px;  
+    left: 724px;
+    width: 150px;
+    z-index: 2
+}
+
+.object_l {
+    position: absolute;
+    bottom: 295px;
+    left: 75px;
+    width: 150px;
+    z-index: 2
+}
+
+.table_r {
+    position: absolute;
+    bottom: 150px;
+    left: 670px;
+    width: 280px;
+    z-index: 0
+}
+
+.table_l {
+    position: absolute;
+    bottom: 150px;
+    left: 10px;
+    width: 280px;
+    z-index: 0
 }
