@@ -1,3 +1,8 @@
+* {
+	font-family: "Arial";
+	text-align: left;
+}
+
 .slide {
 	width: 600px;
 	margin-top: 50px;
@@ -7,55 +12,49 @@
 	border: 0;
 }
 
+.background {
+	width: 600px;
+	z-index: 0;
+}
+
+h3 {
+	text-align: center;
+}
+
+.error {
+	color: red;
+}
+
+.error_incorrect, .error_2more, .error_1more {
+    text-align: center;
+}
+
 .agent {
     position: absolute;
-    bottom: 315px;
-    left: 320px;
     width: 350px;
-}
-
-.point_agent_r {
-    position: absolute;
-    bottom: 315px;
-    left: 320px;
-    width: 350px;
-}
-
-.point_agent_l {
-    position: absolute;
-    bottom: 315px;
-    left: 320px;
-    width: 350px;
+    z-index: 1;
 }
 
 .object_r {
     position: absolute;
-    bottom: 295px;  
-    left: 724px;
     width: 150px;
     z-index: 2
 }
 
 .object_l {
     position: absolute;
-    bottom: 295px;
-    left: 75px;
     width: 150px;
     z-index: 2
 }
 
 .table_r {
     position: absolute;
-    bottom: 150px;
-    left: 670px;
     width: 280px;
     z-index: 0
 }
 
 .table_l {
     position: absolute;
-    bottom: 150px;
-    left: 10px;
     width: 280px;
     z-index: 0
 }

@@ -42,10 +42,6 @@
 
             <img src="../_shared/images/cpl.png" alt="MIT Computational Psycholinguistics Lab" id="cpl_logo"></img>
 
-            <p id="cpl_name">
-                MIT Computational Psycholinguistics Lab
-            </p>
-
             <p id="instruct-text">
                 You will learn about new objects on an alien planet and be asked a few questions about them. The HIT should take ~5 minutes. Please pay attention, thanks!
             </p>
@@ -62,10 +58,10 @@
             <input type="text" id="botresponse" size="30"></input>
             <button onclick="_s.button()" id="bot_button">Continue</button>
 
-            <p class="text" id="error_incorrect" style="color: #7CB637">This is incorrect.</p>
-            <p class="text" id="error_2more" style="color: #7CB637">You have 2 more trials.</p>
-            <p class="text" id="error_1more" style="color: #7CB637">You have 1 more trial.</p>
-            <p class="text" id="error" style="color: #7CB637">
+            <p class="error error_incorrect">This is incorrect.</p>
+            <p class="error error_2more">You have 2 more trials.</p>
+            <p class="error error_1more">You have 1 more trial.</p>
+            <p class="error error_final">
                 Error: You failed the comprehension questions too many times.
                 You are not permitted to complete the HIT. Please click 'Return HIT' to avoid any impact on your approval rating.
                 <br/><br/>
@@ -77,10 +73,19 @@
             <h3>Sound Check</h3>
 
             <p>Please adjust your system volume to a comfortable level. When you are ready, click the <b>Test</b> button. You will hear a word like "skyscraper". Enter the word you hear into the box below and click <b>Continue</b> when you are finished.</p>
-            <button onclick="_s.test_sound()">Test</button><br>
+            <button onclick="_s.test_sound()" id="sound_test_button">Test</button><br>
             <input type="text" id="sound_response"></input><br><br><br>
-            <button onclick="_s.button()">Continue</button>
-            <p class="err">Please write the word you hear when clicking the Test button.</p>
+            <button onclick="_s.button()" id="sound_button">Continue</button>
+            
+            <p class="error error_incorrect">This is incorrect.</p>
+            <p class="error error_2more">You have 2 more trials.</p>
+            <p class="error error_1more">You have 1 more trial.</p>
+            <p class="error error_final">
+                Error: You failed the comprehension questions too many times.
+                You are not permitted to complete the HIT. Please click 'Return HIT' to avoid any impact on your approval rating.
+                <br/><br/>
+                If you believe you are receiving this message in error, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a>
+            </p>
         </div>
 
         <div class="slide" id="introduction">
@@ -91,68 +96,65 @@
         </div>
 
         <div class="slide" id="trials">
-            TRIALS SLIDE
             <img class="background" id="background" src="">
 
-            <img id="Mouse_straight" class="agent"  src="../_shared/images/Mouse_straight.png">
-            <img id="Mouse_point_l" class="point_agent_l"  src="../_shared/images/Mouse_point_l.png">
-            <img id="Mouse_point_r" class="point_agent_r"  src="../_shared/images/Mouse_point_r.png">
-            <img id="Mouse_disappear" class="agent"  src="../_shared/images/Mouse_disappear.png">
+            <img id="Mouse_straight" class="agent straight_agent"  src="../_shared/images/Mouse_straight.png">
+            <img id="Mouse_point_l" class="agent point_agent_l"  src="../_shared/images/Mouse_point_l.png">
+            <img id="Mouse_point_r" class="agent point_agent_r"  src="../_shared/images/Mouse_point_r.png">
                 
-            <img id="Monkey_straight" class="agent"  src="../_shared/images/Monkey_straight.png">
-            <img id="Monkey_point_l" class="point_agent_l"  src="../_shared/images/Monkey_point_l.png">
-            <img id="Monkey_point_r" class="point_agent_r"  src="../_shared/images/Monkey_point_r.png">
-            <img id="Monkey_disappear" class="agent"  src="../_shared/images/Monkey_disappear.png">
+            <img id="Monkey_straight" class="agent straight_agent"  src="../_shared/images/Monkey_straight.png">
+            <img id="Monkey_point_l" class="agent point_agent_l"  src="../_shared/images/Monkey_point_l.png">
+            <img id="Monkey_point_r" class="agent point_agent_r"  src="../_shared/images/Monkey_point_r.png">
                     
-            <img id="Bunny_straight" class="agent"  src="../_shared/images/Bunny_straight.png">
-            <img id="Bunny_point_l" class="point_agent_l"  src="../_shared/images/Bunny_point_l.png">
-            <img id="Bunny_point_r" class="point_agent_r"  src="../_shared/images/Bunny_point_r.png">
-            <img id="Bunny_disappear" class="agent"  src="../_shared/images/Bunny_disappear.png">    
+            <img id="Bunny_straight" class="agent straight_agent"  src="../_shared/images/Bunny_straight.png">
+            <img id="Bunny_point_l" class="agent point_agent_l"  src="../_shared/images/Bunny_point_l.png">
+            <img id="Bunny_point_r" class="agent point_agent_r"  src="../_shared/images/Bunny_point_r.png">
+            <img id="Bunny_disappear" class="agent straight_agent"  src="../_shared/images/Bunny_disappear.png">    
      
-            <img id="Dog_straight" class="agent"  src="../_shared/images/Dog_straight.png">
-            <img id="Dog_point_l" class="point_agent_l"  src="../_shared/images/Dog_point_l.png">
-            <img id="Dog_point_r" class="point_agent_r"  src="../_shared/images/Dog_point_r.png">
-            <img id="Dog_disappear" class="agent"  src="../_shared/images/Dog_disappear.png">     
+            <img id="Dog_straight" class="agent straight_agent"  src="../_shared/images/Dog_straight.png">
+            <img id="Dog_point_l" class="agent point_agent_l"  src="../_shared/images/Dog_point_l.png">
+            <img id="Dog_point_r" class="agent point_agent_r"  src="../_shared/images/Dog_point_r.png">
+            <img id="Dog_disappear" class="agent straight_agent"  src="../_shared/images/Dog_disappear.png">     
                 
-            <img id="Elephant_straight" class="agent"  src="../_shared/images/Elephant_straight.png">
-            <img id="Elephant_point_l" class="point_agent_l"  src="../_shared/images/Elephant_point_l.png">
-            <img id="Elephant_point_r" class="point_agent_r"  src="../_shared/images/Elephant_point_r.png">
-            <img id="Elephant_disappear" class="agent"  src="../_shared/images/Elephant_disappear.png">    
+            <img id="Elephant_straight" class="agent straight_agent"  src="../_shared/images/Elephant_straight.png">
+            <img id="Elephant_point_l" class="agent point_agent_l"  src="../_shared/images/Elephant_point_l.png">
+            <img id="Elephant_point_r" class="agent point_agent_r"  src="../_shared/images/Elephant_point_r.png">
+            <img id="Elephant_disappear" class="agent straight_agent"  src="../_shared/images/Elephant_disappear.png">    
                 
-            <img id="Pig_straight" class="agent"  src="../_shared/images/Pig_straight.png">
-            <img id="Pig_point_l" class="point_agent_l"  src="../_shared/images/Pig_point_l.png">
-            <img id="Pig_point_r" class="point_agent_r"  src="../_shared/images/Pig_point_r.png">
-            <img id="Pig_disappear" class="agent"  src="../_shared/images/Pig_disappear.png">     
+            <img id="Pig_straight" class="agent straight_agent"  src="../_shared/images/Pig_straight.png">
+            <img id="Pig_point_l" class="agent point_agent_l"  src="../_shared/images/Pig_point_l.png">
+            <img id="Pig_point_r" class="agent point_agent_r"  src="../_shared/images/Pig_point_r.png">
+            <img id="Pig_disappear" class="agent straight_agent"  src="../_shared/images/Pig_disappear.png">     
                 
-            <img id="Bear_straight" class="agent"  src="../_shared/images/Bear_straight.png">
-            <img id="Bear_point_l" class="point_agent_l"  src="../_shared/images/Bear_point_l.png">
-            <img id="Bear_point_r" class="point_agent_r"  src="../_shared/images/Bear_point_r.png">
-            <img id="Bear_disappear" class="agent"  src="../_shared/images/Bear_disappear.png">
+            <img id="Bear_straight" class="agent straight_agent"  src="../_shared/images/Bear_straight.png">
+            <img id="Bear_point_l" class="agent point_agent_l"  src="../_shared/images/Bear_point_l.png">
+            <img id="Bear_point_r" class="agent point_agent_r"  src="../_shared/images/Bear_point_r.png">
+            <img id="Bear_disappear" class="agent straight_agent"  src="../_shared/images/Bear_disappear.png">
                 
-            <img id="Beaver_straight" class="agent"  src="../_shared/images/Beaver_straight.png">
-            <img id="Beaver_point_l" class="point_agent_l"  src="../_shared/images/Beaver_point_l.png">
-            <img id="Beaver_point_r" class="point_agent_r"  src="../_shared/images/Beaver_point_r.png">
-            <img id="Beaver_disappear" class="agent"  src="../_shared/images/Beaver_disappear.png">    
+            <img id="Beaver_straight" class="agent straight_agent"  src="../_shared/images/Beaver_straight.png">
+            <img id="Beaver_point_l" class="agent point_agent_l"  src="../_shared/images/Beaver_point_l.png">
+            <img id="Beaver_point_r" class="agent point_agent_r"  src="../_shared/images/Beaver_point_r.png">
+            <img id="Beaver_disappear" class="agent straight_agent"  src="../_shared/images/Beaver_disappear.png">    
                 
-            <img id="Cat_straight" class="agent"  src="../_shared/images/Cat_straight.png">
-            <img id="Cat_point_l" class="point_agent_l"  src="../_shared/images/Cat_point_l.png">
-            <img id="Cat_point_r" class="point_agent_r"  src="../_shared/images/Cat_point_r.png">
-            <img id="Cat_disappear" class="agent"  src="../_shared/images/Cat_disappear.png">    
+            <img id="Cat_straight" class="agent straight_agent"  src="../_shared/images/Cat_straight.png">
+            <img id="Cat_point_l" class="agent point_agent_l"  src="../_shared/images/Cat_point_l.png">
+            <img id="Cat_point_r" class="agent point_agent_r"  src="../_shared/images/Cat_point_r.png">
+            <img id="Cat_disappear" class="agent straight_agent"  src="../_shared/images/Cat_disappear.png">    
                 
-            <img id="Sheep_straight" class="agent"  src="../_shared/images/Sheep_straight.png">
-            <img id="Sheep_point_l" class="point_agent_l"  src="../_shared/images/Sheep_point_l.png">
-            <img id="Sheep_point_r" class="point_agent_r"  src="../_shared/images/Sheep_point_r.png">
-            <img id="Sheep_disappear" class="agent"  src="../_shared/images/Sheep_disappear.png">    
+            <img id="Sheep_straight" class="agent straight_agent"  src="../_shared/images/Sheep_straight.png">
+            <img id="Sheep_point_l" class="agent point_agent_l"  src="../_shared/images/Sheep_point_l.png">
+            <img id="Sheep_point_r" class="agent point_agent_r"  src="../_shared/images/Sheep_point_r.png">
+            <img id="Sheep_disappear" class="agent straight_agent"  src="../_shared/images/Sheep_disappear.png">    
                 
-            <img id="Tiger_straight" class="agent"  src="../_shared/images/Tiger_straight.png">
-            <img id="Tiger_point_l" class="point_agent_l"  src="../_shared/images/Tiger_point_l.png">
-            <img id="Tiger_point_r" class="point_agent_r"  src="../_shared/images/Tiger_point_r.png">
-            <img id="Tiger_disappear" class="agent"  src="../_shared/images/Tiger_disappear.png">    
+            <img id="Tiger_straight" class="agent straight_agent"  src="../_shared/images/Tiger_straight.png">
+            <img id="Tiger_point_l" class="agent point_agent_l"  src="../_shared/images/Tiger_point_l.png">
+            <img id="Tiger_point_r" class="agent point_agent_r"  src="../_shared/images/Tiger_point_r.png">
+            <img id="Tiger_disappear" class="agent straight_agent"  src="../_shared/images/Tiger_disappear.png">    
                 
-            <img id="Frog_straight" class="agent"  src="../_shared/images/Frog_straight.png">
-            <img id="Frog_point_l" class="point_agent_l"  src="../_shared/images/Frog_point_l.png">
-            <img id="Frog_point_r" class="point_agent_r"  src="../_shared/images/Frog_point_r.png">
-            <img id="Frog_disappear" class="agent"  src="../_shared/images/Frog_disappear.png">     
+            <img id="Frog_straight" class="agent straight_agent"  src="../_shared/images/Frog_straight.png">
+            <img id="Frog_point_l" class="agent point_agent_l"  src="../_shared/images/Frog_point_l.png">
+            <img id="Frog_point_r" class="agent point_agent_r"  src="../_shared/images/Frog_point_r.png">
+            <img id="Frog_disappear" class="agent straight_agent"  src="../_shared/images/Frog_disappear.png">     
         
             <img id="object_l" class="object_l" src="">
             

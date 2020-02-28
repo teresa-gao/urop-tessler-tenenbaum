@@ -3,8 +3,6 @@ var testAgents = shuffle(["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog"
 
 function showAgent(id, orient) {
     $(".agent").hide();
-    $(".point_agent_l").hide();
-    $(".point_agent_r").hide();
     $("#"+id+"_"+orient).show();
 }
 
@@ -34,10 +32,7 @@ function make_slides(f) {
         name : "botcaptcha",
         bot_trials : 0,
         start: function() {
-            $("#error").hide();
-            $("#error_incorrect").hide();
-            $("#error_2more").hide();
-            $("#error_1more").hide();
+            $(".error").hide();
             // list of speaker names to be sampled from
             speaker = _.sample(["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles"]);
             // list of listener names to be sampled from
@@ -56,7 +51,6 @@ function make_slides(f) {
             bot_sentence.appendChild(content);
             bot_question.appendChild(q_content);
             document.getElementById('bot_context').appendChild(bot_sentence);
-            document.getElementById('bot_context').appendChild(document.createElement("br"));
             document.getElementById('bot_context').appendChild(bot_question);
             document.getElementById('bot_context').appendChild(document.createElement("br"));
 
@@ -77,19 +71,20 @@ function make_slides(f) {
                 // gives participant two more trials if the response was incorrect
             } else {
                 this.bot_trials++;
-                $("#error_incorrect").show();
+                $(".error_incorrect").show();
                 if (this.bot_trials == 1) {
-                        $("#error_2more").show();
+                        $(".error_2more").show();
                 } else if (this.bot_trials == 2) {
-                        $("#error_2more").hide();
-                        $("#error_1more").show();
+                        $(".error_2more").hide();
+                        $(".error_1more").show();
                 } else {
                     // if participant fails, they cannot proceed
-                        $("#error_incorrect").hide();
-                        $("#error_1more").hide();
+                        $(".error_incorrect").hide();
+                        $(".error_1more").hide();
                         $("#bot_button").hide();
+                        $(".progress").hide();
                         $('#botresponse').prop("disabled", true);
-                        $("#error").show();
+                        $(".error_final").show();
                 };
             }
         }
@@ -97,15 +92,52 @@ function make_slides(f) {
 
     slides.sound_check = slide({
         name: "sound_check",
+        sound_trials: 0,
         start: function() {
             exp.sound_word = _.sample(['tiger', 'evergreen']);
             exp.sound = new Audio('../_shared/audio/'+exp.sound_word+'.mp3');
-            $('.err').hide();
+            $('.error').hide();
         },
         test_sound: function() {
             exp.sound.play();
         },
         button: function() {
+            // get the participants' input
+            sound_response = $("#sound_response").val();
+            // append data if response correct
+            if (sound_response.toLowerCase() == exp.sound_word) {
+                /* TO-DO: fix this MTurk data-pushing
+                exp.catch_trials.push({
+                    condition: "sound_response",
+                    n_fails: this.bot_trials,
+                    response: bot_response,
+                    bot_sentence: this.bot_utterance,
+                    bot_question: this.bot_question
+                });
+                */
+                exp.go();
+                // gives participant two more trials if the response was incorrect
+            } else {
+                this.sound_trials++;
+                $(".error_incorrect").show();
+                if (this.sound_trials == 1) {
+                        $(".error_2more").show();
+                } else if (this.sound_trials == 2) {
+                        $(".error_2more").hide();
+                        $(".error_1more").show();
+                } else {
+                    // if participant fails, they cannot proceed
+                        $(".error_incorrect").hide();
+                        $(".error_1more").hide();
+                        $("#sound_button").hide();
+                        $("#sound_test_button").hide();
+                        $(".progress").hide();
+                        $('#sound_response').prop("disabled", true);
+                        $(".error_final").show();
+                };
+            }
+
+            /*
             if ($('#sound_response').val() == '') {
             $('.err').show();
             }
@@ -114,6 +146,7 @@ function make_slides(f) {
             exp.sound_check = response;
             exp.go();
             }
+            */
         }
     });
 
@@ -166,8 +199,6 @@ function make_slides(f) {
                     "time_in_minutes" : (Date.now() - exp.startT)/60000
             };
             setTimeout(function() {turk.submit(exp.data);}, 1000);
-
-            // TO-DO: PICK UP AT LINE 451 OF kids_combination.js for agents
         }
     });
 
