@@ -23,10 +23,15 @@ h3 {
 
 .error {
 	color: red;
+    text-align: center;
 }
 
-.error_incorrect, .error_2more, .error_1more {
-    text-align: center;
+.error_final {
+    text-align: left;
+}
+
+.write_something {
+    color: black;
 }
 
 .agent {

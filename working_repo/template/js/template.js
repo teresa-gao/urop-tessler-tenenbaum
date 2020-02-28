@@ -59,7 +59,10 @@ function make_slides(f) {
             // get the participants' input
             bot_response = $("#botresponse").val();
             // append data if response correct
-            if (bot_response.toLowerCase() == listener.toLowerCase()) {
+            if (bot_response.toLowerCase() == "") {
+                $(".error_incorrect").hide();
+                $(".write_something").show();
+            } else if (bot_response.toLowerCase() == listener.toLowerCase()) {
                 exp.catch_trials.push({
                     condition: "botcaptcha",
                     n_fails: this.bot_trials,
@@ -71,19 +74,19 @@ function make_slides(f) {
                 // gives participant two more trials if the response was incorrect
             } else {
                 this.bot_trials++;
+                $(".error").hide();
                 $(".error_incorrect").show();
                 if (this.bot_trials == 1) {
                         $(".error_2more").show();
                 } else if (this.bot_trials == 2) {
-                        $(".error_2more").hide();
                         $(".error_1more").show();
                 } else {
                     // if participant fails, they cannot proceed
-                        $(".error_incorrect").hide();
-                        $(".error_1more").hide();
-                        $("#bot_button").hide();
+                        $(".error").hide();
+                        $("#sound_button").hide();
+                        $("#sound_test_button").hide();
                         $(".progress").hide();
-                        $('#botresponse').prop("disabled", true);
+                        $('#sound_response').prop("disabled", true);
                         $(".error_final").show();
                 };
             }
@@ -105,7 +108,11 @@ function make_slides(f) {
             // get the participants' input
             sound_response = $("#sound_response").val();
             // append data if response correct
-            if (sound_response.toLowerCase() == exp.sound_word) {
+            
+            if (sound_response.toLowerCase() == "") {
+                $(".error_incorrect").hide();
+                $(".write_something").show();
+            } else if (sound_response.toLowerCase() == exp.sound_word) {
                 /* TO-DO: fix this MTurk data-pushing
                 exp.catch_trials.push({
                     condition: "sound_response",
@@ -119,16 +126,15 @@ function make_slides(f) {
                 // gives participant two more trials if the response was incorrect
             } else {
                 this.sound_trials++;
+                $(".error").hide();
                 $(".error_incorrect").show();
                 if (this.sound_trials == 1) {
                         $(".error_2more").show();
                 } else if (this.sound_trials == 2) {
-                        $(".error_2more").hide();
                         $(".error_1more").show();
                 } else {
                     // if participant fails, they cannot proceed
-                        $(".error_incorrect").hide();
-                        $(".error_1more").hide();
+                        $(".error").hide();
                         $("#sound_button").hide();
                         $("#sound_test_button").hide();
                         $(".progress").hide();
