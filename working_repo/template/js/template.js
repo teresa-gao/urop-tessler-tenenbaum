@@ -21,7 +21,7 @@ function shuffle(array) {
     return array;
 }
 
-// MAIN PART OF PROGRAM BEGINS HERE! :)
+// MAIN PROGRAM BEGINS HERE! :)
 function make_slides(f) {
     var slides = {};
 
@@ -171,6 +171,7 @@ function make_slides(f) {
     slides.trials = slide({
         name : "trials",
         /* present: exp.trials_data, */
+
         start : function() {
             $(".agent").hide();
             agent_straight(agents[0]);
@@ -181,11 +182,7 @@ function make_slides(f) {
             var object = shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
             change_image("object", "../_shared/images/t" + object[0] + ".png");
         },
-        /*
-        present_handle: function(stim) {
-
-        }
-        */
+        
         button : function() {
             exp.go();
         }
@@ -273,6 +270,7 @@ function init() {
     ];
 
     exp.trials_data = [];
+
     //make corresponding slides:
     exp.slides = make_slides(exp);
 

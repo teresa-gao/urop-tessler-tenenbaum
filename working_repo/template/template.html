@@ -164,7 +164,6 @@
             <div class="long_form">
                 <h3>Post-HIT Survey</h3>
                 <p class="info">Answering these questions is optional, but doing so will help us better understand your responses.</p>
-
                 <p>Did you read the instructions and do you think you did the HIT correctly?</p>
                 <label><input type="radio"  name="assess" value="No"/>No</label>
                 <label><input type="radio"  name="assess" value="Yes"/>Yes</label>
@@ -201,27 +200,18 @@
                 <p>Native Language: <input type="text" id="language"/></p>
                 <label>(the language(s) spoken at home when you were a child)</label>
 
-                <p>What did you think of the HIT?</p>
-                <select id="enjoyment">
-                    <label><option value="-1"></option></label>
-                    <label><option value="0">Worse than the Average HIT</option></label>
-                    <label><option value="1" >An Average HIT</option></label>
-                    <label><option value="2">Better than average HIT</option></label>
-                </select>
-
-                <p>Would you like to share any other comments about the experiment?</p>
+                <p>Do you have any additional comments to share about the experiment?</p>
                 <textarea id="comments" rows="3" cols="50"></textarea>
                 <br/>
                 <button onclick="_s.submit()" style="margin-top:20px;" type="button">Submit</button>
             </div>
         </div>
 
-        <div id="thanks" class="slide js">
+        <div id="thanks" class="slide">
             <h3>Thank you for your participation!</h3>
         </div>
 
         <div class="progress">
-            <span>Progress:</span>
             <div class="bar-wrapper">
                 <div class="bar" width="0%">
                 </div>
