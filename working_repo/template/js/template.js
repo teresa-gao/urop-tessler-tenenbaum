@@ -1,9 +1,14 @@
 // Experiment variables and randomization
-var testAgents = shuffle(["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"]);
+var agents = shuffle(["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"]);
 
-function showAgent(id, orient) {
+function agent_straight(agent_id) {
     $(".agent").hide();
-    $("#"+id+"_"+orient).show();
+    $("#"+agent_id+"_straight").show();
+}
+
+function agent_point_r(agent_id) {
+    $(".agent").hide();
+    $("#"+agent_id+"_point_r").show();
 }
 
 function shuffle(array) {
@@ -163,6 +168,30 @@ function make_slides(f) {
         }
     });
 
+    slides.trials = slide({
+        name : "trials",
+        /* present: exp.trials_data, */
+        start : function() {
+            $(".agent").hide();
+            agent_straight(agents[0]);
+
+            var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
+            change_image("background", "../_shared/images/back" + back[0] + ".jpg");
+
+            var object = shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
+            change_image("object", "../_shared/images/t" + object[0] + ".png");
+        },
+        /*
+        present_handle: function(stim) {
+
+        }
+        */
+        button : function() {
+            exp.go();
+        }
+    });
+
+    
     slides.subj_info = slide({
         name : "subj_info",
         submit : function(e){
@@ -182,20 +211,10 @@ function make_slides(f) {
         }
     });
 
-    slides.trials = slide({
-        name : "trials",
-        start : function() {
-            var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
-            background("../_shared/images/back" + back[0] + ".jpg");
-        },
-        button : function() {
-            exp.go();
-        }
-    });
-
     slides.thanks = slide({
         name : "thanks",
         start : function() {
+            $("progress").hide();
             exp.data= {
                     "trials" : exp.trials_data,
                     "catch_trials" : exp.catch_trials,
@@ -211,8 +230,8 @@ function make_slides(f) {
     return slides;
 }
 
-function background(x) {
-    document.getElementById("background").src = x;
+function change_image(class_name, source) {
+    document.getElementById(class_name).src = source;
 }
 
 /// init ///
@@ -244,10 +263,10 @@ function init() {
 
     //blocks of the experiment:
     exp.structure=[
-        "i0",
-        "botcaptcha",
-        "sound_check",
-        "introduction",
+        // "i0",
+        // "botcaptcha",
+        // "sound_check",
+        // "introduction",
         "trials",
         "subj_info",
         "thanks"
