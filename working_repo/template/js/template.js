@@ -1,5 +1,8 @@
 // Experiment variables and randomization
+var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents = shuffle(["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"]);
+var object = shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
+var item_name = shuffle(["fep", "dax", "blicket"]);
 
 function agent_straight(agent_id) {
     $(".agent").hide();
@@ -174,16 +177,22 @@ function make_slides(f) {
 
         start : function() {
             $(".agent").hide();
+            $("#continue_button").hide();
             agent_straight(agents[0]);
-
-            var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
             change_image("background", "../_shared/images/back" + back[0] + ".jpg");
-
-            var object = shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
             change_image("object", "../_shared/images/t" + object[0] + ".png");
+            $(".speech-bubble").text("Hello! You must be the new scientist. Welcome to the laboratory!")
+            // TO-DO: If audio is played, wait until audio finishes before revealing "next" button
+        },
+
+        next_button_1 : function() {
+            $("#next_button_1").hide();
+            agent_point_r(agents[0]);
+            $(".speech-bubble").text("Let me show you this new thing we've discovered! This is a " + item_name[0] + ".");
+            $("#continue_button").show();
         },
         
-        button : function() {
+        continue_button : function() {
             exp.go();
         }
     });
@@ -263,7 +272,7 @@ function init() {
         // "i0",
         // "botcaptcha",
         // "sound_check",
-        // "introduction",
+        "introduction",
         "trials",
         "subj_info",
         "thanks"
