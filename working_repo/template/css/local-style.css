@@ -53,8 +53,8 @@ h3 {
 .object {
     position: absolute;
     bottom: 30px;
-    right: 135px;
-    width: 125px;
+    right: 175px;
+    width: 100px;
     z-index: 2;
 }
 

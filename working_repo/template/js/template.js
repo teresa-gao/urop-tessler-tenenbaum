@@ -177,27 +177,55 @@ function make_slides(f) {
 
         start : function() {
             $(".agent").hide();
-            $("#continue_button").hide();
+            $("button").hide();
             agent_straight(agents[0]);
             change_image("background", "../_shared/images/back" + back[0] + ".jpg");
             change_image("object", "../_shared/images/t" + object[0] + ".png");
-            $(".speech-bubble").text("Hello! You must be the new scientist. Welcome to the laboratory!")
+            $(".speech-bubble").text("Hello! You must be the new scientist. Welcome to the laboratory!");
             // TO-DO: If audio is played, wait until audio finishes before revealing "next" button
+            $("#next_button_1").show();
         },
 
         next_button_1 : function() {
+            $("button").hide();
             $("#next_button_1").hide();
-            agent_point_r(agents[0]);
             $(".speech-bubble").text("Let me show you this new thing we've discovered! This is a " + item_name[0] + ".");
+            $("#next_button_2").show();
+        },
+
+        next_button_2 : function() {
+            $("button").hide();
+            $(".speech-bubble").hide();
+            agent_point_r(agents[0]);
+            // TO-DO: Insert delay here (wait for text to be spoken)
+
+            // Object "falls" off table
+            $("#object").delay(250).animate({
+                left: "+=150px",
+                duration: 2000},
+                { easing: "easeInQuad"
+            });
+            $("#object").animate({
+                bottom: "-=25px",
+                duration: 50},
+                { easing: "easeOutQuad"
+            });
+
+            // Object "squeaks" (pulses)
             $("#object").animate({
                 height: "+=50px",
-                duration: 1200
+                duration: 10
             });
             $("#object").animate({
                 height: "-=50px",
-                duration: 1200
+                duration: 10,
+                function() {
+                    $(".speech-bubble").show();
+                    agent_straight(agents[0]);
+                    $(".speech-bubble").text("Wow, did you see what the " + item_name[0] + " just did?");
+                    $("#continue_button").show();
+                }
             });
-            $("#continue_button").show();
         },
         
         continue_button : function() {
