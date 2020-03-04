@@ -189,6 +189,14 @@ function make_slides(f) {
             $("#next_button_1").hide();
             agent_point_r(agents[0]);
             $(".speech-bubble").text("Let me show you this new thing we've discovered! This is a " + item_name[0] + ".");
+            $("#object").animate({
+                height: "+=50px",
+                duration: 1200
+            });
+            $("#object").animate({
+                height: "-=50px",
+                duration: 1200
+            });
             $("#continue_button").show();
         },
         
@@ -272,7 +280,7 @@ function init() {
         // "i0",
         // "botcaptcha",
         // "sound_check",
-        "introduction",
+        // "introduction",
         "trials",
         "subj_info",
         "thanks"

@@ -91,21 +91,21 @@ h3 {
 
 .speech-bubble:after {
     border-left: 20px solid transparent;
-    border-top: 20px solid black;
-    bottom: -20px;
+    border-top: 30px solid black;
+    bottom: -30px;
     content: "";
     position: absolute;
-    left: 150px;
+    left: 170px;
     z-index: 1;
 }
 
 
 .speech-bubble:before {
     border-left: 19px solid transparent;
-    border-top: 19px solid #f8f8f8;
-    bottom: -19px;
+    border-top: 29px solid #f8f8f8;
+    bottom: -29px;
     content: "";
     position: absolute;
-    left: 151px;
+    left: 171px;
     z-index: 3;
 }
