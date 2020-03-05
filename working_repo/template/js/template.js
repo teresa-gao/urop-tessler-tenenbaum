@@ -247,11 +247,33 @@ function make_slides(f) {
                 );
 
                 // Object(s) fall(s) and squeak(s)
-                temp_counter = 1;
-                while (temp_counter <= item_number[0]) {
-                    setTimeout(fall_and_squeak("#object" + temp_counter), 2500);   
-                    temp_counter += 1;
+                setTimeout(fall_and_squeak("#object1"), 2500);
+
+                $("#object1").promise().done( function() {
+                    if (item_number[0] >= 2) {  
+                        fall_and_squeak("#object2");
+                        if (item_number[0] == 3) {
+                            $("#object2").promise().done( function() {
+                                fall_and_squeak("#object3");
+                            });
+                        }
+                    
+                    }
+                });
+
+                /*
+                if (item_number[0] >= 2) {
+                   
+                    $("#object1").promise().done(function() {fall_and_squeak("#object2"); });
+
+                    if (item_number[0] == 3) {
+                        $("#object2").promise().done(function() {
+                            fall_and_squeak("#object3");
+                            }
+                        );
+                    }
                 }
+                */
 
                 // Agent remarks on accidental object behavior
                 setTimeout (function() {
@@ -261,14 +283,14 @@ function make_slides(f) {
                     if (item_number[0] == 1) {
                         $(".speech-bubble").text("Wow, did you notice what the " + item_name[0][0] + " just did?");
                     } else {
-                        $(".speech-bubble").text("Wow, did you notice what the " + item_name[0][1] + " just did?");
+                        $(".speech-bubble").text("Wow, did you notice what the " + item_number[0] + " "+ item_name[0][1] + " just did?");
                     };
 
                     setTimeout (function () {
                         $("#continue_button1").show();
 
                     }, 2000); // Time after agent speaks before continue button shows
-                }, 2250); // Time after "squeak" before agent speaks
+                }, 2500); // Time after "squeak" before agent speaks
             }, 2000); // Time after agent first (second?) speaks before poking object
         },
 
