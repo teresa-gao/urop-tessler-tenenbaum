@@ -30,54 +30,54 @@ h3 {
 }
 
 .trials_container {
-    position: relative;
+    position:       relative;
 }
 
 #background {
-    position: relative;
-    width: 600px;
-    height: 400px;
-    z-index: 0;
-    opacity: 0.5;
-    filter: grayscale(50%);
+    position:       relative;
+    width:          600px;
+    height:         400px;
+    z-index:        0;
+    opacity:        0.5;
+    filter:         grayscale(50%);
 }
 
 .agent {
-    position: absolute;
-    height: 300px;
-    bottom: 0px;
-    left:           50px;
-    z-index: 1;
+    position:       absolute;
+    height:         300px;
+    bottom:         0px;
+    left:           15px;
+    z-index:        1;
 }
 
 .object {
-    position: absolute;
-    bottom: 30px;
-    width: 100px;
+    position:       absolute;
+    bottom:         50px;
+    width:          75px;
 }
 
 #object1 {
-    right: 175px;
-    z-index: 4;
+    right:          250px;
+    z-index:        4;
 }
 
 #object2 {
-    right: 165px;
-    z-index: 3;
+    right:          200px;
+    z-index:        3;
 }
 
 #object3 {
-    right: 155px;
-    z-index: 2;
+    right:          150px;
+    z-index:        2;
 }
 
 .table {
-    position: absolute;
-    bottom: 0px;
-    right: 125px;
-    width: 150px;
-    height: 30px;
-    z-index: 1;
+    position:       absolute;
+    bottom:         0px;
+    right:          165px;
+    width:          150px;
+    height:         50px;
+    z-index:        1;
 }
 
 .speech-bubble {
@@ -102,17 +102,15 @@ h3 {
     margin-bottom: 0;
 }
 
-
 .speech-bubble:after {
     border-left: 20px solid transparent;
     border-top: 30px solid black;
     bottom: -30px;
     content: "";
     position: absolute;
-    left: 170px;
+    left: 125px;
     z-index: 1;
 }
-
 
 .speech-bubble:before {
     border-left: 19px solid transparent;
@@ -120,6 +118,6 @@ h3 {
     bottom: -29px;
     content: "";
     position: absolute;
-    left: 171px;
+    left: 126px;
     z-index: 3;
 }

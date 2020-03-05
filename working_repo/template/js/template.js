@@ -24,7 +24,7 @@ function fall_and_squeak(object_id) {
             easing: "easeInQuad"
     });
     $(object_id).animate({
-        bottom: "-=25px"
+        bottom: "0px"
         },
         {
             duration: 75,
@@ -249,10 +249,8 @@ function make_slides(f) {
                 // Object(s) fall(s) and squeak(s)
                 temp_counter = 1;
                 while (temp_counter <= item_number[0]) {
-                    setTimeout(function() {
-                        setTimeout(fall_and_squeak("#object" + temp_counter), 2500);
-                        temp_counter += 1;
-                    }, 2000);   
+                    setTimeout(fall_and_squeak("#object" + temp_counter), 2500);   
+                    temp_counter += 1;
                 }
 
                 // Agent remarks on accidental object behavior
@@ -273,23 +271,38 @@ function make_slides(f) {
                 }, 2250); // Time after "squeak" before agent speaks
             }, 2000); // Time after agent first (second?) speaks before poking object
         },
-        
-        continue_button1 : function() {
-            $("#background").hide();
-            $(".speech-bubble").hide();
-            $(".agent").hide();
-            $(".object").hide();
-            $("#table").hide();
-            $("button").hide();
-            // display slider here
-            $("#continue_button2").show();
-        },
 
-        continue_button2 : function() {
+        continue_button1 : function() {
             exp.go();
         }
     });
 
+    slides.slider = slide({
+        name : "slider",
+        start: function() {
+            $(".error").hide();
+
+            $("#prompt").text("Imagine that you have another " + item_name[0][0] + ". What do you think would be the likelihood that it squeaks?");
+            this.init_sliders();
+            exp.sliderPost = null;
+
+            $("#continue_button2").show();
+        },
+
+        init_sliders: function() {
+            utils.make_slider("#single_slider", function(event, ui) {
+                exp.sliderPost = ui.value;
+            });
+        },
+
+        continue_button2 : function() {
+            if (exp.sliderPost === null) {
+                $(".error").show();
+            } else {
+                exp.go();
+            }
+        }
+    });
     
     slides.subj_info = slide({
         name : "subj_info",
@@ -370,6 +383,7 @@ function init() {
         // "sound_check",
         // "introduction",
         "trials",
+        "slider",
         "subj_info",
         "thanks"
     ];
