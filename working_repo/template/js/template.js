@@ -150,17 +150,6 @@ function make_slides(f) {
                         $(".error_final").show();
                 };
             }
-
-            /*
-            if ($('#sound_response').val() == '') {
-            $('.err').show();
-            }
-            else {
-            response = $('#sound_response').val();
-            exp.sound_check = response;
-            exp.go();
-            }
-            */
         }
     });
 
@@ -183,52 +172,87 @@ function make_slides(f) {
             change_image("object", "../_shared/images/t" + object[0] + ".png");
             $(".speech-bubble").text("Hello! You must be the new scientist. Welcome to the laboratory!");
             // TO-DO: If audio is played, wait until audio finishes before revealing "next" button
-            $("#next_button_1").show();
+            setTimeout( function() {
+                $("#next_button").delay(2000).show();
+            }, 2000);
         },
 
-        next_button_1 : function() {
+        next_button : function() {
             $("button").hide();
-            $("#next_button_1").hide();
+            $("#next_button").hide();
             $(".speech-bubble").text("Let me show you this new thing we've discovered! This is a " + item_name[0] + ".");
-            $("#next_button_2").show();
-        },
 
-        next_button_2 : function() {
-            $("button").hide();
-            $(".speech-bubble").hide();
-            agent_point_r(agents[0]);
-            // TO-DO: Insert delay here (wait for text to be spoken)
+            setTimeout( function() {
+                $("button").hide();
+                $(".speech-bubble").hide();
 
-            // Object "falls" off table
-            $("#object").delay(250).animate({
-                left: "+=150px",
-                duration: 2000},
-                { easing: "easeInQuad"
-            });
-            $("#object").animate({
-                bottom: "-=25px",
-                duration: 50},
-                { easing: "easeOutQuad"
-            });
+                // Agent points
+                agent_point_r(agents[0]);
+                $(".agent").animate(
+                    { width: "+=20px"},
+                    { duration: 400}
+                );
+                $(".agent").animate(
+                    { width: "-=20px"},
+                    { duration: 400}
+                );
 
-            // Object "squeaks" (pulses)
-            $("#object").animate({
-                height: "+=50px",
-                duration: 10
-            });
-            $("#object").animate({
-                height: "-=50px",
-                duration: 10,
-                function() {
-                    $(".speech-bubble").show();
-                    agent_straight(agents[0]);
-                    $(".speech-bubble").text("Wow, did you see what the " + item_name[0] + " just did?");
-                    $("#continue_button").show();
-                }
-            });
+                // Object "falls" off table
+                setTimeout (function() {
+                    $("#object").delay(800).animate({
+                        left: "+=150px"},
+                        {
+                            duration: 500,
+                            easing: "easeInQuad"
+                    });
+                    $("#object").animate({
+                        bottom: "-=25px"
+                        },
+                        {
+                            duration: 75,
+                            easing: "easeOutQuad"
+                        }
+                    );
+
+                    // Object "falls" and squeaks
+                    setTimeout (function() {
+                        const squeak = new Audio('../_shared/audio/squeak.mp3');
+
+                        $("#object").animate({
+                            height: "+=25px",
+                            duration: 2000,
+                        });
+                        $("#object").animate({
+                            height: "-=25px",
+                            duration: 2000
+                        });
+                        squeak.play(); // TO-DO: timing is off from animation sometimes??
+
+                        setTimeout (function() {
+                            $(".speech-bubble").show();
+                            agent_straight(agents[0]);
+                            $(".speech-bubble").text("Wow, did you notice what the " + item_name[0] + " just did?");
+                            setTimeout (function () {
+                                $("#continue_button1").show();
+                            }, 2000); // Time after agent speaks before continue button shows
+                        }, 2500); // Time after object "squeaks" before agent speaks
+                    }, 800); // Time after object starts to move before it falls and squeaks
+                }, 100); // Time after agent "pokes" object before it moves 
+            }, 2000); // Time after agent first (second?) speaks before poking object
         },
         
-        continue_button : function() {
+        continue_button1 : function() {
+            $("#background").hide();
+            $(".speech-bubble").hide();
+            $(".agent").hide();
+            $("#object").hide();
+            $("#table").hide();
+            $("button").hide();
+            // display slider here
+            $("#continue_button2").show();
+        },
+
+        continue_button2 : function() {
             exp.go();
         }
     });
@@ -236,6 +260,9 @@ function make_slides(f) {
     
     slides.subj_info = slide({
         name : "subj_info",
+        start: function() {
+            $("#submit_button").show();
+        },
         submit : function(e){
             //if (e.preventDefault) e.preventDefault(); // I don't know what this means.
             exp.subj_data = {

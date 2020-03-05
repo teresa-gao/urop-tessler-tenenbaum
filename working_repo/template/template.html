@@ -106,61 +106,49 @@
                 <img class="table" id="table" src="../_shared/images/table.png">
 
                 <img id="Mouse_straight" class="agent straight_agent"  src="../_shared/images/Mouse_straight.png">
-                <img id="Mouse_point_l" class="agent point_agent_l"  src="../_shared/images/Mouse_point_l.png">
                 <img id="Mouse_point_r" class="agent point_agent_r"  src="../_shared/images/Mouse_point_r.png">
                     
                 <img id="Monkey_straight" class="agent straight_agent"  src="../_shared/images/Monkey_straight.png">
-                <img id="Monkey_point_l" class="agent point_agent_l"  src="../_shared/images/Monkey_point_l.png">
                 <img id="Monkey_point_r" class="agent point_agent_r"  src="../_shared/images/Monkey_point_r.png">
                         
                 <img id="Bunny_straight" class="agent straight_agent"  src="../_shared/images/Bunny_straight.png">
-                <img id="Bunny_point_l" class="agent point_agent_l"  src="../_shared/images/Bunny_point_l.png">
                 <img id="Bunny_point_r" class="agent point_agent_r"  src="../_shared/images/Bunny_point_r.png">    
          
                 <img id="Dog_straight" class="agent straight_agent"  src="../_shared/images/Dog_straight.png">
-                <img id="Dog_point_l" class="agent point_agent_l"  src="../_shared/images/Dog_point_l.png">
                 <img id="Dog_point_r" class="agent point_agent_r"  src="../_shared/images/Dog_point_r.png">     
                     
                 <img id="Elephant_straight" class="agent straight_agent"  src="../_shared/images/Elephant_straight.png">
-                <img id="Elephant_point_l" class="agent point_agent_l"  src="../_shared/images/Elephant_point_l.png">
                 <img id="Elephant_point_r" class="agent point_agent_r"  src="../_shared/images/Elephant_point_r.png"> 
                     
                 <img id="Pig_straight" class="agent straight_agent"  src="../_shared/images/Pig_straight.png">
-                <img id="Pig_point_l" class="agent point_agent_l"  src="../_shared/images/Pig_point_l.png">
                 <img id="Pig_point_r" class="agent point_agent_r"  src="../_shared/images/Pig_point_r.png">  
                     
                 <img id="Bear_straight" class="agent straight_agent"  src="../_shared/images/Bear_straight.png">
-                <img id="Bear_point_l" class="agent point_agent_l"  src="../_shared/images/Bear_point_l.png">
                 <img id="Bear_point_r" class="agent point_agent_r"  src="../_shared/images/Bear_point_r.png">
                     
                 <img id="Beaver_straight" class="agent straight_agent"  src="../_shared/images/Beaver_straight.png">
-                <img id="Beaver_point_l" class="agent point_agent_l"  src="../_shared/images/Beaver_point_l.png">
                 <img id="Beaver_point_r" class="agent point_agent_r"  src="../_shared/images/Beaver_point_r.png">   
                     
                 <img id="Cat_straight" class="agent straight_agent"  src="../_shared/images/Cat_straight.png">
-                <img id="Cat_point_l" class="agent point_agent_l"  src="../_shared/images/Cat_point_l.png">
                 <img id="Cat_point_r" class="agent point_agent_r"  src="../_shared/images/Cat_point_r.png">
                     
                 <img id="Sheep_straight" class="agent straight_agent"  src="../_shared/images/Sheep_straight.png">
-                <img id="Sheep_point_l" class="agent point_agent_l"  src="../_shared/images/Sheep_point_l.png">
                 <img id="Sheep_point_r" class="agent point_agent_r"  src="../_shared/images/Sheep_point_r.png">   
                     
                 <img id="Tiger_straight" class="agent straight_agent"  src="../_shared/images/Tiger_straight.png">
-                <img id="Tiger_point_l" class="agent point_agent_l"  src="../_shared/images/Tiger_point_l.png">
                 <img id="Tiger_point_r" class="agent point_agent_r"  src="../_shared/images/Tiger_point_r.png"> 
                     
                 <img id="Frog_straight" class="agent straight_agent"  src="../_shared/images/Frog_straight.png">
-                <img id="Frog_point_l" class="agent point_agent_l"  src="../_shared/images/Frog_point_l.png">
                 <img id="Frog_point_r" class="agent point_agent_r"  src="../_shared/images/Frog_point_r.png">
 
                 <div class="speech-bubble speech-bubble-left"></div>
             </div>
             
-            <button id="next_button_1" onclick="_s.next_button_1()" style="margin-top:20px; position:relative">Next</button>
+            <button id="next_button" onclick="_s.next_button()" style="margin-top:20px; position:relative">Next</button>
 
-            <button id="next_button_2" onclick="_s.next_button_2()" style="margin-top:20px; position:relative">Next</button>
+            <button id="continue_button1" onclick="_s.continue_button1()" style="margin-top:20px; position:relative">Continue</button>
 
-            <button id="continue_button" onclick="_s.continue_button()" style="margin-top:20px; position:relative">Continue</button>
+            <button id="continue_button2" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button>
         </div>
 
         <div class="slide"  id="subj_info">
@@ -206,7 +194,7 @@
                 <p>Do you have any additional comments to share about the experiment?</p>
                 <textarea id="comments" rows="3" cols="50"></textarea>
                 <br/>
-                <button onclick="_s.submit()" style="margin-top:20px;" type="button">Submit</button>
+                <button id="submit_button" onclick="_s.submit()" style="margin-top:20px;" type="button">Submit</button>
             </div>
         </div>
 
