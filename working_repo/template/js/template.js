@@ -2,7 +2,8 @@
 var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents = shuffle(["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"]);
 var object = shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
-var item_name = shuffle(["fep", "dax", "blicket"]);
+var item_name = shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
+var item_number = shuffle([1, 2, 3]);
 
 function agent_straight(agent_id) {
     $(".agent").hide();
@@ -12,6 +13,39 @@ function agent_straight(agent_id) {
 function agent_point_r(agent_id) {
     $(".agent").hide();
     $("#"+agent_id+"_point_r").show();
+}
+
+function fall_and_squeak(object_id) {
+    // Object "falls" off table
+    $(object_id).animate({
+        left: "+=150px"},
+        {
+            duration: 500,
+            easing: "easeInQuad"
+    });
+    $(object_id).animate({
+        bottom: "-=25px"
+        },
+        {
+            duration: 75,
+            easing: "easeOutQuad"
+        }
+    );
+
+        // Object "falls" and squeaks
+    setTimeout (function() {
+        const squeak = new Audio('../_shared/audio/squeak.mp3');
+
+        $(object_id).animate({
+            height: "+=25px",
+            duration: 2000,
+        });
+        $(object_id).animate({
+            height: "-=25px",
+            duration: 2000
+        });
+        squeak.play(); // TO-DO: timing is off from animation sometimes??
+    }, 575); // Time after object starts to move before it falls and squeaks   
 }
 
 function shuffle(array) {
@@ -167,9 +201,19 @@ function make_slides(f) {
         start : function() {
             $(".agent").hide();
             $("button").hide();
-            agent_straight(agents[0]);
+            $(".object").hide();
+
+            var temp_counter = 1;
+            while (temp_counter <= item_number[0]) {
+                console.log("object" + temp_counter);
+                change_image("object" + temp_counter, "../_shared/images/t" + object[0] + ".png");
+                $("#object" + temp_counter).show();
+                temp_counter += 1;
+            };
+            
             change_image("background", "../_shared/images/back" + back[0] + ".jpg");
-            change_image("object", "../_shared/images/t" + object[0] + ".png");
+            
+            agent_straight(agents[0]);
             $(".speech-bubble").text("Hello! You must be the new scientist. Welcome to the laboratory!");
             // TO-DO: If audio is played, wait until audio finishes before revealing "next" button
             setTimeout( function() {
@@ -180,8 +224,13 @@ function make_slides(f) {
         next_button : function() {
             $("button").hide();
             $("#next_button").hide();
-            $(".speech-bubble").text("Let me show you this new thing we've discovered! This is a " + item_name[0] + ".");
 
+            if (item_number[0] == 1) {
+                $(".speech-bubble").text("Let me show you what we've discovered! This is a " + item_name[0][0] + "."); // singular
+            } else {
+                $(".speech-bubble").text("Let me show you what we've discovered! These are " + item_number[0] + " " + item_name[0][1] + "."); // plural
+            };
+            
             setTimeout( function() {
                 $("button").hide();
                 $(".speech-bubble").hide();
@@ -190,54 +239,38 @@ function make_slides(f) {
                 agent_point_r(agents[0]);
                 $(".agent").animate(
                     { width: "+=20px"},
-                    { duration: 400}
+                    { duration: 200}
                 );
                 $(".agent").animate(
                     { width: "-=20px"},
                     { duration: 400}
                 );
 
-                // Object "falls" off table
+                // Object(s) fall(s) and squeak(s)
+                temp_counter = 1;
+                while (temp_counter <= item_number[0]) {
+                    setTimeout(function() {
+                        setTimeout(fall_and_squeak("#object" + temp_counter), 2500);
+                        temp_counter += 1;
+                    }, 2000);   
+                }
+
+                // Agent remarks on accidental object behavior
                 setTimeout (function() {
-                    $("#object").delay(800).animate({
-                        left: "+=150px"},
-                        {
-                            duration: 500,
-                            easing: "easeInQuad"
-                    });
-                    $("#object").animate({
-                        bottom: "-=25px"
-                        },
-                        {
-                            duration: 75,
-                            easing: "easeOutQuad"
-                        }
-                    );
+                    $(".speech-bubble").show();
+                    agent_straight(agents[0]);
+                    
+                    if (item_number[0] == 1) {
+                        $(".speech-bubble").text("Wow, did you notice what the " + item_name[0][0] + " just did?");
+                    } else {
+                        $(".speech-bubble").text("Wow, did you notice what the " + item_name[0][1] + " just did?");
+                    };
 
-                    // Object "falls" and squeaks
-                    setTimeout (function() {
-                        const squeak = new Audio('../_shared/audio/squeak.mp3');
+                    setTimeout (function () {
+                        $("#continue_button1").show();
 
-                        $("#object").animate({
-                            height: "+=25px",
-                            duration: 2000,
-                        });
-                        $("#object").animate({
-                            height: "-=25px",
-                            duration: 2000
-                        });
-                        squeak.play(); // TO-DO: timing is off from animation sometimes??
-
-                        setTimeout (function() {
-                            $(".speech-bubble").show();
-                            agent_straight(agents[0]);
-                            $(".speech-bubble").text("Wow, did you notice what the " + item_name[0] + " just did?");
-                            setTimeout (function () {
-                                $("#continue_button1").show();
-                            }, 2000); // Time after agent speaks before continue button shows
-                        }, 2500); // Time after object "squeaks" before agent speaks
-                    }, 800); // Time after object starts to move before it falls and squeaks
-                }, 100); // Time after agent "pokes" object before it moves 
+                    }, 2000); // Time after agent speaks before continue button shows
+                }, 2250); // Time after "squeak" before agent speaks
             }, 2000); // Time after agent first (second?) speaks before poking object
         },
         
@@ -245,7 +278,7 @@ function make_slides(f) {
             $("#background").hide();
             $(".speech-bubble").hide();
             $(".agent").hide();
-            $("#object").hide();
+            $(".object").hide();
             $("#table").hide();
             $("button").hide();
             // display slider here
@@ -299,8 +332,8 @@ function make_slides(f) {
     return slides;
 }
 
-function change_image(class_name, source) {
-    document.getElementById(class_name).src = source;
+function change_image(id_name, source) {
+    document.getElementById(id_name).src = source;
 }
 
 /// init ///
