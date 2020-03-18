@@ -29,11 +29,11 @@ h3 {
     color: black;
 }
 
-.trials_container {
+.container {
     position:       relative;
 }
 
-#background {
+.background {
     position:       relative;
     width:          600px;
     height:         400px;
@@ -81,43 +81,43 @@ h3 {
 }
 
 .speech-bubble {
-    background: #f8f8f8;
-    border-radius: 4px;
-    font-size: 1rem;
-    text-align: center;
-    line-height: 1.3;
-    border: 1px solid black;
-    padding: 15px;
-    position: absolute;
-    z-index: 3;
-    top: 10px;
-    left: 10px;
-    right: 10px;
+    background:     #f8f8f8;
+    border-radius:  4px;
+    font-size:      1rem;
+    text-align:     center;
+    line-height:    1.3;
+    border:         1px solid black;
+    padding:        15px;
+    position:       absolute;
+    z-index:        3;
+    top:            10px;
+    left:           10px;
+    right:          10px;
 }
 
 .speech-bubble p {
-    margin: 0 0 10px;
+    margin:         0 0 10px;
 }
 .speech-bubble p:last-of-type {
-    margin-bottom: 0;
+    margin-bottom:  0;
 }
 
 .speech-bubble:after {
-    border-left: 20px solid transparent;
-    border-top: 30px solid black;
-    bottom: -30px;
-    content: "";
-    position: absolute;
-    left: 125px;
-    z-index: 1;
+    border-left:    20px solid transparent;
+    border-top:     30px solid black;
+    bottom:         -30px;
+    content:        "";
+    position:       absolute;
+    left:           125px;
+    z-index:        1;
 }
 
 .speech-bubble:before {
-    border-left: 19px solid transparent;
-    border-top: 29px solid #f8f8f8;
-    bottom: -29px;
-    content: "";
-    position: absolute;
-    left: 126px;
-    z-index: 3;
+    border-left:    19px solid transparent;
+    border-top:     29px solid #f8f8f8;
+    bottom:         -29px;
+    content:        "";
+    position:       absolute;
+    left:           126px;
+    z-index:        3;
 }

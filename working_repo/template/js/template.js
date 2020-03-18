@@ -1,21 +1,27 @@
 // Experiment variables and randomization
 var back = shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents = shuffle(["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"]);
-var object = shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
+var objects = shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
 var item_name = shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
 var item_number = shuffle([1, 2, 3]);
+var item_presentation = shuffle(["pedagogical", "demonstration", "accidental"]);
+var squeaky = shuffle([true, false]);
 
-function agent_straight(agent_id) {
+// Console logs for debugging
+console.log(item_presentation[0]);
+console.log(squeaky[0]);
+
+function agent_straight(agent_class) {
     $(".agent").hide();
-    $("#"+agent_id+"_straight").show();
+    $("."+agent_class+"_straight").show();
 }
 
-function agent_point_r(agent_id) {
+function agent_point_r(agent_class) {
     $(".agent").hide();
-    $("#"+agent_id+"_point_r").show();
+    $("."+agent_class+"_point_r").show();
 }
 
-function fall_and_squeak(object_id) {
+function object_fall(object_id, squeak) {
     // Object "falls" off table
     $(object_id).animate({
         left: "+=150px"},
@@ -34,7 +40,10 @@ function fall_and_squeak(object_id) {
 
         // Object "falls" and squeaks
     setTimeout (function() {
-        const squeak = new Audio('../_shared/audio/squeak.mp3');
+        if (squeak) {
+            const squeak = new Audio('../_shared/audio/squeak.mp3');
+            squeak.play();
+        };        
 
         $(object_id).animate({
             height: "+=25px",
@@ -44,7 +53,7 @@ function fall_and_squeak(object_id) {
             height: "-=25px",
             duration: 2000
         });
-        squeak.play(); // TO-DO: timing is off from animation sometimes??
+         // TO-DO: timing is off from animation sometimes??
     }, 575); // Time after object starts to move before it falls and squeaks   
 }
 
@@ -194,121 +203,172 @@ function make_slides(f) {
         }
     });
 
-    slides.trials = slide({
-        name : "trials",
-        /* present: exp.trials_data, */
-
+    slides.greeting = slide({
+        name : "greeting",
         start : function() {
-            $(".agent").hide();
             $("button").hide();
-            $(".object").hide();
-
-            var temp_counter = 1;
-            while (temp_counter <= item_number[0]) {
-                console.log("object" + temp_counter);
-                change_image("object" + temp_counter, "../_shared/images/t" + object[0] + ".png");
-                $("#object" + temp_counter).show();
-                temp_counter += 1;
-            };
-            
-            change_image("background", "../_shared/images/back" + back[0] + ".jpg");
-            
+            $(".agent").hide();
             agent_straight(agents[0]);
+            change_image("background", "../_shared/images/back" + back[0] + ".jpg");    
+        
             $(".speech-bubble").text("Hello! You must be the new scientist. Welcome to the laboratory!");
             // TO-DO: If audio is played, wait until audio finishes before revealing "next" button
-            setTimeout( function() {
-                $("#next_button").delay(2000).show();
-            }, 2000);
-        },
-
-        next_button : function() {
-            $("button").hide();
-            $("#next_button").hide();
-
-            if (item_number[0] == 1) {
-                $(".speech-bubble").text("Let me show you what we've discovered! This is a " + item_name[0][0] + "."); // singular
-            } else {
-                $(".speech-bubble").text("Let me show you what we've discovered! These are " + item_number[0] + " " + item_name[0][1] + "."); // plural
-            };
             
             setTimeout( function() {
-                $("button").hide();
-                $(".speech-bubble").hide();
-
-                // Agent points
-                agent_point_r(agents[0]);
-                $(".agent").animate(
-                    { width: "+=20px"},
-                    { duration: 200}
-                );
-                $(".agent").animate(
-                    { width: "-=20px"},
-                    { duration: 400}
-                );
-
-                // Object(s) fall(s) and squeak(s)
-                setTimeout(fall_and_squeak("#object1"), 2500);
-
-                $("#object1").promise().done( function() {
-                    if (item_number[0] >= 2) {  
-                        fall_and_squeak("#object2");
-                        if (item_number[0] == 3) {
-                            $("#object2").promise().done( function() {
-                                fall_and_squeak("#object3");
-                            });
-                        }
-                    
-                    }
-                });
-
-                /*
-                if (item_number[0] >= 2) {
-                   
-                    $("#object1").promise().done(function() {fall_and_squeak("#object2"); });
-
-                    if (item_number[0] == 3) {
-                        $("#object2").promise().done(function() {
-                            fall_and_squeak("#object3");
-                            }
-                        );
-                    }
-                }
-                */
-
-                // Agent remarks on accidental object behavior
-                setTimeout (function() {
-                    $(".speech-bubble").show();
-                    agent_straight(agents[0]);
-                    
-                    if (item_number[0] == 1) {
-                        $(".speech-bubble").text("Wow, did you notice what the " + item_name[0][0] + " just did?");
-                    } else {
-                        $(".speech-bubble").text("Wow, did you notice what the " + item_number[0] + " "+ item_name[0][1] + " just did?");
-                    };
-
-                    setTimeout (function () {
-                        $("#continue_button1").show();
-
-                    }, 2000); // Time after agent speaks before continue button shows
-                }, 2500); // Time after "squeak" before agent speaks
-            }, 2000); // Time after agent first (second?) speaks before poking object
+                $("button").show();
+            }, 2000);
         },
-
-        continue_button1 : function() {
-            exp.go();
+        button : function() {
+            exp.go(); //use exp.go() if and only if there is no "present" data.
         }
     });
 
-    slides.slider = slide({
-        name : "slider",
-        start: function() {
-            $(".error").hide();
+    slides.trials = slide({
+        name : "trials",
+        present: exp.trials_data,
+        present_handle : function(stim) {
+            console.log(stim);
+            this.stim = stim;
 
-            $("#prompt").text("Imagine that you have another " + item_name[0][0] + ". What do you think would be the likelihood that it squeaks?");
-            this.init_sliders();
-            exp.sliderPost = null;
+            if (stim.type == "trial") {
+                $(".agent").hide();
+                $("button").hide();
+                $(".object").hide();
+                $(".error").hide();
+                $(".slider_label").hide();
 
-            $("#continue_button2").show();
+                var temp_counter = 1;
+                while (temp_counter <= stim.item_number) {
+                    change_image("object", "../_shared/images/t" + stim.object + ".png");
+                    $("#object" + temp_counter).show();
+                    temp_counter += 1;
+                };
+                
+                change_image("background", "../_shared/images/back" + stim.background + ".jpg");
+                agent_straight(stim.agent);
+
+                if (stim.item_number == 1) {
+                    $(".speech-bubble").text("Let me show you what we've discovered! This is a " + stim.item_name[0] + "."); // singular
+                } else {
+                    $(".speech-bubble").text("Let me show you what we've discovered! These are " + stim.item_number + " " + stim.item_name[1] + "."); // plural
+                };
+
+                if (stim.item_presentation == "pedagogical") {
+                    setTimeout( function() {
+                        if (stim.squeak == true) {
+                            $(".speech-bubble").text(stim.item_name[1].charAt(0).toUpperCase() + stim.item_name[1].slice(1, stim.item_name[1].length) + " squeak.");
+                        } else {
+                            $(".speech-bubble").text(stim.item_name[1].charAt(0).toUpperCase() + stim.item_name[1].slice(1, stim.item_name[1].length) + " don't squeak.");
+                        };
+                    }, 2000);
+                };
+
+                setTimeout( function() {
+                    if ((stim.item_presentation == "demonstration") || (stim.item_presentation == "pedagogical")) {
+                        if (stim.item_number == 1) {
+                            $(".speech-bubble").text("Let's see what sound this " + stim.item_name[0] + " makes."); // singular
+                        } else {
+                            $(".speech-bubble").text("Let's see what sound these " + stim.item_name[1] + " make."); // plural
+                        }
+                    };
+
+                    setTimeout( function() {
+                        $("button").hide();
+                        $(".speech-bubble").hide();
+
+                        // Agent points
+                        agent_point_r(stim.agent);
+                        $(".agent").animate(
+                            { width: "+=20px"},
+                            { duration: 200}
+                        );
+                        $(".agent").animate(
+                            { width: "-=20px"},
+                            { duration: 400}
+                        );
+
+                        // Object(s) fall(s) and squeak(s)
+                        $(".agent").promise().done( function() {
+                            object_fall("#object1", stim.squeaky);
+                        });
+
+                        $("#object1").promise().done( function() {
+                            if (stim.item_number >= 2) {  
+                                object_fall("#object2", stim.squeaky);
+                                if (stim.item_number == 3) {
+                                    $("#object2").promise().done( function() {
+                                        object_fall("#object3", stim.squeaky);
+                                    });
+                                }
+                            }
+                        });
+
+                        /*
+                        if (item_number[0] >= 2) {
+                           
+                            $("#object1").promise().done(function() {fall_and_squeak("#object2"); });
+
+                            if (item_number[0] == 3) {
+                                $("#object2").promise().done(function() {
+                                    fall_and_squeak("#object3");
+                                    }
+                                );
+                            }
+                        }
+                        */
+
+                        // Agent remarks on accidental object behavior
+                        setTimeout (function() {
+                            
+                            agent_straight(stim.agent);
+                            
+                            if (stim.item_presentation == "accidental") {
+                                $(".speech-bubble").show();
+                                if (stim.item_number == 1) {
+                                    setTimeout( function() {
+                                        $(".speech-bubble").text("Wow, did you notice what the " + stim.item_name[0] + " just did?");
+                                    }, 2000);
+                                } else {
+                                    setTimeout( function() {
+                                        $(".speech-bubble").text("Wow, did you notice what the " + stim.item_number + " "+ stim.item_name[1] + " just did?");
+                                    })
+                                };
+                                setTimeout (function () {
+                                    $("#continue_button").show();
+                                }, 2000); // Time before continue button shows
+                            } else {
+                                $("#continue_button").show();
+                            }
+                        }, 2500); // Time after "squeak" before agent speaks
+                    }, 2000); // Time after agent first (second?) speaks before poking object
+                }, 2000);
+            } else {
+                $(".agent").hide();
+                $("button").hide();
+                $(".object").hide();
+                $(".error").hide();
+                $(".table").hide();
+                $(".speech-bubble").hide();
+                $(".background").hide();
+                $(".slider_label").show();
+
+                $("#prompt").text("Imagine that you have another " + stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
+                this.init_sliders();
+                exp.sliderPost = null;
+
+                if (exp.sliderPost == null) {
+                    $(".error").show();
+                } else {
+                    exp.data_trials.push(_.extend(this.stim, {
+                    response: exp.sliderPost,
+                    condition: exp.condition,
+                    //level: exp.level
+                    }));
+                    _stream.apply(this);
+                }
+
+                $("#continue_button").show();
+            }
         },
 
         init_sliders: function() {
@@ -317,12 +377,8 @@ function make_slides(f) {
             });
         },
 
-        continue_button2 : function() {
-            if (exp.sliderPost === null) {
-                $(".error").show();
-            } else {
-                exp.go();
-            }
+        continue_button : function() {
+            _stream.apply(this);
         }
     });
     
@@ -336,7 +392,7 @@ function make_slides(f) {
             exp.subj_data = {
                 language : $("#language").val(),
                 enjoyment : $("#enjoyment").val(),
-                asses : $('input[name="assess"]:checked').val(),
+                assess : $('input[name="assess"]:checked').val(),
                 age : $("#age").val(),
                 gender : $("#gender").val(),
                 education : $("#education").val(),
@@ -367,8 +423,11 @@ function make_slides(f) {
     return slides;
 }
 
-function change_image(id_name, source) {
-    document.getElementById(id_name).src = source;
+function change_image(class_name, source) {
+    changing_images = document.getElementsByClassName(class_name);
+    for (var i=0; i<changing_images.length; i+=1) {
+        changing_images[i].src = source;
+    }
 }
 
 /// init ///
@@ -404,13 +463,34 @@ function init() {
         // "botcaptcha",
         // "sound_check",
         // "introduction",
+        "greeting",
         "trials",
-        "slider",
+        // "slider",
         "subj_info",
         "thanks"
     ];
 
-    exp.trials_data = [];
+    exp.trials_data = [{
+        type: "trial",
+        background: back[0],
+        agent: agents[0],
+        object: objects[0],
+        item_name: item_name[0],
+        item_number: item_number[0],
+        item_presentation: item_presentation[0],
+        squeaky: squeaky[0]
+    }, {
+        type: "response",
+        background: back[0],
+        agent: agents[0],
+        object: objects[0],
+        item_name: item_name[0],
+        item_number: item_number[0],
+        item_presentation: item_presentation[0],
+        squeaky: squeaky[0]
+    }];
+
+    console.log(exp.trials_data);
 
     //make corresponding slides:
     exp.slides = make_slides(exp);
