@@ -7,10 +7,6 @@ var item_number = shuffle([1, 2, 3]);
 var item_presentation = shuffle(["pedagogical", "demonstration", "accidental"]);
 var squeaky = shuffle([true, false]);
 
-// Console logs for debugging
-console.log(item_presentation[0]);
-console.log(squeaky[0]);
-
 function agent_straight(agent_class) {
     $(".agent").hide();
     $("."+agent_class+"_straight").show();
@@ -55,6 +51,13 @@ function object_fall(object_id, squeak) {
         });
          // TO-DO: timing is off from animation sometimes??
     }, 575); // Time after object starts to move before it falls and squeaks   
+}
+
+function change_image(class_name, source) {
+    changing_images = document.getElementsByClassName(class_name);
+    for (var i=0; i<changing_images.length; i+=1) {
+        changing_images[i].src = source;
+    }
 }
 
 function shuffle(array) {
@@ -114,6 +117,7 @@ function make_slides(f) {
                 $(".error_incorrect").hide();
                 $(".write_something").show();
             } else if (bot_response.toLowerCase() == listener.toLowerCase()) {
+                /*
                 exp.catch_trials.push({
                     condition: "botcaptcha",
                     n_fails: this.bot_trials,
@@ -121,6 +125,7 @@ function make_slides(f) {
                     bot_sentence: this.bot_utterance,
                     bot_question: this.bot_question
                 });
+                */
                 exp.go();
                 // gives participant two more trials if the response was incorrect
             } else {
@@ -334,10 +339,10 @@ function make_slides(f) {
                                     })
                                 };
                                 setTimeout (function () {
-                                    $("#continue_button").show();
+                                    $("#continue_button1").show();
                                 }, 2000); // Time before continue button shows
                             } else {
-                                $("#continue_button").show();
+                                $("#continue_button1").show();
                             }
                         }, 2500); // Time after "squeak" before agent speaks
                     }, 2000); // Time after agent first (second?) speaks before poking object
@@ -356,18 +361,7 @@ function make_slides(f) {
                 this.init_sliders();
                 exp.sliderPost = null;
 
-                if (exp.sliderPost == null) {
-                    $(".error").show();
-                } else {
-                    exp.data_trials.push(_.extend(this.stim, {
-                    response: exp.sliderPost,
-                    condition: exp.condition,
-                    //level: exp.level
-                    }));
-                    _stream.apply(this);
-                }
-
-                $("#continue_button").show();
+                $("#continue_button2").show();
             }
         },
 
@@ -377,8 +371,16 @@ function make_slides(f) {
             });
         },
 
-        continue_button : function() {
+        continue_button1 : function() {
             _stream.apply(this);
+        },
+
+        continue_button2 : function() {
+            if (exp.sliderPost == null) {
+                $(".error").show();
+            } else {
+                _stream.apply(this);      
+            }
         }
     });
     
@@ -423,13 +425,6 @@ function make_slides(f) {
     return slides;
 }
 
-function change_image(class_name, source) {
-    changing_images = document.getElementsByClassName(class_name);
-    for (var i=0; i<changing_images.length; i+=1) {
-        changing_images[i].src = source;
-    }
-}
-
 /// init ///
 function init() {
 
@@ -459,13 +454,12 @@ function init() {
 
     //blocks of the experiment:
     exp.structure=[
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
-        // "introduction",
+        "i0",
+        "botcaptcha",
+        "sound_check",
+        "introduction",
         "greeting",
         "trials",
-        // "slider",
         "subj_info",
         "thanks"
     ];
@@ -489,8 +483,6 @@ function init() {
         item_presentation: item_presentation[0],
         squeaky: squeaky[0]
     }];
-
-    console.log(exp.trials_data);
 
     //make corresponding slides:
     exp.slides = make_slides(exp);
