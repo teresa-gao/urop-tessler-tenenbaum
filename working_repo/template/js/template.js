@@ -5,7 +5,7 @@ var objects = shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "1
 var item_name = shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
 var item_number = shuffle([1, 2, 3]);
 var item_presentation = shuffle(["pedagogical", "demonstration", "accidental"]);
-var squeaky = shuffle([true, false]);
+var squeaky = ([true, false]);
 
 function agent_straight(agent_class) {
     $(".agent").hide();
@@ -34,23 +34,27 @@ function object_fall(object_id, squeak) {
         }
     );
 
-        // Object "falls" and squeaks
-    setTimeout (function() {
-        if (squeak) {
-            const squeak = new Audio('../_shared/audio/squeak.mp3');
+        // Object falls and squeaks if squeak condition is true
+    if (squeak) {
+        setTimeout (function() {
+            const squeak = new Audio("../_shared/audio/squeak.mp3");
+            // squeak.muted = false;
             squeak.play();
-        };        
 
-        $(object_id).animate({
-            height: "+=25px",
-            duration: 2000,
-        });
-        $(object_id).animate({
-            height: "-=25px",
-            duration: 2000
-        });
-         // TO-DO: timing is off from animation sometimes??
-    }, 575); // Time after object starts to move before it falls and squeaks   
+            // audio.play();
+
+            $(object_id).animate({
+                height: "+=25px",
+                // duration: 2000
+            });
+
+            $(object_id).animate({
+                height: "-=25px",
+                // duration: 2000
+            });       
+             // TO-DO: timing is off from animation sometimes??
+        }, 575); // Time after object starts to move before it falls and squeaks   
+    };
 }
 
 function change_image(class_name, source) {
@@ -295,17 +299,17 @@ function make_slides(f) {
                         // Object(s) fall(s) and squeak(s)
                         $(".agent").promise().done( function() {
                             object_fall("#object1", stim.squeaky);
-                        });
-
-                        $("#object1").promise().done( function() {
-                            if (stim.item_number >= 2) {  
-                                object_fall("#object2", stim.squeaky);
-                                if (stim.item_number == 3) {
+                        
+                            $("#object1").promise().done( function() {
+                                if (stim.item_number >= 2) {  
+                                    object_fall("#object2", stim.squeaky);
                                     $("#object2").promise().done( function() {
-                                        object_fall("#object3", stim.squeaky);
-                                    });
+                                        if (stim.item_number == 3) {
+                                            object_fall("#object3", stim.squeaky);
+                                        };
+                                    }); 
                                 }
-                            }
+                            });
                         });
 
                         /*
@@ -328,15 +332,16 @@ function make_slides(f) {
                             agent_straight(stim.agent);
                             
                             if (stim.item_presentation == "accidental") {
-                                $(".speech-bubble").show();
                                 if (stim.item_number == 1) {
                                     setTimeout( function() {
+                                        $(".speech-bubble").show();
                                         $(".speech-bubble").text("Wow, did you notice what the " + stim.item_name[0] + " just did?");
                                     }, 2000);
                                 } else {
                                     setTimeout( function() {
+                                        $(".speech-bubble").show();
                                         $(".speech-bubble").text("Wow, did you notice what the " + stim.item_number + " "+ stim.item_name[1] + " just did?");
-                                    })
+                                    }, 2000);
                                 };
                                 setTimeout (function () {
                                     $("#continue_button1").show();
@@ -344,7 +349,7 @@ function make_slides(f) {
                             } else {
                                 $("#continue_button1").show();
                             }
-                        }, 2500); // Time after "squeak" before agent speaks
+                        }, (600 + (600 * stim.item_number))); // Time after "squeak" before agent speaks
                     }, 2000); // Time after agent first (second?) speaks before poking object
                 }, 2000);
             } else {
@@ -430,6 +435,18 @@ function init() {
 
     //; support for uniqueturker
     // https://uniqueturker.myleott.com
+
+    /*
+    var xhr = new XMLHttpRequest();
+    xhr.open("GET", "http://localhost:8000", true); // ../_shared/audio/squeak.mp3
+    xhr.responseType = "blob";
+    var audio = document.querySelector("audio");
+    xhr.onload = function() {
+        audio.src = URL.createObjectURL(xhr.response);
+    };
+    xhr.send();
+    */
+
     repeatWorker = false;
     (function(){
             var ut_id = "[INSERT uniqueTurkerID]";
@@ -454,10 +471,10 @@ function init() {
 
     //blocks of the experiment:
     exp.structure=[
-        "i0",
-        "botcaptcha",
-        "sound_check",
-        "introduction",
+        // "i0",
+        // "botcaptcha",
+        // "sound_check",
+        // "introduction",
         "greeting",
         "trials",
         "subj_info",
