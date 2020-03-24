@@ -24,6 +24,46 @@ function agent_say(display_text) {
     }, 2000);
 }
 
+function object_fall(object_id, squeak) {
+    // Object "falls" off table
+    $(object_id).animate({
+        left: "+=150px"},
+        {
+            duration: 500,
+            easing: "easeInQuad"
+    });
+    $(object_id).animate({
+        bottom: "0px"
+        },
+        {
+            duration: 75,
+            easing: "easeOutQuad"
+        }
+    );
+
+        // Object falls and squeaks if squeak condition is true
+    if (squeak) {
+        setTimeout (function() {
+            const squeak = new Audio("../_shared/audio/squeak.mp3");
+            // squeak.muted = false;
+            squeak.play();
+
+            // audio.play();
+
+            $(object_id).animate({
+                height: "+=25px",
+                // duration: 2000
+            });
+
+            $(object_id).animate({
+                height: "-=25px",
+                // duration: 2000
+            });       
+             // TO-DO: timing is off from animation sometimes??
+        }, 575); // Time after object starts to move before it falls and squeaks   
+    };
+}
+
 function change_image(class_name, source) {
     changing_images = document.getElementsByClassName(class_name);
     for (var i=0; i<changing_images.length; i+=1) {
