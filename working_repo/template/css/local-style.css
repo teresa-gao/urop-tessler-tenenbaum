@@ -46,36 +46,37 @@ h3 {
     position:       absolute;
     height:         300px;
     bottom:         0px;
-    left:           15px;
+    left:           0px;
     z-index:        1;
 }
 
 .object {
     position:       absolute;
     bottom:         50px;
-    width:          75px;
-}
-
-#object1 {
-    right:          250px;
+    width:          50px;
     z-index:        4;
 }
 
-#object2 {
-    right:          200px;
-    z-index:        3;
+.object1 {
+    right:          271px;
 }
 
-#object3 {
-    right:          150px;
-    z-index:        2;
+.object2 {
+    right:          198px;
+}
+
+.object3 {
+    right:          125px;
+}
+
+.object4 {
+    right:          52px;
 }
 
 .table {
     position:       absolute;
     bottom:         0px;
-    right:          165px;
-    width:          150px;
+    right:          50px;
     height:         50px;
     z-index:        1;
 }
