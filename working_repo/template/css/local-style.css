@@ -44,9 +44,9 @@ h3 {
 
 .agent {
     position:       absolute;
-    height:         300px;
+    height:         275px;
     bottom:         0px;
-    right:          300px;
+    right:          360px;
     z-index:        1;
 }
 
@@ -71,6 +71,30 @@ h3 {
 
 .object4 {
     right:          52px;
+}
+
+.blanket {
+    position:       absolute;
+    bottom:         60px;
+    width:          70px;
+    height:         80px;
+    z-index:        5;
+}
+
+.blanket1 {
+    right:          261px;
+}
+
+.blanket2 {
+    right:          188px;
+}
+
+.blanket3 {
+    right:          115px;
+}
+
+.blanket4 {
+    right:          42px;
 }
 
 .table {

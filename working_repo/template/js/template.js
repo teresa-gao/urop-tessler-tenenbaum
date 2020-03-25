@@ -1,6 +1,6 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
-var agents =            shuffle(["Elephant","Pig","Frog","Mouse","Monkey","Bunny","Dog","Bear","Tiger","Cat","Sheep","Beaver"]);
+var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
 var objects =           shuffle([ ["bird01", "blue"] ]);
 // var objects =           shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
 var item_name =         shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
@@ -219,12 +219,14 @@ function make_slides(f) {
                 $(".object").hide();
                 $(".error").hide();
                 $(".slider_label").hide();
+                $(".blanket").hide();
 
                 var temp_counter = 1;
                 while (temp_counter <= stim.item_number) {
                     change_image("closed", "../_shared/images/" + stim.object[0] + "_closed.svg");
                     change_image("open", "../_shared/images/" + stim.object[0] + "_open.svg");
                     $(".object" + temp_counter + ".closed").show();
+                    $(".blanket" + temp_counter + ".blanket_up").show();
                     temp_counter += 1;
                 };
             } else if (stim.type == "response") {
