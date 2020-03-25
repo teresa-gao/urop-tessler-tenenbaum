@@ -46,7 +46,7 @@ h3 {
     position:       absolute;
     height:         300px;
     bottom:         0px;
-    left:           0px;
+    right:          300px;
     z-index:        1;
 }
 
