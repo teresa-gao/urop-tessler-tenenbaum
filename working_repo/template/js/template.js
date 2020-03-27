@@ -1,7 +1,7 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
-var objects =           shuffle([ ["bird01", "blue"] ]);
+var objects =           shuffle([ ["bird01", "purple wings"] ]);
 // var objects =           shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
 var item_name =         shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
 var item_number =       shuffle([1, 2, 3, 4]);
@@ -17,8 +17,8 @@ function agent_point_r(agent_class) {
     $("."+agent_class+"_point_r").show();
 }
 
-function agent_say(duration=2000, display_text) {
-    var deferred = new $.Deferred();
+function agent_say(display_text, duration=2000) {
+    let deferred = new $.Deferred();
 
     $(".speech-bubble").show();
     $(".speech-bubble").text(display_text);
@@ -185,25 +185,6 @@ function make_slides(f) {
         }
     });
 
-    slides.greeting = slide({
-        name : "greeting",
-        start : function() {
-            $("button").hide();
-            $(".agent").hide();
-            agent_straight(agents[0]);
-            change_image("background", "../_shared/images/back" + back[0] + ".jpg");    
-        
-            agent_say(2000, "Hello! You must be the new scientist. Welcome to the laboratory!").then(
-                function() {
-                    $("button").show();
-                }
-            );
-        },
-        button : function() {
-            exp.go(); //use exp.go() if and only if there is no "present" data.
-        }
-    });
-
     slides.trials = slide({
         name : "trials",
         present: exp.trials_data,
@@ -211,35 +192,177 @@ function make_slides(f) {
             console.log(stim);
             this.stim = stim;
 
+            $("button").hide();
+            $(".object").hide();
+            $(".error").hide();
+            $(".speech-bubble").hide();
+            $(".slider_label").hide();
+            $(".blanket").hide();
+            $(".label").hide();
 
+            $(".table").show();
+            $(".background").show();
 
-            if (stim.type == "trial") {
-                $(".speech-bubble").hide();
-                $("button").hide();
-                $(".object").hide();
-                $(".error").hide();
-                $(".slider_label").hide();
-                $(".blanket").hide();
+            // Agent greets user
+            if (stim.type == "greeting") {
+                agent_straight(stim.agent);
+                change_image("background", "../_shared/images/back" + stim.background + ".jpg");    
+            
+                agent_say("Hello! You must be the new scientist. Welcome to the laboratory!").then(
+                    function() {
+                        $("#continue_button1").show();
+                    }
+                );
 
-                var temp_counter = 1;
-                while (temp_counter <= stim.item_number) {
-                    change_image("closed", "../_shared/images/" + stim.object[0] + "_closed.svg");
-                    change_image("open", "../_shared/images/" + stim.object[0] + "_open.svg");
-                    $(".object" + temp_counter + ".closed").show();
-                    $(".blanket" + temp_counter + ".blanket_up").show();
-                    temp_counter += 1;
-                };
-            } else if (stim.type == "response") {
+            // Trial
+            } else if (stim.type == "trial") {
+                
+                // Condition: accidental
+                if (stim.item_presentation == "accidental") {
+
+                    // Displays objects, blankets, and tags
+                    let temp_counter = 1;
+                    while (temp_counter <= stim.item_number) {
+                        change_image("closed", "../_shared/images/" + stim.object[0] + "_closed.svg");
+                        change_image("open", "../_shared/images/" + stim.object[0] + "_open.svg");
+                        $(".object" + temp_counter + ".closed").show();
+                        $(".blanket" + temp_counter + ".blanket_up").show();
+                        $("#label" + temp_counter).show();
+                        document.getElementById("label" + temp_counter).innerHTML = stim.item_name[0].toUpperCase();
+                        temp_counter += 1;
+                    };
+
+                    let say_text = "";
+                    if (item_number == 1) {
+                        say_text = "Look at that! There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
+                    } else {
+                        say_text = "Look at that! There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
+                    };
+
+                    agent_say(say_text, 3000).then(
+
+                        // Agent prods line of object(s)
+                        function() {
+                            let deferred = new $.Deferred();
+
+                            $(".speech-bubble").hide();
+                            agent_point_r(stim.agent);
+                            $(".agent").animate(
+                                { right: "330px"},
+                                { duration: 300}
+                            );
+                            $(".agent").animate(
+                                { right: "360px"},
+                                { duration: 300}
+                            );
+
+                            setTimeout (function() {
+                                deferred.resolve();
+                            }, 600);
+
+                            return deferred.promise();
+                        }
+                    ).then(
+                        
+                        // Blanket drops
+                        function() {
+                            let deferred = new $.Deferred();
+
+                            temp_counter = stim.item_number;
+
+                            $("#label" + temp_counter).fadeOut(600);
+                            $(".blanket" + temp_counter + ".blanket_up").fadeOut(600);
+                            $(".blanket" + temp_counter + ".blanket_down").fadeIn(600);
+                        
+                            setTimeout (function() {
+                                deferred.resolve();
+                            }, 600);
+
+                            return deferred.promise();
+                        }
+                    ).then(
+
+                        // "Open" object property revealed
+                        function() {
+                            let deferred = new $.Deferred();
+
+                            $(".object" + temp_counter + ".closed").fadeOut(600);
+                            $(".object" + temp_counter + ".open").fadeIn(600);
+
+                            setTimeout (function() {
+                                deferred.resolve();
+                            }, 600);
+
+                            return deferred.promise();
+                        }
+                    ).then(
+
+                        // Agent remarks on "open" object property
+                        function() {
+                            let deferred = new $.Deferred();
+
+                            agent_straight(stim.agent);
+                            agent_say("Wow, " + stim.object[1] + "!")
+
+                            setTimeout (function() {
+                                deferred.resolve();
+                            }, 2000);
+
+                            return deferred.promise();
+                        }
+
+                    ).then(
+
+                        // Object resets to "closed"
+                        function() {
+                            let deferred = new $.Deferred();
+
+                            $(".speech-bubble").hide();
+                            $(".object" + temp_counter + ".open").fadeOut(600);
+                            $(".object" + temp_counter + ".closed").fadeIn(600);
+
+                            setTimeout (function() {
+                                deferred.resolve();
+                            }, 600);
+
+                            return deferred.promise();
+                        }
+                    ).then(
+
+                        // Continues to next
+                        function() {
+                            $("#continue_button1").show();
+                        }
+                    );
+                }
+
+            // Capture user response (prediction)
+            } else {
                 $(".agent").hide();
-                $("button").hide();
                 $(".object").hide();
                 $(".error").hide();
-                $(".slider_label").hide();
+                $(".speech-bubble").hide();
+                $(".blanket").hide();
+                $(".label").hide();
+                $(".table").hide();
+                $(".background").hide();
+
+                $("#prompt").text("Imagine that you have another " + stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
+                this.init_sliders();
+                exp.sliderPost = null;
+
+                $("#continue_button2").show();
             };
         },
 
         continue_button1 : function() {
             _stream.apply(this);
+        },
+
+        init_sliders: function() {
+            utils.make_slider("#single_slider", function(event, ui) {
+                exp.sliderPost = ui.value;
+            });
         },
 
         continue_button2 : function() {
@@ -337,19 +460,24 @@ function init() {
         // "botcaptcha",
         // "sound_check",
         // "introduction",
-        "greeting",
         "trials",
         "subj_info",
         "thanks"
     ];
 
-    exp.trials_data = [{
-        type: "trial",
+    exp.trials_data = [
+    {
+        type: "greeting",
         background: back[0],
+        agent: agents[0]
+    },
+    {
+        type: "trial",
         agent: agents[0],
         object: objects[0],
         item_name: item_name[0],
-        item_number: item_number[0],
+        item_number: 4, // For easy debugging
+        // item_number: item_number[0],
         item_presentation: item_presentation[0],
     }, {
         type: "response",
