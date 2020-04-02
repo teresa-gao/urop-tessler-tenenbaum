@@ -69,19 +69,27 @@ h3 {
 }
 
 .object1.open {
-    right:          200px;
+    right:          219px;
 }
 
-.object2 {
+.object2.closed {
     right:          202px;
 }
 
-.object3 {
+.object2.open {
+    right:          146px;
+}
+
+.object3.closed {
     right:          129px;
 }
 
+.object3.open {
+    right:          73px;
+}
+
 .object4.closed {
-    right:          56px; /* before: 52; */
+    right:          56px;
 }
 
 .object4.open {

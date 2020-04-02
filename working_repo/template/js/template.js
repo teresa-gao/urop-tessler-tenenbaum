@@ -217,20 +217,34 @@ function make_slides(f) {
             // Trial
             } else if (stim.type == "trial") {
                 
-                // Condition: accidental
-                if (stim.item_presentation == "accidental") {
+                // Displays objects, blankets, and tags
+                let temp_counter = 1;
+                while (temp_counter <= stim.item_number) {
+                    change_image("closed", "../_shared/images/" + stim.object[0] + "_closed.svg");
+                    change_image("open", "../_shared/images/" + stim.object[0] + "_open.svg");
+                    $(".object" + temp_counter + ".closed").show();
+                    $(".blanket" + temp_counter + ".blanket_up").show();
+                    $("#label" + temp_counter).show();
+                    document.getElementById("label" + temp_counter).innerHTML = stim.item_name[0].toUpperCase();
+                    temp_counter += 1;
+                };
 
-                    // Displays objects, blankets, and tags
-                    let temp_counter = 1;
-                    while (temp_counter <= stim.item_number) {
-                        change_image("closed", "../_shared/images/" + stim.object[0] + "_closed.svg");
-                        change_image("open", "../_shared/images/" + stim.object[0] + "_open.svg");
-                        $(".object" + temp_counter + ".closed").show();
-                        $(".blanket" + temp_counter + ".blanket_up").show();
-                        $("#label" + temp_counter).show();
-                        document.getElementById("label" + temp_counter).innerHTML = stim.item_name[0].toUpperCase();
-                        temp_counter += 1;
+                if (stim.item_presentation == "lookit") {
+
+                    let say_text = "";
+                    if (item_number == 1) {
+                        say_text = "Look at that! There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
+                    } else {
+                        say_text = "Look at that! There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
                     };
+
+                    agent_say(say_text, 3000).then(
+                    function() {
+                        $("#continue_button1").show();
+                    }
+                );
+
+                } else if (stim.item_presentation == "accidental") {
 
                     let say_text = "";
                     if (item_number == 1) {
@@ -247,11 +261,11 @@ function make_slides(f) {
 
                             $(".speech-bubble").hide();
                             agent_point_r(stim.agent);
-                            $(".agent").animate(
+                            $("."+stim.agent+"_point_r").animate(
                                 { right: "330px"},
                                 { duration: 300}
                             );
-                            $(".agent").animate(
+                            $("."+stim.agent+"_point_r").animate(
                                 { right: "360px"},
                                 { duration: 300}
                             );
@@ -268,7 +282,7 @@ function make_slides(f) {
                         function() {
                             let deferred = new $.Deferred();
 
-                            temp_counter = stim.item_number;
+                            let temp_counter = stim.exemplar_num;
 
                             $("#label" + temp_counter).fadeOut(600);
                             $(".blanket" + temp_counter + ".blanket_up").fadeOut(600);
@@ -347,7 +361,7 @@ function make_slides(f) {
                 $(".table").hide();
                 $(".background").hide();
 
-                $("#prompt").text("Imagine that you have another " + stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
+                $("#prompt").text("Imagine that you have another " + stim.item_name[0] + ". What do you think would be the likelihood that it has " + stim.object[1] + "?");
                 this.init_sliders();
                 exp.sliderPost = null;
 
@@ -466,28 +480,54 @@ function init() {
     ];
 
     exp.trials_data = [
-    {
-        type: "greeting",
-        background: back[0],
-        agent: agents[0]
-    },
-    {
-        type: "trial",
-        agent: agents[0],
-        object: objects[0],
-        item_name: item_name[0],
-        item_number: 4, // For easy debugging
-        // item_number: item_number[0],
-        item_presentation: item_presentation[0],
-    }, {
-        type: "response",
-        background: back[0],
-        agent: agents[0],
-        object: objects[0],
-        item_name: item_name[0],
-        item_number: item_number[0],
-        item_presentation: item_presentation[0],
-    }];
+        {
+            type: "greeting",
+            background: back[0],
+            agent: agents[0]
+        }, {
+            type: "trial",
+            item_presentation: "lookit",
+            agent: agents[0],
+            object: objects[0],
+            item_name: item_name[0],
+            item_number: 4, // For easy debugging
+            // item_number: item_number[0],
+        }
+    ];
+
+    let temp_counter = 1;
+    while (!(temp_counter > 4)) { // For easy debugging; should be item_number[0]
+        exp.trials_data = exp.trials_data.concat([ 
+            _.extend(
+                {
+                    type: "trial",
+                    item_presentation: item_presentation[0],
+                    agent: agents[0],
+                    object: objects[0],
+                    item_name: item_name[0],
+                    item_number: 4, // For easy debugging
+                    // item_number: item_number[0],
+                    exemplar_num: temp_counter
+                }
+            )
+        ]);
+
+        temp_counter += 1;
+    }
+
+    exp.trials_data = exp.trials_data.concat([
+        _.extend(
+            {
+                type: "response",
+                background: back[0],
+                agent: agents[0],
+                object: objects[0],
+                item_name: item_name[0],
+                item_number: item_number[0],
+                item_presentation: item_presentation[0],
+            }
+        )
+    ]);
 
     //make corresponding slides:
     exp.slides = make_slides(exp);
