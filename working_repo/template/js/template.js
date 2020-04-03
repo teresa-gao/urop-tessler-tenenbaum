@@ -17,11 +17,32 @@ function agent_point_r(agent_class) {
     $("."+agent_class+"_point_r").show();
 }
 
+function agent_poke_r(agent_class) {
+    let deferred = new $.Deferred();
+
+    $(".speech").hide();
+    agent_point_r(agent_class);
+    $("."+agent_class+"_point_r").animate(
+        { right: "-=30px"},
+        { duration: 300}
+    );
+    $("."+agent_class+"_point_r").animate(
+        { right: "+=30px"},
+        { duration: 300}
+    );
+
+    setTimeout (function() {
+        deferred.resolve();
+    }, 600);
+
+    return deferred.promise();
+}
+
 function agent_say(display_text, duration=2000) {
     let deferred = new $.Deferred();
 
-    $(".speech-bubble").show();
-    $(".speech-bubble").text(display_text);
+    $(".speech").show();
+    $("#speech-bubble").text(display_text);
 
     setTimeout (function() {
         deferred.resolve();
@@ -195,7 +216,7 @@ function make_slides(f) {
             $("button").hide();
             $(".object").hide();
             $(".error").hide();
-            $(".speech-bubble").hide();
+            $(".speech").hide();
             $(".slider_label").hide();
             $(".blanket").hide();
             $(".label").hide();
@@ -232,7 +253,7 @@ function make_slides(f) {
                 if (stim.item_presentation == "lookit") {
 
                     let say_text = "";
-                    if (item_number == 1) {
+                    if (stim.item_number == 1) {
                         say_text = "Look at that! There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
                     } else {
                         say_text = "Look at that! There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
@@ -246,37 +267,18 @@ function make_slides(f) {
 
                 } else if (stim.item_presentation == "accidental") {
 
-                    let say_text = "";
-                    if (item_number == 1) {
-                        say_text = "Look at that! There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
-                    } else {
-                        say_text = "Look at that! There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
-                    };
+                    $(".speech").hide();
+                    let agent_right_val = (360 - (stim.exemplar_num-1)*73) + "px";
+                    let speech_tail_val = (475 - (stim.exemplar_num - 1)*73) + "px";
 
-                    agent_say(say_text, 3000).then(
+                    $("." + stim.agent + "_straight").css("right", agent_right_val);
+                    $("." + stim.agent + "_point_r").css("right", agent_right_val);
+                    $("#speech-bubble-outline").css("right", speech_tail_val);
+                    $("#speech-bubble-tail").css("right", speech_tail_val);
+                    console.log(speech_tail_val);
 
-                        // Agent prods line of object(s)
-                        function() {
-                            let deferred = new $.Deferred();
-
-                            $(".speech-bubble").hide();
-                            agent_point_r(stim.agent);
-                            $("."+stim.agent+"_point_r").animate(
-                                { right: "330px"},
-                                { duration: 300}
-                            );
-                            $("."+stim.agent+"_point_r").animate(
-                                { right: "360px"},
-                                { duration: 300}
-                            );
-
-                            setTimeout (function() {
-                                deferred.resolve();
-                            }, 600);
-
-                            return deferred.promise();
-                        }
-                    ).then(
+                    // Agent prods line of object(s)
+                    agent_poke_r(stim.agent).then(
                         
                         // Blanket drops
                         function() {
@@ -300,6 +302,7 @@ function make_slides(f) {
                         function() {
                             let deferred = new $.Deferred();
 
+                            let temp_counter = stim.exemplar_num;
                             $(".object" + temp_counter + ".closed").fadeOut(600);
                             $(".object" + temp_counter + ".open").fadeIn(600);
 
@@ -331,7 +334,9 @@ function make_slides(f) {
                         function() {
                             let deferred = new $.Deferred();
 
-                            $(".speech-bubble").hide();
+                            $(".speech").hide();
+
+                            let temp_counter = stim.exemplar_num;
                             $(".object" + temp_counter + ".open").fadeOut(600);
                             $(".object" + temp_counter + ".closed").fadeIn(600);
 
@@ -355,7 +360,7 @@ function make_slides(f) {
                 $(".agent").hide();
                 $(".object").hide();
                 $(".error").hide();
-                $(".speech-bubble").hide();
+                $(".speech").hide();
                 $(".blanket").hide();
                 $(".label").hide();
                 $(".table").hide();
@@ -490,13 +495,12 @@ function init() {
             agent: agents[0],
             object: objects[0],
             item_name: item_name[0],
-            item_number: 4, // For easy debugging
-            // item_number: item_number[0],
+            item_number: item_number[0],
         }
     ];
 
     let temp_counter = 1;
-    while (!(temp_counter > 4)) { // For easy debugging; should be item_number[0]
+    while (!(temp_counter > item_number[0])) {
         exp.trials_data = exp.trials_data.concat([ 
             _.extend(
                 {
@@ -505,8 +509,7 @@ function init() {
                     agent: agents[0],
                     object: objects[0],
                     item_name: item_name[0],
-                    item_number: 4, // For easy debugging
-                    // item_number: item_number[0],
+                    item_number: item_number[0],
                     exemplar_num: temp_counter
                 }
             )

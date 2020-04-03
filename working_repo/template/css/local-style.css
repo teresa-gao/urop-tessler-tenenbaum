@@ -44,7 +44,7 @@ h3 {
 
 .agent {
     position:       absolute;
-    height:         275px;
+    height:         300px;
     bottom:         0px;
     right:          360px;
     z-index:        1;
@@ -61,7 +61,7 @@ h3 {
 }
 
 .open {
-    z-index:        7;
+    z-index:        8;
 }
 
 .object1.closed {
@@ -132,7 +132,7 @@ h3 {
     bottom:         0px;
     right:          50px;
     height:         50px;
-    z-index:        1;
+    z-index:        2;
 }
 
 .label {
@@ -158,14 +158,14 @@ h3 {
     left:           529px;
 }
 
-.speech-bubble, .label {
+#speech-bubble, .label {
     position:       absolute;
     background:     #f8f8f8;
     text-align:     center;
     line-height:    1.3;
 }
 
-.speech-bubble {
+#speech-bubble {
     z-index:        3;
     font-size:      1rem;
     padding:        15px;
@@ -176,29 +176,29 @@ h3 {
     right:          10px;
 }
 
-.speech-bubble p {
+#speech-bubble p {
     margin:         0 0 10px;
 }
-.speech-bubble p:last-of-type {
+#speech-bubble p:last-of-type {
     margin-bottom:  0;
 }
 
-.speech-bubble:after {
+#speech-bubble-outline {
     border-left:    20px solid transparent;
     border-top:     30px solid black;
-    bottom:         -30px;
+    top:            50px;
     content:        "";
     position:       absolute;
-    left:           125px;
+    right:          475px;
     z-index:        1;
 }
 
-.speech-bubble:before {
+#speech-bubble-tail {
     border-left:    19px solid transparent;
     border-top:     29px solid #f8f8f8;
-    bottom:         -29px;
+    top:            50px;
     content:        "";
     position:       absolute;
-    left:           126px;
+    right:          475px;
     z-index:        3;
 }

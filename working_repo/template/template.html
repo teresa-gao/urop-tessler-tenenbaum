@@ -3,36 +3,11 @@
     <head>
         <title>Generics Exploration 2</title>
 
-        <!--JS-->
-
-        <!-- external general utilities -->
-        <script src="../_shared/js/jquery-1.11.1.min.js "></script>
-        <script src="../_shared/full-projects/jquery-ui/jquery-ui.min.js"></script>
-        <script src="../_shared/js/underscore-min.js"></script>
-        <!-- if you want to draw stuff: -->
-        <!-- <script src="../_shared/js/raphael-min.js"></script> -->
-
-        <!-- cocolab experiment logic -->
-        <script src="../_shared/js/exp-V2.js"></script>
-        <script src="../_shared/js/stream-V2.js"></script>
-
-        <!-- cocolab general utilities -->
-        <script src="../_shared/js/mmturkey.js "></script>
-        <script src="../_shared/js/browserCheck.js"></script>
-        <script src="../_shared/js/utils.js"></script>
-        <script src="../_shared/js/uniqueturker.js"></script>
-        <!-- if you want to draw cute creatures (depends on raphael): -->
-        <!-- <script src="../_shared/js/ecosystem.js"></script> -->
-        <!-- experiment specific helper functions -->
-        <!-- <script src="js/local-utils.js"></script> -->
-
         <!--CSS-->
         <link href="../_shared/full-projects/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
         <link href="../_shared/css/cocolab-style.css" rel="stylesheet" type="text/css"/>
         <link href="css/local-style.css" rel="stylesheet" type="text/css"/>
 
-        <!-- experiment file -->
-        <script src="js/template.js"></script>
     </head>
 
     <body onload="init();">
@@ -161,7 +136,9 @@
                 <img class="agent straight_agent Frog_straight"  src="../_shared/images/Frog_straight.png">
                 <img class="agent point_agent_r Frog_point_r"  src="../_shared/images/Frog_point_r.png">
 
-                <div class="speech-bubble speech-bubble-left"></div>
+                <div id="speech-bubble" class="speech"></div>
+                <div id="speech-bubble-outline" class="speech"></div>
+                <div id="speech-bubble-tail" class="speech"></div>
             </div>
 
             <p id="prompt"></p>
@@ -243,5 +220,30 @@
             </div>
         </div>
 
+        <!--JS-->
+
+        <!-- external general utilities -->
+        <script src="../_shared/js/jquery-1.11.1.min.js "></script>
+        <script src="../_shared/full-projects/jquery-ui/jquery-ui.min.js"></script>
+        <script src="../_shared/js/underscore-min.js"></script>
+        <!-- if you want to draw stuff: -->
+        <!-- <script src="../_shared/js/raphael-min.js"></script> -->
+
+        <!-- cocolab experiment logic -->
+        <script src="../_shared/js/exp-V2.js"></script>
+        <script src="../_shared/js/stream-V2.js"></script>
+
+        <!-- cocolab general utilities -->
+        <script src="../_shared/js/mmturkey.js "></script>
+        <script src="../_shared/js/browserCheck.js"></script>
+        <script src="../_shared/js/utils.js"></script>
+        <script src="../_shared/js/uniqueturker.js"></script>
+        <!-- if you want to draw cute creatures (depends on raphael): -->
+        <!-- <script src="../_shared/js/ecosystem.js"></script> -->
+        <!-- experiment specific helper functions -->
+        <!-- <script src="js/local-utils.js"></script> -->
+
+        <!-- experiment file -->
+        <script type="text/javascript" src="js/template.js"></script>
     </body>
 </html>
