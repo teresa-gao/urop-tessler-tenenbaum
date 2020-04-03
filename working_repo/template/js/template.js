@@ -1,7 +1,7 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
-var objects =           shuffle([ ["bird01", "purple wings"] ]);
+var objects =           shuffle([ ["flower01", "purple flowers"], ["flower02", "yellow flowers"], ["bird01", "purple wings"], ["bird02", "green wings"] ]);
 // var objects =           shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
 var item_name =         shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
 var item_number =       shuffle([1, 2, 3, 4]);
