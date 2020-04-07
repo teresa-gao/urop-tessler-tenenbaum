@@ -1,7 +1,7 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
-var objects =           ([ ["artifact", "artifact06", "squeaking"], ["flower", "flower01", "purple flowers"], ["flower", "flower02", "yellow flowers"], ["bird", "bird01", "purple wings"], ["bird", "bird02", "green wings"] ]);
+var objects =           ([ ["artifact", "artifact01", "squeaking"], ["flower", "flower01", "purple flowers"], ["flower", "flower02", "yellow flowers"], ["bird", "bird01", "purple wings"], ["bird", "bird02", "green wings"] ]);
 var item_name =         shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
 var item_number =       shuffle([1, 2, 3, 4]);
 var item_presentation = ["accidental", "generic", "generic+pedagogical"]; // For now, this remains unshuffled
@@ -312,13 +312,24 @@ function make_slides(f) {
                         function() {
                             let deferred = new $.Deferred();
                             
-
-                            // "Open" object property revealed
-                            squeak = new Audio('../_shared/audio/gliss_up.mp3');
-                            squeak.play();
-                            let temp_counter = stim.exemplar_num;
-                            $(".object" + temp_counter + ".closed").fadeOut(600);
-                            $(".object" + temp_counter + ".open").fadeIn(600);
+                            if (stim.object[0] == "artifact") {
+                                squeak = new Audio('../_shared/audio/squeak.mp3');
+                                squeak.play();
+                                $(".object" + stim.exemplar_num).animate(
+                                    { height: "-=10px", width: "+=0px"},
+                                    { duration: 300}
+                                );
+                                $(".object" + stim.exemplar_num).animate(
+                                    { height: "+=10px", width: "+=0px"},
+                                    { duration: 300}
+                                );
+                            } else {
+                                // "Open" object property revealed
+                                gliss_up = new Audio('../_shared/audio/gliss_up.mp3');
+                                gliss_up.play();
+                                $(".object" + temp_counter + ".closed").fadeOut(600);
+                                $(".object" + temp_counter + ".open").fadeIn(600);
+                            }
 
                             setTimeout (function() {
                                 deferred.resolve();
