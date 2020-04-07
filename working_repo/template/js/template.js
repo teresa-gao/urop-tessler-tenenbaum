@@ -1,8 +1,7 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
-var objects =           shuffle([ ["flower01", "purple flowers"], ["flower02", "yellow flowers"], ["bird01", "purple wings"], ["bird02", "green wings"] ]);
-// var objects =           shuffle(["01", "02", "03", "04" , "05", "06", "07", "08", "09", "10", "11", "12", "13", "14", "15", "16", "17", "18", "19", "20", "21", "22"]);
+var objects =           ([ ["artifact", "artifact06", "squeaking"], ["flower", "flower01", "purple flowers"], ["flower", "flower02", "yellow flowers"], ["bird", "bird01", "purple wings"], ["bird", "bird02", "green wings"] ]);
 var item_name =         shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
 var item_number =       shuffle([1, 2, 3, 4]);
 var item_presentation = ["accidental", "generic", "generic+pedagogical"]; // For now, this remains unshuffled
@@ -210,7 +209,6 @@ function make_slides(f) {
         name : "trials",
         present: exp.trials_data,
         present_handle : function(stim) {
-            console.log(stim);
             this.stim = stim;
 
             $("button").hide();
@@ -241,8 +239,10 @@ function make_slides(f) {
                 // Displays objects, blankets, and tags
                 let temp_counter = 1;
                 while (temp_counter <= stim.item_number) {
-                    change_image("closed", "../_shared/images/" + stim.object[0] + "_closed.svg");
-                    change_image("open", "../_shared/images/" + stim.object[0] + "_open.svg");
+
+                    change_image("closed", "../_shared/images/" + stim.object[1] + "_closed.svg");
+                    change_image("open", "../_shared/images/" + stim.object[1] + "_open.svg");
+
                     $(".object" + temp_counter + ".closed").show();
                     $(".blanket" + temp_counter + ".blanket_up").show();
                     $("#label" + temp_counter).show();
@@ -268,14 +268,24 @@ function make_slides(f) {
                 } else if (stim.item_presentation == "accidental") {
 
                     $(".speech").hide();
-                    let agent_right_val = (360 - (stim.exemplar_num-1)*73) + "px";
+                    let agent_right_val = (360 - (stim.exemplar_num - 1)*73) + "px";
                     let speech_tail_val = (475 - (stim.exemplar_num - 1)*73) + "px";
 
+                    // Previously shown objects are still displayed
+                    let temp_counter = 1;
+                    while (temp_counter < stim.exemplar_num) {
+                        change_image("closed", "../_shared/images/" + stim.object[1] + "_closed.svg");
+                        $(".blanket" + temp_counter + ".blanket_up").hide();
+                        $(".blanket" + temp_counter + ".blanket_down").show();
+                        $("#label" + temp_counter).hide();
+                        temp_counter += 1;
+                    };
+
+                    // Agent and speech bubble position adjust to active object
                     $("." + stim.agent + "_straight").css("right", agent_right_val);
                     $("." + stim.agent + "_point_r").css("right", agent_right_val);
                     $("#speech-bubble-outline").css("right", speech_tail_val);
                     $("#speech-bubble-tail").css("right", speech_tail_val);
-                    console.log(speech_tail_val);
 
                     // Agent prods line of object(s)
                     agent_poke_r(stim.agent).then(
@@ -298,10 +308,14 @@ function make_slides(f) {
                         }
                     ).then(
 
-                        // "Open" object property revealed
+                        
                         function() {
                             let deferred = new $.Deferred();
+                            
 
+                            // "Open" object property revealed
+                            squeak = new Audio('../_shared/audio/gliss_up.mp3');
+                            squeak.play();
                             let temp_counter = stim.exemplar_num;
                             $(".object" + temp_counter + ".closed").fadeOut(600);
                             $(".object" + temp_counter + ".open").fadeIn(600);
@@ -312,6 +326,7 @@ function make_slides(f) {
 
                             return deferred.promise();
                         }
+
                     ).then(
 
                         // Agent remarks on "open" object property
@@ -319,7 +334,7 @@ function make_slides(f) {
                             let deferred = new $.Deferred();
 
                             agent_straight(stim.agent);
-                            agent_say("Wow, " + stim.object[1] + "!")
+                            agent_say("Wow, " + stim.object[2] + "!")
 
                             setTimeout (function() {
                                 deferred.resolve();
@@ -366,7 +381,7 @@ function make_slides(f) {
                 $(".table").hide();
                 $(".background").hide();
 
-                $("#prompt").text("Imagine that you have another " + stim.item_name[0] + ". What do you think would be the likelihood that it has " + stim.object[1] + "?");
+                $("#prompt").text("Imagine that you have another " + stim.item_name[0] + ". What do you think would be the likelihood that it has " + stim.object[2] + "?");
                 this.init_sliders();
                 exp.sliderPost = null;
 
