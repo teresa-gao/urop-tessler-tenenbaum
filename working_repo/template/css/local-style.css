@@ -64,36 +64,20 @@ h3 {
     z-index:        8;
 }
 
-.object1.closed {
+.object1 {
     right:          275px;
 }
 
-.object1.open {
-    right:          219px;
-}
-
-.object2.closed {
+.object2 {
     right:          202px;
 }
 
-.object2.open {
-    right:          146px;
-}
-
-.object3.closed {
+.object3 {
     right:          129px;
 }
 
-.object3.open {
-    right:          73px;
-}
-
-.object4.closed {
+.object4 {
     right:          56px;
-}
-
-.object4.open {
-    right:          0px;
 }
 
 .blanket_up {

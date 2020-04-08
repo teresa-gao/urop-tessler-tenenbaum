@@ -1,103 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!-- Generator: Adobe Illustrator 24.0.2, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
-<svg version="1.1" id="new" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
-	 viewBox="0 0 322.1 178.4" style="enable-background:new 0 0 322.1 178.4;" xml:space="preserve">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+	 viewBox="0 0 104.3 199.5" style="enable-background:new 0 0 104.3 199.5;" xml:space="preserve">
 <style type="text/css">
 	.st0{fill:none;stroke:#00B04C;stroke-width:10;stroke-miterlimit:10;}
-	.st1{fill:#6A5028;}
-	.st2{fill:#A93223;}
-	.st3{fill:#D33B2A;}
-	.st4{fill:#D79E02;}
-	.st5{fill:#FFC62A;}
-	.st6{fill:#FFFE54;}
+	.st1{fill:#008639;}
+	.st2{fill:#6A5028;}
+	.st3{fill:#A93223;}
+	.st4{fill:#D33B2A;}
+	.st5{fill:#D79E02;}
+	.st6{fill:#FFC62A;}
+	.st7{fill:#FFFE54;}
 </style>
-<path class="st0" d="M152.9,119.6c0-8.3,8.2-13.1,8.5-20.7c0.1-4.7,2.2-19.6,0-31.4C157.6,46.6,132,42,140.8,20.8
-	c3.2-7.8,20.4-12.4,34.4,1"/>
-<path class="st1" d="M199.6,131.2c0.4-1.5,0.4-2.6,0.1-3.6c-0.3-0.9-0.9-1-1.7-1.9c-1.1-1.3-1.6-2-2.3-2.3c-1.4-0.6-1.5-0.1-1.9,0
-	c-0.5,0.1-2.8-0.2-3.4-0.7c-1.3-1.1-2.8-1.5-2.9-1.6c0,0,0,0,0,0c0,0,0,0-0.1-0.1c-0.8-0.2-2.1-0.3-3.1,0c-1.1,0.3-1.1,0.5-2.6,0.9
-	c0,0,0,0,0,0c0,0-1.3-0.2-2.8-0.4c-0.2,0-0.4,0-0.4-0.1c-1.8-0.5-3.6,0.4-3.6,0.4c-1.3,0-1.8-0.1-2-0.2c-1.1-0.4-0.9,0-3.5-0.3
-	c-3.1-0.3-1.6-2.4-6.8-2.3c-1.8,0-1.8,1-3.7,0.2c-3.4-1.4-6.4,0.8-9.6-0.8c-3-1.5-6.2,0.7-9.6,1.7c-2.6,0.8-4.3,0.4-5.6,1.2
-	c-1.3,0.7-0.9,0.6-2.7,0.8c-2.2,0.2-3.9,0.7-5.7,0.6c-2.2-0.2-1-0.6-3.2-0.4c-1.6,0.1-2.4,1.7-5.9,1c-2.3-0.4-2.4-1.2-3.5-0.7
-	c-1.6,0.8-4.6,0.8-4.4,2.4c0.1,1.3-2.5,1.1-2.6,2.6c-0.1,0.7,0.1,1.5,0.5,2.4c0,0,0.9,2,2.8,3.3C115.4,137.6,189.5,132,199.6,131.2z
-	"/>
-<polygon class="st2" points="185.3,178.4 120.5,178.4 109.7,139.2 196.1,139.2 "/>
-<path class="st3" d="M201.7,143.5h-97.5c-1.9,0-3.4-1.5-3.4-3.4v-8.3c0-1.9,1.5-3.4,3.4-3.4h97.5c1.9,0,3.4,1.5,3.4,3.4v8.3
-	C205.1,141.9,203.5,143.5,201.7,143.5z"/>
-<path class="st0" d="M161.2,100.6c0.2-9.6,74.2,14.1,99.4-11.4"/>
-<path class="st0" d="M157.6,55.4c-13.5-1.6-31.3-0.4-43.9,14.3c-21.4,24.8-13.8,50.2-53.7,44.1"/>
-<ellipse id="petals_144_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 16.4284 98.6469)" class="st4" cx="174.8" cy="21.6" rx="3.5" ry="18"/>
-<ellipse id="petals_143_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 5.007156e-03 117.8633)" class="st4" cx="199" cy="58.9" rx="3.5" ry="18"/>
-<ellipse id="petals_142_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 64.0704 165.0535)" class="st4" cx="167.1" cy="30.1" rx="3.5" ry="18"/>
-<ellipse id="petals_141_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 67.5286 211.3457)" class="st4" cx="206.7" cy="50.4" rx="3.5" ry="18"/>
-<ellipse id="petals_140_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -0.6857 2.8862)" class="st4" cx="164.7" cy="40.6" rx="18" ry="3.5"/>
-<ellipse id="petals_139_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -0.6652 3.6646)" class="st4" cx="209.2" cy="39.9" rx="18" ry="3.5"/>
-<ellipse id="petals_138_" transform="matrix(0.8584 -0.513 0.513 0.8584 -2.7445 93.3999)" class="st4" cx="167.8" cy="51.7" rx="18" ry="3.5"/>
-<ellipse id="petals_137_" transform="matrix(0.8584 -0.513 0.513 0.8584 14.3823 109.7696)" class="st4" cx="206" cy="28.8" rx="18" ry="3.5"/>
-<ellipse id="petals_136_" transform="matrix(0.478 -0.8784 0.8784 0.478 39.4882 186.053)" class="st4" cx="176.3" cy="59.8" rx="18" ry="3.5"/>
-<ellipse id="petals_135_" transform="matrix(0.478 -0.8784 0.8784 0.478 84.9438 184.3311)" class="st4" cx="197.6" cy="20.7" rx="18" ry="3.5"/>
-<ellipse id="petals_134_" transform="matrix(0.9997 -2.281180e-02 2.281180e-02 0.9997 -1.3771 4.2917)" class="st4" cx="187.4" cy="62.5" rx="3.5" ry="18"/>
-<ellipse id="petals_133_" transform="matrix(0.9997 -2.281180e-02 2.281180e-02 0.9997 -0.3621 4.2569)" class="st4" cx="186.4" cy="18" rx="3.5" ry="18"/>
-<ellipse id="petals_132_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 37.532 135.0092)" class="st5" cx="170.4" cy="25.4" rx="3.5" ry="18"/>
-<ellipse id="petals_131_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 26.3434 169.4548)" class="st5" cx="203.5" cy="55.1" rx="3.5" ry="18"/>
-<ellipse id="petals_130_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 95.6551 189.5561)" class="st5" cx="165.2" cy="35.6" rx="3.5" ry="18"/>
-<ellipse id="petals_129_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 120.8791 239.4986)" class="st5" cx="208.7" cy="44.9" rx="3.5" ry="18"/>
-<ellipse id="petals_128_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -6.3758 47.4756)" class="st5" cx="165.5" cy="46.4" rx="18" ry="3.5"/>
-<ellipse id="petals_127_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -1.3245 58.8064)" class="st5" cx="208.3" cy="34.1" rx="18" ry="3.5"/>
-<ellipse id="petals_126_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 11.7141 140.1412)" class="st5" cx="171.4" cy="56.2" rx="18" ry="3.5"/>
-<ellipse id="petals_125_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 44.0729 152.6801)" class="st5" cx="202.4" cy="24.3" rx="18" ry="3.5"/>
-<ellipse id="petals_124_" transform="matrix(0.2341 -0.9722 0.9722 0.2341 78.9963 224.0603)" class="st5" cx="181.7" cy="61.9" rx="18" ry="3.5"/>
-<ellipse id="petals_123_" transform="matrix(0.2341 -0.9722 0.9722 0.2341 129.0571 201.0416)" class="st5" cx="192.1" cy="18.6" rx="18" ry="3.5"/>
-<ellipse id="petals_122_" transform="matrix(0.9597 -0.2811 0.2811 0.9597 -9.5307 56.7755)" class="st5" cx="193.2" cy="61.6" rx="3.5" ry="18"/>
-<ellipse id="petals_121_" transform="matrix(0.9597 -0.2811 0.2811 0.9597 1.9729 51.5366)" class="st5" cx="180.7" cy="18.9" rx="3.5" ry="18"/>
-<ellipse id="petals_120_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 12.4103 156.1484)" class="st4" cx="269.9" cy="57.1" rx="3.5" ry="18"/>
-<ellipse id="petals_119_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 -4.0131 175.3648)" class="st4" cx="294.1" cy="94.5" rx="3.5" ry="18"/>
-<ellipse id="petals_118_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 84.1468 268.985)" class="st4" cx="262.2" cy="65.6" rx="3.5" ry="18"/>
-<ellipse id="petals_117_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 87.605 315.2772)" class="st4" cx="301.8" cy="85.9" rx="3.5" ry="18"/>
-<ellipse id="petals_116_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -1.2927 4.5549)" class="st4" cx="259.7" cy="76.2" rx="18" ry="3.5"/>
-<ellipse id="petals_115_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -1.2722 5.3333)" class="st4" cx="304.3" cy="75.4" rx="18" ry="3.5"/>
-<ellipse id="petals_114_" transform="matrix(0.8584 -0.513 0.513 0.8584 -7.5087 147.2126)" class="st4" cx="262.9" cy="87.2" rx="18" ry="3.5"/>
-<ellipse id="petals_113_" transform="matrix(0.8584 -0.513 0.513 0.8584 9.618 163.5824)" class="st4" cx="301.1" cy="64.4" rx="18" ry="3.5"/>
-<ellipse id="petals_112_" transform="matrix(0.478 -0.8784 0.8784 0.478 57.9137 288.1286)" class="st4" cx="271.4" cy="95.3" rx="18" ry="3.5"/>
-<ellipse id="petals_111_" transform="matrix(0.478 -0.8784 0.8784 0.478 103.3692 286.4067)" class="st4" cx="292.6" cy="56.2" rx="18" ry="3.5"/>
-<ellipse id="petals_110_" transform="matrix(0.9997 -2.281180e-02 2.281180e-02 0.9997 -2.163 6.4701)" class="st4" cx="282.5" cy="98" rx="3.5" ry="18"/>
-<ellipse id="petals_109_" transform="matrix(0.9997 -2.281180e-02 2.281180e-02 0.9997 -1.148 6.4354)" class="st4" cx="281.5" cy="53.5" rx="3.5" ry="18"/>
-<ellipse id="petals_108_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 42.5892 217.4391)" class="st5" cx="265.5" cy="60.9" rx="3.5" ry="18"/>
-<ellipse id="petals_107_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 31.4006 251.8846)" class="st5" cx="298.5" cy="90.7" rx="3.5" ry="18"/>
-<ellipse id="petals_106_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 136.0137 310.5877)" class="st5" cx="260.2" cy="71.1" rx="3.5" ry="18"/>
-<ellipse id="petals_105_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 161.2378 360.5303)" class="st5" cx="303.8" cy="80.5" rx="3.5" ry="18"/>
-<ellipse id="petals_104_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -12.4898 75.0953)" class="st5" cx="260.6" cy="81.9" rx="18" ry="3.5"/>
-<ellipse id="petals_103_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -7.4385 86.4261)" class="st5" cx="303.4" cy="69.6" rx="18" ry="3.5"/>
-<ellipse id="petals_102_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 15.095 219.2016)" class="st5" cx="266.5" cy="91.8" rx="18" ry="3.5"/>
-<ellipse id="petals_101_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 47.4538 231.7405)" class="st5" cx="297.5" cy="59.8" rx="18" ry="3.5"/>
-<ellipse id="petals_100_" transform="matrix(0.2341 -0.9722 0.9722 0.2341 117.2795 343.7272)" class="st5" cx="276.8" cy="97.4" rx="18" ry="3.5"/>
-<ellipse id="petals_99_" transform="matrix(0.2341 -0.9722 0.9722 0.2341 167.3404 320.7086)" class="st5" cx="287.2" cy="54.1" rx="18" ry="3.5"/>
-<ellipse id="petals_98_" transform="matrix(0.9597 -0.2811 0.2811 0.9597 -15.6853 84.9339)" class="st5" cx="288.3" cy="97.2" rx="3.5" ry="18"/>
-<ellipse id="petals_97_" transform="matrix(0.9597 -0.2811 0.2811 0.9597 -4.1817 79.6951)" class="st5" cx="275.7" cy="54.4" rx="3.5" ry="18"/>
-<circle class="st6" cx="282" cy="76.2" r="13.6"/>
-<circle class="st6" cx="186.9" cy="40.3" r="13.6"/>
-<ellipse id="petals_47_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 -41.7171 28.9134)" class="st4" cx="28" cy="84.9" rx="3.5" ry="18"/>
-<ellipse id="petals_46_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 -58.1405 48.1299)" class="st4" cx="52.2" cy="122.2" rx="3.5" ry="18"/>
-<ellipse id="petals_45_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 -72.0964 68.8298)" class="st4" cx="20.3" cy="93.4" rx="3.5" ry="18"/>
-<ellipse id="petals_44_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 -68.6382 115.122)" class="st4" cx="59.9" cy="113.7" rx="3.5" ry="18"/>
-<ellipse id="petals_43_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -1.8157 0.3278)" class="st4" cx="17.8" cy="104" rx="18" ry="3.5"/>
-<ellipse id="petals_42_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -1.7952 1.1062)" class="st4" cx="62.3" cy="103.2" rx="18" ry="3.5"/>
-<ellipse id="petals_41_" transform="matrix(0.8584 -0.513 0.513 0.8584 -56.0191 27.045)" class="st4" cx="21" cy="115" rx="18" ry="3.5"/>
-<ellipse id="petals_40_" transform="matrix(0.8584 -0.513 0.513 0.8584 -38.8924 43.4147)" class="st4" cx="59.2" cy="92.2" rx="18" ry="3.5"/>
-<ellipse id="petals_39_" transform="matrix(0.478 -0.8784 0.8784 0.478 -92.7782 90.1379)" class="st4" cx="29.4" cy="123.1" rx="18" ry="3.5"/>
-<ellipse id="petals_38_" transform="matrix(0.478 -0.8784 0.8784 0.478 -47.3227 88.416)" class="st4" cx="50.7" cy="84" rx="18" ry="3.5"/>
-<ellipse id="petals_37_" transform="matrix(0.9997 -2.281180e-02 2.281180e-02 0.9997 -2.8598 0.9587)" class="st4" cx="40.6" cy="125.8" rx="3.5" ry="18"/>
-<ellipse id="petals_36_" transform="matrix(0.9997 -2.281180e-02 2.281180e-02 0.9997 -1.8448 0.924)" class="st4" cx="39.6" cy="81.3" rx="3.5" ry="18"/>
-<ellipse id="petals_35_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 -58.1152 46.8421)" class="st5" cx="23.5" cy="88.7" rx="3.5" ry="18"/>
-<ellipse id="petals_34_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 -69.3037 81.2877)" class="st5" cx="56.6" cy="118.5" rx="3.5" ry="18"/>
-<ellipse id="petals_33_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 -82.2125 96.018)" class="st5" cx="18.3" cy="98.9" rx="3.5" ry="18"/>
-<ellipse id="petals_32_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 -56.9884 145.9606)" class="st5" cx="61.8" cy="108.3" rx="3.5" ry="18"/>
-<ellipse id="petals_31_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -29.5499 9.4174)" class="st5" cx="18.7" cy="109.7" rx="18" ry="3.5"/>
-<ellipse id="petals_30_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -24.4986 20.7482)" class="st5" cx="61.5" cy="97.4" rx="18" ry="3.5"/>
-<ellipse id="petals_29_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 -78.3531 53.9753)" class="st5" cx="24.6" cy="119.6" rx="18" ry="3.5"/>
-<ellipse id="petals_28_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 -45.9943 66.5142)" class="st5" cx="55.6" cy="87.6" rx="18" ry="3.5"/>
-<ellipse id="petals_27_" transform="matrix(0.2341 -0.9722 0.9722 0.2341 -95.0242 129.8098)" class="st5" cx="34.9" cy="125.2" rx="18" ry="3.5"/>
-<ellipse id="petals_26_" transform="matrix(0.2341 -0.9722 0.9722 0.2341 -44.9633 106.7911)" class="st5" cx="45.3" cy="81.9" rx="18" ry="3.5"/>
-<ellipse id="petals_25_" transform="matrix(0.9597 -0.2811 0.2811 0.9597 -33.246 18.0606)" class="st5" cx="46.3" cy="124.9" rx="3.5" ry="18"/>
-<ellipse id="petals_4_" transform="matrix(0.9597 -0.2811 0.2811 0.9597 -21.7425 12.8218)" class="st5" cx="33.8" cy="82.2" rx="3.5" ry="18"/>
-<circle class="st6" cx="40.1" cy="103.6" r="13.6"/>
+<g id="stem">
+	<path class="st0" d="M52.1,140.9c0-11.2,14.9-16,5.2-29.9C46.8,96,31.2,94.4,20.4,74.6C8.8,53.3,15.8,35.9,29.9,30
+		c15.9-6.7,23.1-3.2,30.7,1.7"/>
+	<path class="st0" d="M60.4,121.8c0.2-9.6,38.8-5.7,38.8-33.3c0-11.8-18.4-18-19.4-13.8"/>
+	<path class="st0" d="M29.2,86.4c-13.8-6.5-23.7,6.8-23.6,15.4c0.1,12.5,15.1,23.9,21.5,22.2"/>
+</g>
+<g id="buds">
+	<path class="st1" d="M82.3,71.8c-3.1-3.3-8.1-4-11.6-3.1c-10.1,2.7-15.3,20.1-10.4,25.1c4.6,4.6,20,0.8,23.8-8.8
+		C85.5,81.5,85.9,75.7,82.3,71.8z"/>
+</g>
+<g id="pot">
+	<g id="dirt">
+		<path class="st2" d="M98.9,152.4c0.4-1.5,0.4-2.6,0.1-3.6c-0.3-0.9-0.9-1-1.7-1.9c-1.1-1.3-1.6-2-2.3-2.3c-1.4-0.6-1.5-0.1-1.9,0
+			c-0.5,0.1-2.8-0.2-3.4-0.7c-1.3-1.1-2.8-1.5-2.9-1.6c0,0,0,0,0,0c0,0,0,0-0.1-0.1c-0.8-0.2-2.1-0.3-3.1,0
+			c-1.1,0.3-1.1,0.5-2.6,0.9c0,0,0,0,0,0c0,0-1.3-0.2-2.8-0.4c-0.2,0-0.4,0-0.4-0.1c-1.8-0.5-3.6,0.4-3.6,0.4c-1.3,0-1.8-0.1-2-0.2
+			c-1.1-0.4-0.9,0-3.5-0.3c-3.1-0.3-1.6-2.4-6.8-2.3c-1.8,0-1.8,1-3.7,0.2c-3.4-1.4-6.4,0.8-9.6-0.8c-3-1.5-6.2,0.7-9.6,1.7
+			c-2.6,0.8-4.3,0.4-5.6,1.2c-1.3,0.7-0.9,0.6-2.7,0.8c-2.2,0.2-3.9,0.7-5.7,0.6c-2.2-0.2-1-0.6-3.2-0.4c-1.6,0.1-2.4,1.7-5.9,1
+			c-2.3-0.4-2.4-1.2-3.5-0.7c-1.6,0.8-4.6,0.8-4.4,2.4c0.1,1.3-2.5,1.1-2.6,2.6c-0.1,0.7,0.1,1.5,0.5,2.4c0,0,0.9,2,2.8,3.3
+			C14.6,158.7,88.7,153.2,98.9,152.4z"/>
+	</g>
+	<polygon class="st3" points="84.6,199.4 19.7,199.4 8.9,160.2 95.4,160.2 	"/>
+	<path class="st4" d="M100.9,164.5H3.4c-1.9,0-3.4-1.5-3.4-3.4v-8.3c0-1.9,1.5-3.4,3.4-3.4h97.5c1.9,0,3.4,1.5,3.4,3.4v8.3
+		C104.3,163,102.8,164.5,100.9,164.5z"/>
+</g>
+<g id="flowers">
+	
+		<ellipse id="petals_120_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 -3.4463 31.7354)" class="st5" cx="51.9" cy="21.7" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_119_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 -19.8698 50.9519)" class="st5" cx="76.1" cy="59" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_118_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 -2.8538 55.7297)" class="st5" cx="44.2" cy="30.2" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_117_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 0.6045 102.0219)" class="st5" cx="83.8" cy="50.5" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_116_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -0.7063 0.7361)" class="st5" cx="41.7" cy="40.7" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_115_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -0.6859 1.5146)" class="st5" cx="86.2" cy="40" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_114_" transform="matrix(0.8584 -0.513 0.513 0.8584 -20.2059 30.3543)" class="st5" cx="44.9" cy="51.8" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_113_" transform="matrix(0.8584 -0.513 0.513 0.8584 -3.0792 46.724)" class="st5" cx="83.1" cy="28.9" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_112_" transform="matrix(0.478 -0.8784 0.8784 0.478 -24.7753 78.1322)" class="st5" cx="53.3" cy="59.9" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_111_" transform="matrix(0.478 -0.8784 0.8784 0.478 20.6802 76.4103)" class="st5" cx="74.6" cy="20.8" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_110_" transform="matrix(0.9997 -2.281180e-02 2.281180e-02 0.9997 -1.4115 1.4875)" class="st5" cx="64.5" cy="62.6" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_109_" transform="matrix(0.9997 -2.281180e-02 2.281180e-02 0.9997 -0.3965 1.4528)" class="st5" cx="63.5" cy="18.1" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_108_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 -3.2254 43.686)" class="st6" cx="47.4" cy="25.5" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_107_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 -14.414 78.1316)" class="st6" cx="80.5" cy="55.3" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_106_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 -1.5337 69.4589)" class="st6" cx="42.2" cy="35.7" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_105_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 23.6903 119.4015)" class="st6" cx="85.7" cy="45" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_104_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -11.178 13.5583)" class="st6" cx="42.6" cy="46.5" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_103_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -6.1266 24.8891)" class="st6" cx="85.4" cy="34.2" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_102_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 -25.7108 51.9266)" class="st6" cx="48.5" cy="56.3" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_101_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 6.648 64.4654)" class="st6" cx="79.5" cy="24.4" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_100_" transform="matrix(0.2341 -0.9722 0.9722 0.2341 -15.2593 104.6289)" class="st6" cx="58.8" cy="62" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_99_" transform="matrix(0.2341 -0.9722 0.9722 0.2341 34.8016 81.6102)" class="st6" cx="69.2" cy="18.7" rx="18" ry="3.5"/>
+	
+		<ellipse id="petals_98_" transform="matrix(0.9597 -0.2811 0.2811 0.9597 -14.5155 22.23)" class="st6" cx="70.2" cy="61.7" rx="3.5" ry="18"/>
+	
+		<ellipse id="petals_97_" transform="matrix(0.9597 -0.2811 0.2811 0.9597 -3.012 16.9912)" class="st6" cx="57.7" cy="19" rx="3.5" ry="18"/>
+	<circle class="st7" cx="64" cy="40.7" r="13.6"/>
+	
+		<ellipse id="petals_24_" transform="matrix(0.8388 -0.5445 0.5445 0.8388 -58.9573 29.7874)" class="st5" cx="20.8" cy="114.5" rx="2.1" ry="11"/>
+	<path id="petals_23_" class="st5" d="M41.6,146.4c-1,0.6-4.5-3-7.8-8s-5.2-9.7-4.2-10.4c1-0.6,4.5,3,7.8,8S42.6,145.8,41.6,146.4"
+		/>
+	
+		<ellipse id="petals_22_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 -97.6916 79.3999)" class="st5" cx="16.1" cy="119.6" rx="2.1" ry="11"/>
+	
+		<ellipse id="petals_21_" transform="matrix(0.4563 -0.8898 0.8898 0.4563 -95.5815 107.6449)" class="st5" cx="40.3" cy="132" rx="2.1" ry="11"/>
+	<path id="petals_20_" class="st5" d="M3.7,126.3c0-1.2,4.9-2.2,10.9-2.3s11,0.8,11,1.9c0,1.2-4.9,2.2-10.9,2.3S3.7,127.4,3.7,126.3
+		"/>
+	
+		<ellipse id="petals_19_" transform="matrix(0.9998 -1.749077e-02 1.749077e-02 0.9998 -2.1906 0.7503)" class="st5" cx="41.8" cy="125.6" rx="11" ry="2.1"/>
+	
+		<ellipse id="petals_18_" transform="matrix(0.8584 -0.513 0.513 0.8584 -65.786 27.3009)" class="st5" cx="16.6" cy="132.8" rx="11" ry="2.1"/>
+	
+		<ellipse id="petals_17_" transform="matrix(0.8584 -0.513 0.513 0.8584 -55.3363 37.2888)" class="st5" cx="39.9" cy="118.9" rx="11" ry="2.1"/>
+	<path id="petals_16_" class="st5" d="M16.5,147.4c-1-0.6,0.5-5.3,3.4-10.6c2.9-5.3,6.1-9.2,7.1-8.6c1,0.6-0.5,5.3-3.4,10.6
+		C20.7,144.1,17.5,148,16.5,147.4"/>
+	
+		<ellipse id="petals_15_" transform="matrix(0.478 -0.8784 0.8784 0.478 -81.9411 89.9521)" class="st5" cx="34.7" cy="113.9" rx="11" ry="2.1"/>
+	<path id="petals_14_" class="st5" d="M28.8,150.4c-1.2,0-2.2-4.9-2.4-10.9c-0.1-6.1,0.7-11,1.9-11c1.2,0,2.2,4.9,2.4,10.9
+		S30,150.4,28.8,150.4"/>
+	<path id="petals_13_" class="st5" d="M27.7,101.3c1.2,0,2.2,4.9,2.4,10.9c0.1,6.1-0.7,11-1.9,11c-1.2,0-2.2-4.9-2.4-10.9
+		C25.6,106.3,26.5,101.3,27.7,101.3"/>
+	
+		<ellipse id="petals_12_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 -80.7752 52.1054)" class="st6" cx="18.1" cy="116.8" rx="2.1" ry="11"/>
+	
+		<ellipse id="petals_11_" transform="matrix(0.6691 -0.7432 0.7432 0.6691 -87.6018 73.1222)" class="st6" cx="38.3" cy="134.9" rx="2.1" ry="11"/>
+	
+		<ellipse id="petals_10_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 -108.4427 111.7384)" class="st6" cx="14.9" cy="123" rx="2.1" ry="11"/>
+	
+		<ellipse id="petals_9_" transform="matrix(0.2102 -0.9777 0.9777 0.2102 -93.0524 142.2106)" class="st6" cx="41.5" cy="128.7" rx="2.1" ry="11"/>
+	
+		<ellipse id="petals_8_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -35.1716 9.2156)" class="st6" cx="15.2" cy="129.6" rx="11" ry="2.1"/>
+	
+		<ellipse id="petals_7_" transform="matrix(0.9612 -0.2759 0.2759 0.9612 -32.0896 16.129)" class="st6" cx="41.3" cy="122.1" rx="11" ry="2.1"/>
+	
+		<ellipse id="petals_6_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 -91.6393 54.6656)" class="st6" cx="18.8" cy="135.6" rx="11" ry="2.1"/>
+	
+		<ellipse id="petals_5_" transform="matrix(0.6962 -0.7179 0.7179 0.6962 -71.8958 62.3161)" class="st6" cx="37.7" cy="116.1" rx="11" ry="2.1"/>
+	<path id="petals_4_" class="st6" d="M22.5,149.7c-1.1-0.3-0.9-5.3,0.5-11.2c1.4-5.9,3.5-10.4,4.6-10.2c1.1,0.3,0.9,5.3-0.5,11.2
+		C25.7,145.4,23.6,150,22.5,149.7"/>
+	<path id="petals_3_" class="st6" d="M34,102c1.1,0.3,0.9,5.3-0.5,11.2c-1.4,5.9-3.5,10.4-4.6,10.2c-1.1-0.3-0.9-5.3,0.5-11.2
+		C30.7,106.3,32.8,101.7,34,102"/>
+	<path id="petals_2_" class="st6" d="M35.1,149.4c-1.1,0.3-3.4-4.1-5.1-9.9c-1.7-5.8-2.2-10.8-1-11.1c1.1-0.3,3.4,4.1,5.1,9.9
+		C35.8,144.1,36.2,149.1,35.1,149.4"/>
+	<path id="petals_1_" class="st6" d="M21.3,102.3c1.1-0.3,3.4,4.1,5.1,9.9c1.7,5.8,2.2,10.8,1,11.1c-1.1,0.3-3.4-4.1-5.1-9.9
+		S20.2,102.6,21.3,102.3"/>
+	<circle class="st7" cx="28.2" cy="126.1" r="8.3"/>
+</g>
 </svg>
