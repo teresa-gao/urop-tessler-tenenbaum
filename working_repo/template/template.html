@@ -72,9 +72,9 @@
             <button onclick="_s.button()">Continue</button>
         </div>
 
-        <div class="slide" id="trials">
+        <div class="slide" id="trials1">
             <div class="background-container">
-                <img class="background" id="background_trials" src="">
+                <img class="background" src="">
 
                 <img class="object object1 closed" src="">
                 <img class="object object1 open" src="">
@@ -86,10 +86,10 @@
                 <img class="object object4 open" src="">
                 
                 <img class="table" src="../_shared/images/table.svg">
-                <div class="label" id="label1">{{}}</div>
-                <div class="label" id="label2">{{}}</div>
-                <div class="label" id="label3">{{}}</div>
-                <div class="label" id="label4">{{}}</div>
+                <div class="label label1">{{}}</div>
+                <div class="label label2">{{}}</div>
+                <div class="label label3">{{}}</div>
+                <div class="label label4">{{}}</div>
 
                 <img class="blanket blanket1 blanket_up" src="../_shared/images/blanket_up.png">
                 <img class="blanket blanket1 blanket_down" src="../_shared/images/blanket_down.png">
@@ -136,30 +136,216 @@
                 <img class="agent straight_agent Frog_straight"  src="../_shared/images/Frog_straight.png">
                 <img class="agent point_agent_r Frog_point_r"  src="../_shared/images/Frog_point_r.png">
 
-                <div id="speech-bubble" class="speech"></div>
-                <div id="speech-bubble-outline" class="speech"></div>
-                <div id="speech-bubble-tail" class="speech"></div>
+                <div class="speech speech-bubble"></div>
+                <div class="speech speech-bubble-outline"></div>
+                <div class="speech speech-bubble-tail"></div>
             </div>
 
-            <p id="prompt"></p>
-            <table id="slider_table" class="slider_table">
-                <tr>
-                    <td class="slider_label left">0% (not likely at all)</td>
-                    <td class="slider_label right">100% (extremely likely)</td>
-                </tr>
-                <tr>
-                    <td colspan="2"><div id="single_slider" class="slider"></div>
-                    </td>
-                </tr>
-            </table>
+            <div class="slider" style="width:100%">
+                <p class="prompt"></p>
+                <table class="slider slider_table" style="width:100%">
+                    <tr>
+                        <td class="slider_label left">0% (not likely at all)</td>
+                        <td class="slider_label right">100% (extremely likely)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><div id="single_slider1" style="width:90%"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
 
             <div class="error">Please adjust the slider before continuing.</div>
 
             <!-- <button id="continue_button" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button> -->
 
-            <button class="continue_button" id="continue_button1" onclick="_s.continue_button1()" style="margin-top:20px; position:relative">Continue</button>
+            <button class="continue_button continue_button1" onclick="_s.continue_button1()" style="margin-top:20px; position:relative">Continue</button>
 
-            <button class="continue_button" id="continue_button2" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button>
+            <button class="continue_button continue_button2" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button>
+        </div>
+
+        <div class="slide" id="trials2">
+            <div class="background-container">
+                <img class="background" src="">
+
+                <img class="object object1 closed" src="">
+                <img class="object object1 open" src="">
+                <img class="object object2 closed" src="">
+                <img class="object object2 open" src="">
+                <img class="object object3 closed" src="">
+                <img class="object object3 open" src="">
+                <img class="object object4 closed" src="">
+                <img class="object object4 open" src="">
+                
+                <img class="table" src="../_shared/images/table.svg">
+                <div class="label label1">{{}}</div>
+                <div class="label label2">{{}}</div>
+                <div class="label label3">{{}}</div>
+                <div class="label label4">{{}}</div>
+
+                <img class="blanket blanket1 blanket_up" src="../_shared/images/blanket_up.png">
+                <img class="blanket blanket1 blanket_down" src="../_shared/images/blanket_down.png">
+                <img class="blanket blanket2 blanket_up" src="../_shared/images/blanket_up.png">
+                <img class="blanket blanket2 blanket_down" src="../_shared/images/blanket_down.png">
+                <img class="blanket blanket3 blanket_up" src="../_shared/images/blanket_up.png">
+                <img class="blanket blanket3 blanket_down" src="../_shared/images/blanket_down.png">
+                <img class="blanket blanket4 blanket_up" src="../_shared/images/blanket_up.png">
+                <img class="blanket blanket4 blanket_down" src="../_shared/images/blanket_down.png">
+
+                <img class="agent straight_agent Mouse_straight"  src="../_shared/images/Mouse_straight.png">
+                <img class="agent point_agent_r Mouse_point_r"  src="../_shared/images/Mouse_point_r.png">
+                    
+                <img class="agent straight_agent Monkey_straight"  src="../_shared/images/Monkey_straight.png">
+                <img class="agent point_agent_r Monkey_point_r"  src="../_shared/images/Monkey_point_r.png">
+                        
+                <img class="agent straight_agent Bunny_straight"  src="../_shared/images/Bunny_straight.png">
+                <img class="agent point_agent_r Bunny_point_r"  src="../_shared/images/Bunny_point_r.png">    
+         
+                <img class="agent straight_agent Dog_straight"  src="../_shared/images/Dog_straight.png">
+                <img class="agent point_agent_r Dog_point_r"  src="../_shared/images/Dog_point_r.png">     
+                    
+                <img class="agent straight_agent Elephant_straight"  src="../_shared/images/Elephant_straight.png">
+                <img class="agent point_agent_r Elephant_point_r"  src="../_shared/images/Elephant_point_r.png"> 
+                    
+                <img class="agent straight_agent Pig_straight"  src="../_shared/images/Pig_straight.png">
+                <img class="agent point_agent_r Pig_point_r"  src="../_shared/images/Pig_point_r.png">  
+                    
+                <img class="agent straight_agent Bear_straight"  src="../_shared/images/Bear_straight.png">
+                <img class="agent point_agent_r Bear_point_r"  src="../_shared/images/Bear_point_r.png">
+                    
+                <img class="agent straight_agent Beaver_straight"  src="../_shared/images/Beaver_straight.png">
+                <img class="agent point_agent_r Beaver_point_r"  src="../_shared/images/Beaver_point_r.png">   
+                    
+                <img class="agent straight_agent Cat_straight"  src="../_shared/images/Cat_straight.png">
+                <img class="agent point_agent_r Cat_point_r"  src="../_shared/images/Cat_point_r.png">
+                    
+                <img class="agent straight_agent Sheep_straight"  src="../_shared/images/Sheep_straight.png">
+                <img class="agent point_agent_r Sheep_point_r"  src="../_shared/images/Sheep_point_r.png">
+                    
+                <img class="agent straight_agent Tiger_straight"  src="../_shared/images/Tiger_straight.png">
+                <img class="agent point_agent_r Tiger_point_r"  src="../_shared/images/Tiger_point_r.png"> 
+                    
+                <img class="agent straight_agent Frog_straight"  src="../_shared/images/Frog_straight.png">
+                <img class="agent point_agent_r Frog_point_r"  src="../_shared/images/Frog_point_r.png">
+
+                <div class="speech speech-bubble"></div>
+                <div class="speech speech-bubble-outline"></div>
+                <div class="speech speech-bubble-tail"></div>
+            </div>
+
+            <div class="slider" style="width:100%">
+                <p class="prompt"></p>
+                <table class="slider slider_table" style="width:100%">
+                    <tr>
+                        <td class="slider_label left">0% (not likely at all)</td>
+                        <td class="slider_label right">100% (extremely likely)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><div id="single_slider2" style="width:90%"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="error">Please adjust the slider before continuing.</div>
+
+            <!-- <button id="continue_button" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button> -->
+
+            <button class="continue_button continue_button1" onclick="_s.continue_button1()" style="margin-top:20px; position:relative">Continue</button>
+
+            <button class="continue_button continue_button2" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button>
+        </div>
+
+        <div class="slide" id="trials3">
+            <div class="background-container">
+                <img class="background" src="">
+
+                <img class="object object1 closed" src="">
+                <img class="object object1 open" src="">
+                <img class="object object2 closed" src="">
+                <img class="object object2 open" src="">
+                <img class="object object3 closed" src="">
+                <img class="object object3 open" src="">
+                <img class="object object4 closed" src="">
+                <img class="object object4 open" src="">
+                
+                <img class="table" src="../_shared/images/table.svg">
+                <div class="label label1">{{}}</div>
+                <div class="label label2">{{}}</div>
+                <div class="label label3">{{}}</div>
+                <div class="label label4">{{}}</div>
+
+                <img class="blanket blanket1 blanket_up" src="../_shared/images/blanket_up.png">
+                <img class="blanket blanket1 blanket_down" src="../_shared/images/blanket_down.png">
+                <img class="blanket blanket2 blanket_up" src="../_shared/images/blanket_up.png">
+                <img class="blanket blanket2 blanket_down" src="../_shared/images/blanket_down.png">
+                <img class="blanket blanket3 blanket_up" src="../_shared/images/blanket_up.png">
+                <img class="blanket blanket3 blanket_down" src="../_shared/images/blanket_down.png">
+                <img class="blanket blanket4 blanket_up" src="../_shared/images/blanket_up.png">
+                <img class="blanket blanket4 blanket_down" src="../_shared/images/blanket_down.png">
+
+                <img class="agent straight_agent Mouse_straight"  src="../_shared/images/Mouse_straight.png">
+                <img class="agent point_agent_r Mouse_point_r"  src="../_shared/images/Mouse_point_r.png">
+                    
+                <img class="agent straight_agent Monkey_straight"  src="../_shared/images/Monkey_straight.png">
+                <img class="agent point_agent_r Monkey_point_r"  src="../_shared/images/Monkey_point_r.png">
+                        
+                <img class="agent straight_agent Bunny_straight"  src="../_shared/images/Bunny_straight.png">
+                <img class="agent point_agent_r Bunny_point_r"  src="../_shared/images/Bunny_point_r.png">    
+         
+                <img class="agent straight_agent Dog_straight"  src="../_shared/images/Dog_straight.png">
+                <img class="agent point_agent_r Dog_point_r"  src="../_shared/images/Dog_point_r.png">     
+                    
+                <img class="agent straight_agent Elephant_straight"  src="../_shared/images/Elephant_straight.png">
+                <img class="agent point_agent_r Elephant_point_r"  src="../_shared/images/Elephant_point_r.png"> 
+                    
+                <img class="agent straight_agent Pig_straight"  src="../_shared/images/Pig_straight.png">
+                <img class="agent point_agent_r Pig_point_r"  src="../_shared/images/Pig_point_r.png">  
+                    
+                <img class="agent straight_agent Bear_straight"  src="../_shared/images/Bear_straight.png">
+                <img class="agent point_agent_r Bear_point_r"  src="../_shared/images/Bear_point_r.png">
+                    
+                <img class="agent straight_agent Beaver_straight"  src="../_shared/images/Beaver_straight.png">
+                <img class="agent point_agent_r Beaver_point_r"  src="../_shared/images/Beaver_point_r.png">   
+                    
+                <img class="agent straight_agent Cat_straight"  src="../_shared/images/Cat_straight.png">
+                <img class="agent point_agent_r Cat_point_r"  src="../_shared/images/Cat_point_r.png">
+                    
+                <img class="agent straight_agent Sheep_straight"  src="../_shared/images/Sheep_straight.png">
+                <img class="agent point_agent_r Sheep_point_r"  src="../_shared/images/Sheep_point_r.png">
+                    
+                <img class="agent straight_agent Tiger_straight"  src="../_shared/images/Tiger_straight.png">
+                <img class="agent point_agent_r Tiger_point_r"  src="../_shared/images/Tiger_point_r.png"> 
+                    
+                <img class="agent straight_agent Frog_straight"  src="../_shared/images/Frog_straight.png">
+                <img class="agent point_agent_r Frog_point_r"  src="../_shared/images/Frog_point_r.png">
+
+                <div class="speech speech-bubble"></div>
+                <div class="speech speech-bubble-outline"></div>
+                <div class="speech speech-bubble-tail"></div>
+            </div>
+
+            <div class="slider" style="width:100%">
+                <p class="prompt"></p>
+                <table class="slider slider_table" style="width:100%">
+                    <tr>
+                        <td class="slider_label left">0% (not likely at all)</td>
+                        <td class="slider_label right">100% (extremely likely)</td>
+                    </tr>
+                    <tr>
+                        <td colspan="2"><div id="single_slider3" style="width:90%"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="error">Please adjust the slider before continuing.</div>
+
+            <!-- <button id="continue_button" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button> -->
+
+            <button class="continue_button continue_button1" onclick="_s.continue_button1()" style="margin-top:20px; position:relative">Continue</button>
+
+            <button class="continue_button continue_button2" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button>
         </div>
 
         <div class="slide"  id="subj_info">
@@ -209,7 +395,7 @@
             </div>
         </div>
 
-        <div id="thanks" class="slide">
+        <div class="slide" id="thanks">
             <h3>Thank you for your participation!</h3>
         </div>
 
