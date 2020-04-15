@@ -3,8 +3,8 @@ var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
 
 var artifacts =         shuffle([ ["artifact", "artifact01", "squeaking"], ]);
-var flowers =           shuffle([ ["flower", "flower01", "purple flowers"], ["flower", "flower02", "yellow flowers"] ]);
-var birds =             shuffle([ ["bird", "bird01", "purple wings"], ["bird", "bird02", "green wings"] ]);
+var flowers =           shuffle([ ["flower", "flower01", "purple petals"] ]);
+var birds =             shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           shuffle([ artifacts[0], flowers[0], birds[0]]);
 
 var item_name =         shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
@@ -126,7 +126,7 @@ function effect(stim) {
     let deferred = new $.Deferred();
     
     if (stim.object[0] == "artifact") {
-        squeak = new Audio('../_shared/audio/squeak.mp3');
+        squeak = new Audio("../_shared/audio/squeak.mp3");
         squeak.play();
         
         // Object squishes!
@@ -171,25 +171,40 @@ function effect_remark_close(stim) {
 
             agent_straight(stim.agent);
             
+            let delay_time = 2500;
+            let audio_file_name = "";
+
             let say_text = "";
             if (stim.item_presentation == "accidental") {
                 say_text += "Oh wow! ";
+                audio_file_name += "oh_wow_";
             } else if (stim.item_presentation == "pedagogical") {
                 say_text += "See? ";
+                audio_file_name += "see_";
+                delay_time = 2250;
             }
             if (stim.object[0] == "artifact") {
                 say_text += "Squeaking!";
+                audio_file_name += "squeaking";
+                delay_time = 2250;
             } else {
                 say_text += stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
+                if (stim.object[2] == "purple petals") {
+                    audio_file_name += "purple_petals";
+                } else if (stim.object[2] == "green feathers") {
+                    audio_file_name += "green_feathers";
+                }
             }
 
-            agent_say(say_text, 2500);
+            remark = new Audio("../_shared/audio/mh_recordings/" + audio_file_name + ".mp3");
+            remark.play();
+
+            agent_say(say_text, delay_time);
 
             setTimeout (function() {
                 deferred.resolve();
-            }, 2500);
+            }, delay_time);
 
-            console.log("agent remark done");
             return deferred.promise();
         }
 
@@ -215,7 +230,6 @@ function effect_remark_close(stim) {
                 }, 600);
             }
 
-            console.log("object close done")
             return deferred.promise();
         }
     ).then(
@@ -245,8 +259,12 @@ function run_trial(stim, exp_this) {
         let greeting = "";
         if (stim.item_presentation == "pedagogical") {
             greeting += "Hello! I've been here for a while.";
+            hello = new Audio("../_shared/audio/mh_recordings/hello_ive_been_here.mp3");
+            hello.play();
         } else if (stim.item_presentation == "accidental") {
             greeting += "Hello! I just arrived here.";
+            hello = new Audio("../_shared/audio/mh_recordings/hello_i_just_arrived.mp3");
+            hello.play();
         }
 
         agent_say(greeting).then(
@@ -261,22 +279,37 @@ function run_trial(stim, exp_this) {
         set_table(stim);
 
         let lookit = "";
+        let wait_time = 3000;
 
         if (stim.item_number > 1) {
             lookit = "There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
+            there_on_table = new Audio("../_shared/audio/mh_recordings/there_are_" + stim.item_number + "_" + stim.item_name[1] + ".mp3");
         } else {
             lookit = "There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
+            there_on_table = new Audio("../_shared/audio/mh_recordings/there_is_" + stim.item_number + "_" + stim.item_name[0] + ".mp3");
         }
 
         if (stim.item_presentation == "accidental") {
-            lookit = "Oh! Look at that! " + lookit
+            lookit = "Oh! Look at that! " + lookit;
+            oh_look = new Audio("../_shared/audio/mh_recordings/oh_look_at_that.mp3");
+            
+            oh_look.play();
+
+            wait_time += 1750;
+            
+            setTimeout (function() {
+                there_on_table.play();
+            }, 1750)
+
+        } else {
+            there_on_table.play();
         }
 
-        agent_say(lookit, 3000);
+        agent_say(lookit, wait_time);
 
         setTimeout (function() {
             _stream.apply(exp_this);
-        }, 3000);
+        }, wait_time);
 
     // Trial
     } else if (stim.type == "trial") {
@@ -320,10 +353,12 @@ function run_trial(stim, exp_this) {
                     let deferred = new $.Deferred();
 
                     agent_say("Oops!");
+                    oops = new Audio("../_shared/audio/mh_recordings/oops.mp3");
+                    oops.play();
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 1500);
+                    }, 1000);
 
                     return deferred.promise();
                 }
@@ -335,6 +370,9 @@ function run_trial(stim, exp_this) {
             );
 
         } else if (stim.item_presentation == "pedagogical") { // Pedagogical item presentation
+
+            show_you = new Audio("../_shared/audio/mh_recordings/let_me_show_you_something.mp3");
+            show_you.play();
 
             agent_say("Let me show you something.", 2000).then(
                 function() {
@@ -352,11 +390,14 @@ function run_trial(stim, exp_this) {
                 function() {
                     let deferred = new $.Deferred();
 
+                    watch = new Audio("../_shared/audio/mh_recordings/watch_this.mp3");
+                    watch.play();
+                    
                     agent_say("Watch this!");
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 1500);
+                    }, 1250);
 
                     return deferred.promise();
                 }
@@ -453,8 +494,8 @@ function make_slides(f) {
         name: "sound_check",
         sound_trials: 0,
         start: function() {
-            exp.sound_word = _.sample(['tiger', 'evergreen']);
-            exp.sound = new Audio('../_shared/audio/'+exp.sound_word+'.mp3');
+            exp.sound_word = _.sample(["tiger", "evergreen"]);
+            exp.sound = new Audio("../_shared/audio/"+exp.sound_word+".mp3");
             $('.error').hide();
         },
         test_sound: function() {
