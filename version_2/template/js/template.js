@@ -5,11 +5,11 @@ var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger",
 var artifacts =         shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           shuffle([ ["flower", "flower01", "purple flowers"], ["flower", "flower02", "yellow flowers"] ]);
 var birds =             shuffle([ ["bird", "bird01", "purple wings"], ["bird", "bird02", "green wings"] ]);
-var objects =           shuffle([ artifacts[0], flowers[0], birds[0]]);
+var objects =           ([ artifacts[0], flowers[0], birds[0]]);
 
 var item_name =         shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
 var item_number =       shuffle([1, 2, 3, 4]);
-var item_presentation = shuffle(["accidental", "pedagogical"]);
+var item_presentation = shuffle(["accidental", "pedagogical", "gen+ped", "generic"]); // For now, this remains unshuffled
 
 function shuffle(array) {
     for (var i = array.length - 1; i > 0; i--) {
@@ -72,39 +72,17 @@ function agent_say(display_text, duration=2000) {
     return deferred.promise();
 }
 
-function set_table(stim) {
-    // Displays objects, blankets, and tags
-    let temp_counter = 1;
-    while (temp_counter <= stim.item_number) {
-        change_image("closed", "../_shared/images/" + stim.object[1] + "_closed.svg");
-        change_image("open", "../_shared/images/" + stim.object[1] + "_open.svg");
-
-        $(".object" + temp_counter + ".closed").show();
-        $(".blanket" + temp_counter + ".blanket_up").show();
-        $(".label" + temp_counter).show();
-        $(".label" + temp_counter).text(stim.item_name[0].toUpperCase());
-
-        temp_counter += 1;
-    };
-
-    // Adjusts object display based on stimulus
-    $(".object1").css("right", "275px");
-    $(".object2").css("right", "202px");
-    $(".object3").css("right", "129px");
-    $(".object4").css("right", "56px");
-    $(".object").css("height", "85.5px");
-    $(".object").css("width", "auto");
-}
-
-function poke_blanket_fall(stim) {
-
-    let deferred = new $.Deferred();
+function animation(stim) {
+    
+    // console.log("passed to function:");
+    // console.log(stim);
 
     // Agent prods line of object(s)
     agent_poke_r(stim.agent).then(
             
         // Blanket drops
         function() {
+            let deferred = new $.Deferred();
 
             let temp_counter = stim.exemplar_num;
 
@@ -112,58 +90,49 @@ function poke_blanket_fall(stim) {
             $(".blanket" + temp_counter + ".blanket_up").fadeOut(600);
             $(".blanket" + temp_counter + ".blanket_down").fadeIn(600);
         
+            setTimeout (function() {
+                deferred.resolve();
+            }, 600);
+
+            return deferred.promise();
         }
-    )
+    ).then(
 
-    setTimeout (function() {
-        deferred.resolve();
-    }, 1000);
-
-    return deferred.promise();
-}
-
-function effect(stim) {
-    let deferred = new $.Deferred();
-    
-    if (stim.object[0] == "artifact") {
-        squeak = new Audio('../_shared/audio/squeak.mp3');
-        squeak.play();
         
-        // Object squishes!
-        $(".object" + stim.exemplar_num).animate(
-            { height: "-=10px", width: "+=0px"},
-            { duration: 300}
-        );
-        $(".object" + stim.exemplar_num).animate(
-            { height: "+=10px", width: "+=0px"},
-            { duration: 300}
-        );
+        function() {
+            let deferred = new $.Deferred();
+            
+            if (stim.object[0] == "artifact") {
+                squeak = new Audio('../_shared/audio/squeak.mp3');
+                squeak.play();
+                
+                // Object squishes!
+                $(".object" + stim.exemplar_num).animate(
+                    { height: "-=10px", width: "+=0px"},
+                    { duration: 300}
+                );
+                $(".object" + stim.exemplar_num).animate(
+                    { height: "+=10px", width: "+=0px"},
+                    { duration: 300}
+                );
 
-    } else {
-        
-        // "Open" object property revealed
-        if (stim.object[0] == "bird") {
-            gliss_up = new Audio("../_shared/audio/bird_chirp.mp3");
-        } else if (stim.object[0] == "flower") {
-            gliss_up = new Audio("../_shared/audio/gliss_up.mp3");
+            } else {
+                
+                // "Open" object property revealed
+                gliss_up = new Audio('../_shared/audio/gliss_up.mp3');
+                gliss_up.play();
+                $(".object" + stim.exemplar_num + ".closed").fadeOut(600);
+                $(".object" + stim.exemplar_num + ".open").fadeIn(600);
+
+            }
+
+            setTimeout (function() {
+                deferred.resolve();
+            }, 600);
+
+            return deferred.promise();
         }
-        
-        gliss_up.play();
-        $(".object" + stim.exemplar_num + ".closed").fadeOut(600);
-        $(".object" + stim.exemplar_num + ".open").fadeIn(600);
-
-    }
-
-    setTimeout (function() {
-        deferred.resolve();
-    }, 1000);
-
-    return deferred.promise();
-}
-
-function effect_remark_close(stim) {
-    
-    effect(stim).then(
+    ).then(
 
         // Agent remarks on "open" object property
         function() {
@@ -173,23 +142,21 @@ function effect_remark_close(stim) {
             
             let say_text = "";
             if (stim.item_presentation == "accidental") {
-                say_text += "Oh wow! ";
-            } else if (stim.item_presentation == "pedagogical") {
-                say_text += "See? ";
-            }
-            if (stim.object[0] == "artifact") {
-                say_text += "Squeaking!";
+                say_text = "Wow, " + stim.object[2] + "!"
             } else {
-                say_text += stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
+                if (stim.object[0] == "artifact") {
+                    say_text = "Did you hear that? Squeaking!";
+                } else {
+                    say_text = "Did you see that? " + stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
+                }
             }
 
-            agent_say(say_text, 2500);
+            agent_say(say_text);
 
             setTimeout (function() {
                 deferred.resolve();
-            }, 2500);
+            }, 2000);
 
-            console.log("agent remark done");
             return deferred.promise();
         }
 
@@ -215,7 +182,6 @@ function effect_remark_close(stim) {
                 }, 600);
             }
 
-            console.log("object close done")
             return deferred.promise();
         }
     ).then(
@@ -224,10 +190,10 @@ function effect_remark_close(stim) {
         function() {
             $(".continue_button1").show();
         }
-    );
+    ); 
 }
 
-function run_trial(stim, exp_this) {
+function run_trial(stim) {
 
     $("button").hide();
     $(".object, .error, .speech, .slider, .blanket, .label").hide();
@@ -239,133 +205,133 @@ function run_trial(stim, exp_this) {
         agent_straight(stim.agent);
         change_image("background", "../_shared/images/back" + stim.background + ".jpg");    
         
-        $(".speech-bubble").css("left", "10px");
         $(".speech-bubble-tail, .speech-bubble-outline").css("right", "475px");
-        
-        let greeting = "";
-        if (stim.item_presentation == "pedagogical") {
-            greeting += "Hello! I've been here for a while.";
-        } else if (stim.item_presentation == "accidental") {
-            greeting += "Hello! I just arrived here.";
-        }
-
-        agent_say(greeting).then(
+        agent_say("Hello, and welcome to the laboratory!").then(
             function() {
                 $(".continue_button1").show();
             }
         );
 
-    // Agent remarks on objects (number and name) on table
-    } else if (stim.type == "lookit") {
-        
-        set_table(stim);
-
-        let lookit = "";
-
-        if (stim.item_number > 1) {
-            lookit = "There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
-        } else {
-            lookit = "There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
-        }
-
-        if (stim.item_presentation == "accidental") {
-            lookit = "Oh! Look at that! " + lookit
-        }
-
-        agent_say(lookit, 3000);
-
-        setTimeout (function() {
-            _stream.apply(exp_this);
-        }, 3000);
-
     // Trial
     } else if (stim.type == "trial") {
         
-        set_table(stim);
-
-        if (stim.object[0] == "bird") {
-        $(".object1.open").css("right", "219px");
-        $(".object2.open").css("right", "146px");
-        $(".object3.open").css("right", "73px");
-        $(".object4.open").css("right", "0px");
-        } else if (stim.object[0] == "flower") {
-            $(".open").css("height", "95.5px");
-        }
-
-        // Previously shown objects are still displayed
-        temp_counter = 1;
-        while (temp_counter < stim.exemplar_num) {
+        // Displays objects, blankets, and tags
+        let temp_counter = 1;
+        while (temp_counter <= stim.item_number) {
             change_image("closed", "../_shared/images/" + stim.object[1] + "_closed.svg");
-            $(".blanket" + temp_counter + ".blanket_up").hide();
-            $(".blanket" + temp_counter + ".blanket_down").show();
-            $(".label" + temp_counter).hide();
+            // console.log("../_shared/images/" + stim.object[1] + "_closed.svg");
+            change_image("open", "../_shared/images/" + stim.object[1] + "_open.svg");
+
+            $(".object" + temp_counter + ".closed").show();
+            // console.log(".object" + temp_counter + ".closed");
+            $(".blanket" + temp_counter + ".blanket_up").show();
+            $(".label" + temp_counter).show();
+            $(".label" + temp_counter).text(stim.item_name[0].toUpperCase());
+
             temp_counter += 1;
         };
 
-        let agent_right_val = (360 - (stim.exemplar_num - 1)*73) + "px";
-        let speech_bubble_val = (10 + (stim.exemplar_num -1)*73) + "px";
-        let speech_tail_val = (475 - (stim.exemplar_num - 1)*73) + "px";
+        // Adjusts object display based on stimulus
+        $(".object1").css("right", "275px");
+        $(".object2").css("right", "202px");
+        $(".object3").css("right", "129px");
+        $(".object4").css("right", "56px");
+        $(".object").css("height", "85.5px");
+        $(".object").css("width", "auto");
+        // console.log("adjust all");
 
-        // Agent and speech bubble position adjust to active object
-        $("." + stim.agent + "_straight").css("right", agent_right_val);
-        $("." + stim.agent + "_point_r").css("right", agent_right_val);
-        $(".speech-bubble").css("left", speech_bubble_val);
-        $(".speech-bubble-tail").css("right", speech_tail_val);
-        $(".speech-bubble-outline").css("right", speech_tail_val);
+        if (stim.object[0] == "bird") {
+            // console.log("object adjusted as bird");
+            $(".object1.open").css("right", "219px");
+            $(".object2.open").css("right", "146px");
+            $(".object3.open").css("right", "73px");
+            $(".object4.open").css("right", "0px");
+        } else if (stim.object[0] == "flower") {
+            // console.log("object adjusted as flower");
+            $(".open").css("height", "95.5px");
+        }
 
-        if (stim.item_presentation == "accidental") { // Accidental item presentation
+        // Agent says "look at that"
+        if (stim.item_presentation == "lookit") {
 
-            poke_blanket_fall(stim).then(
+            let say_text = "";
+            if (stim.item_number == 1) {
+                say_text = "Look at that! There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
+            } else {
+                say_text = "Look at that! There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
+            };
+
+            agent_say(say_text, 3000).then(
                 function() {
-                    let deferred = new $.Deferred();
-
-                    agent_say("Oops!");
-
-                    setTimeout (function() {
-                        deferred.resolve();
-                    }, 1500);
-
-                    return deferred.promise();
-                }
-            ).then(
-                function() {
-                    $(".speech").hide();
-                    effect_remark_close(stim);
-                }
-            );
-
-        } else if (stim.item_presentation == "pedagogical") { // Pedagogical item presentation
-
-            agent_say("Let me show you something.", 2000).then(
-                function() {
-                    let deferred = new $.Deferred();
-
-                    poke_blanket_fall(stim);
-
-                    setTimeout (function() {
-                        deferred.resolve();
-                    }, 1200);
-
-                    return deferred.promise();
-                }
-            ).then(
-                function() {
-                    let deferred = new $.Deferred();
-
-                    agent_say("Watch this!");
-
-                    setTimeout (function() {
-                        deferred.resolve();
-                    }, 1500);
-
-                    return deferred.promise();
-                }
-            ).then(
-                function() {
-                    $(".speech").hide();
-                    effect_remark_close(stim);
+                    $(".continue_button1").show();
                 }
             );
+
+        // Trial trial
+        } else {
+
+            let agent_right_val = (360 - (stim.exemplar_num - 1)*73) + "px";
+            let speech_tail_val = (475 - (stim.exemplar_num - 1)*73) + "px";
+
+            // Previously shown objects are still displayed
+            let temp_counter = 1;
+            while (temp_counter < stim.exemplar_num) {
+                change_image("closed", "../_shared/images/" + stim.object[1] + "_closed.svg");
+                $(".blanket" + temp_counter + ".blanket_up").hide();
+                $(".blanket" + temp_counter + ".blanket_down").show();
+                $(".label" + temp_counter).hide();
+                temp_counter += 1;
+            };
+
+            // Agent and speech bubble position adjust to active object
+            $("." + stim.agent + "_straight").css("right", agent_right_val);
+            $("." + stim.agent + "_point_r").css("right", agent_right_val);
+            $(".speech-bubble-outline").css("right", speech_tail_val);
+            $(".speech-bubble-tail").css("right", speech_tail_val);
+
+           
+            if (stim.item_presentation == "generic") {
+                
+                let say_text = "I have something to tell you: " + stim.item_name[1];
+
+                if (stim.object[0] == "artifact") {
+                    say_text += " squeak";
+                } else {
+                    say_text += " have " + stim.object[2];
+                }
+
+                agent_say(say_text + ".", 3000).then(
+                    // Continues to next
+                    function() {
+                        $(".continue_button1").show();
+                    }
+                );
+
+            } else if (stim.item_presentation == "accidental") {
+                animation(stim);
+            } else {
+                $(".speech-bubble").show();
+                
+                let say_text = "I have something to show you";
+
+                if (stim.item_presentation == "gen+ped") {
+                    say_text += ": " + stim.item_name[1];
+
+                    if (stim.object[0] == "artifact") {
+                        say_text += " squeak.";
+                    } else {
+                        say_text += " have " + stim.object[2] + ".";
+                    }
+                } else {
+                    say_text += ". Watch this!"
+                }
+
+                agent_say(say_text, 3000).then(
+                    function() {
+                        animation(stim);
+                    }
+                );
+            }
         }
     }
 }
@@ -514,11 +480,11 @@ function make_slides(f) {
         present_handle : function(stim) {
             this.stim = stim;
 
-            console.log(this.stim);
-            run_trial(this.stim, this);
+            // console.log(this.stim);
+            run_trial(this.stim);
 
             // Capture user response (prediction)
-            if (this.stim.type == "response") {
+            if ((this.stim.type != "greeting") && (this.stim.type != "trial")) {
                 $(".agent").hide();
                 $(".object").hide();
                 $(".error").hide();
@@ -568,11 +534,11 @@ function make_slides(f) {
         present_handle : function(stim) {
             this.stim = stim;
 
-            console.log(this.stim);
-            run_trial(this.stim, this);
+            // console.log(this.stim);
+            run_trial(this.stim);
 
             // Capture user response (prediction)
-            if (this.stim.type == "response") {
+            if ((this.stim.type != "greeting") && (this.stim.type != "trial")) {
                 $(".agent").hide();
                 $(".object").hide();
                 $(".error").hide();
@@ -622,11 +588,11 @@ function make_slides(f) {
         present_handle : function(stim) {
             this.stim = stim;
 
-            console.log(this.stim);
-            run_trial(this.stim, this);
+            // console.log(this.stim);
+            run_trial(this.stim);
 
             // Capture user response (prediction)
-            if (this.stim.type == "response") {
+            if ((this.stim.type != "greeting") && (this.stim.type != "trial")) {
                 $(".agent").hide();
                 $(".object").hide();
                 $(".error").hide();
@@ -757,7 +723,7 @@ function init() {
         // "i0",
         // "botcaptcha",
         // "sound_check",
-        "introduction",
+        // "introduction",
         "trials1",
         "trials2",
         "trials3",
@@ -769,13 +735,11 @@ function init() {
     exp.trials1_data = [
         {
             type: "greeting",
-            item_presentation: item_presentation[0],
             background: back[0],
             agent: agents[0]
-        },
-        {
-            type: "lookit",
-            item_presentation: item_presentation[0],
+        }, {
+            type: "trial",
+            item_presentation: "lookit",
             agent: agents[0],
             object: objects[0],
             item_name: item_name[0],
@@ -798,7 +762,7 @@ function init() {
         )
     ]);
 
-    while (temp_counter < item_number[0] + 1) {
+    while ((temp_counter < item_number[0] + 1) && (item_presentation[0] != "generic")) {
         exp.trials1_data = exp.trials1_data.concat([ 
             _.extend(
                 {
@@ -834,13 +798,11 @@ function init() {
     exp.trials2_data = [
         {
             type: "greeting",
-            item_presentation: item_presentation[0],
             background: back[1],
             agent: agents[1]
-        },
-        {
-            type: "lookit",
-            item_presentation: item_presentation[0],
+        }, {
+            type: "trial",
+            item_presentation: "lookit",
             agent: agents[1],
             object: objects[1],
             item_name: item_name[1],
@@ -863,7 +825,7 @@ function init() {
         )
     ]);
 
-    while (temp_counter < item_number[0] + 1) {
+    while ((temp_counter < item_number[0] + 1) && (item_presentation[0] != "generic")) {
         exp.trials2_data = exp.trials2_data.concat([ 
             _.extend(
                 {
@@ -899,13 +861,11 @@ function init() {
     exp.trials3_data = [
         {
             type: "greeting",
-            item_presentation: item_presentation[0],
             background: back[2],
             agent: agents[2]
-        },
-        {
-            type: "lookit",
-            item_presentation: item_presentation[0],
+        }, {
+            type: "trial",
+            item_presentation: "lookit",
             agent: agents[2],
             object: objects[2],
             item_name: item_name[2],
@@ -928,7 +888,7 @@ function init() {
         )
     ]);
 
-    while (temp_counter < item_number[0] + 1) {
+    while ((temp_counter < item_number[0] + 1) && (item_presentation[0] != "generic")) {
         exp.trials3_data = exp.trials3_data.concat([ 
             _.extend(
                 {
