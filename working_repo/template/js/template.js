@@ -1,6 +1,7 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
+var speakers =          shuffle(["mh", "teresa"]);
 
 var artifacts =         shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           shuffle([ ["flower", "flower01", "purple petals"] ]);
@@ -196,7 +197,7 @@ function effect_remark_close(stim) {
                 }
             }
 
-            remark = new Audio("../_shared/audio/mh_recordings/" + audio_file_name + ".mp3");
+            remark = new Audio("../_shared/audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
             remark.play();
 
             agent_say(say_text, delay_time);
@@ -256,18 +257,19 @@ function run_trial(stim, exp_this) {
         $(".speech-bubble").css("left", "10px");
         $(".speech-bubble-tail, .speech-bubble-outline").css("right", "475px");
         
+        // Greeting text and audio (under 2000 ms)
         let greeting = "";
         if (stim.item_presentation == "pedagogical") {
             greeting += "Hello! I've been here for a while.";
-            hello = new Audio("../_shared/audio/mh_recordings/hello_ive_been_here.mp3");
+            hello = new Audio("../_shared/audio/" + stim.speaker + "_recordings/hello_ive_been_here.mp3");
             hello.play();
         } else if (stim.item_presentation == "accidental") {
             greeting += "Hello! I just arrived here.";
-            hello = new Audio("../_shared/audio/mh_recordings/hello_i_just_arrived.mp3");
+            hello = new Audio("../_shared/audio/" + stim.speaker + "_recordings/hello_i_just_arrived.mp3");
             hello.play();
         }
 
-        agent_say(greeting).then(
+        agent_say(greeting, 2250).then(
             function() {
                 $(".continue_button1").show();
             }
@@ -283,15 +285,15 @@ function run_trial(stim, exp_this) {
 
         if (stim.item_number > 1) {
             lookit = "There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
-            there_on_table = new Audio("../_shared/audio/mh_recordings/there_are_" + stim.item_number + "_" + stim.item_name[1] + ".mp3");
+            there_on_table = new Audio("../_shared/audio/" + stim.speaker + "_recordings/there_are_" + stim.item_number + "_" + stim.item_name[1] + ".mp3");
         } else {
             lookit = "There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
-            there_on_table = new Audio("../_shared/audio/mh_recordings/there_is_" + stim.item_number + "_" + stim.item_name[0] + ".mp3");
+            there_on_table = new Audio("../_shared/audio/" + stim.speaker + "_recordings/there_is_" + stim.item_number + "_" + stim.item_name[0] + ".mp3");
         }
 
         if (stim.item_presentation == "accidental") {
             lookit = "Oh! Look at that! " + lookit;
-            oh_look = new Audio("../_shared/audio/mh_recordings/oh_look_at_that.mp3");
+            oh_look = new Audio("../_shared/audio/" + stim.speaker + "_recordings/oh_look_at_that.mp3");
             
             oh_look.play();
 
@@ -353,7 +355,7 @@ function run_trial(stim, exp_this) {
                     let deferred = new $.Deferred();
 
                     agent_say("Oops!");
-                    oops = new Audio("../_shared/audio/mh_recordings/oops.mp3");
+                    oops = new Audio("../_shared/audio/" + stim.speaker + "_recordings/oops.mp3");
                     oops.play();
 
                     setTimeout (function() {
@@ -371,7 +373,7 @@ function run_trial(stim, exp_this) {
 
         } else if (stim.item_presentation == "pedagogical") { // Pedagogical item presentation
 
-            show_you = new Audio("../_shared/audio/mh_recordings/let_me_show_you_something.mp3");
+            show_you = new Audio("../_shared/audio/" + stim.speaker + "_recordings/let_me_show_you_something.mp3");
             show_you.play();
 
             agent_say("Let me show you something.", 2000).then(
@@ -390,7 +392,7 @@ function run_trial(stim, exp_this) {
                 function() {
                     let deferred = new $.Deferred();
 
-                    watch = new Audio("../_shared/audio/mh_recordings/watch_this.mp3");
+                    watch = new Audio("../_shared/audio/" + stim.speaker + "_recordings/watch_this.mp3");
                     watch.play();
                     
                     agent_say("Watch this!");
@@ -812,7 +814,8 @@ function init() {
             type: "greeting",
             item_presentation: item_presentation[0],
             background: back[0],
-            agent: agents[0]
+            agent: agents[0],
+            speaker: speakers[0]
         },
         {
             type: "lookit",
@@ -821,24 +824,11 @@ function init() {
             object: objects[0],
             item_name: item_name[0],
             item_number: item_number[0],
+            speaker: speakers[0]
         }
     ];
 
-    let temp_counter = 2;
-    exp.trials1_data = exp.trials1_data.concat([ 
-        _.extend(
-            {
-                type: "trial",
-                item_presentation: item_presentation[0],
-                agent: agents[0],
-                object: objects[0],
-                item_name: item_name[0],
-                item_number: item_number[0],
-                exemplar_num: 1
-            }
-        )
-    ]);
-
+    let temp_counter = 1;
     while (temp_counter < item_number[0] + 1) {
         exp.trials1_data = exp.trials1_data.concat([ 
             _.extend(
@@ -849,7 +839,8 @@ function init() {
                     object: objects[0],
                     item_name: item_name[0],
                     item_number: item_number[0],
-                    exemplar_num: temp_counter
+                    exemplar_num: temp_counter,
+                    speaker: speakers[0]
                 }
             )
         ]);
@@ -861,12 +852,9 @@ function init() {
         _.extend(
             {
                 type: "response",
-                background: back[0],
-                agent: agents[0],
                 object: objects[0],
                 item_name: item_name[0],
                 item_number: item_number[0],
-                item_presentation: item_presentation[0],
             }
         )
     ]);
@@ -877,7 +865,8 @@ function init() {
             type: "greeting",
             item_presentation: item_presentation[0],
             background: back[1],
-            agent: agents[1]
+            agent: agents[1],
+            speaker: speakers[1]
         },
         {
             type: "lookit",
@@ -886,24 +875,11 @@ function init() {
             object: objects[1],
             item_name: item_name[1],
             item_number: item_number[0],
+            speaker: speakers[1]
         }
     ];
 
-    temp_counter = 2;
-    exp.trials2_data = exp.trials2_data.concat([ 
-        _.extend(
-            {
-                type: "trial",
-                item_presentation: item_presentation[0],
-                agent: agents[1],
-                object: objects[1],
-                item_name: item_name[1],
-                item_number: item_number[0],
-                exemplar_num: 1
-            }
-        )
-    ]);
-
+    temp_counter = 1;
     while (temp_counter < item_number[0] + 1) {
         exp.trials2_data = exp.trials2_data.concat([ 
             _.extend(
@@ -914,7 +890,8 @@ function init() {
                     object: objects[1],
                     item_name: item_name[1],
                     item_number: item_number[0],
-                    exemplar_num: temp_counter
+                    exemplar_num: temp_counter,
+                    speaker: speakers[1]
                 }
             )
         ]);
@@ -926,8 +903,6 @@ function init() {
         _.extend(
             {
                 type: "response",
-                background: back[1],
-                agent: agents[1],
                 object: objects[1],
                 item_name: item_name[1],
                 item_number: item_number[0],
@@ -942,7 +917,8 @@ function init() {
             type: "greeting",
             item_presentation: item_presentation[0],
             background: back[2],
-            agent: agents[2]
+            agent: agents[2],
+            speaker: speakers[2]
         },
         {
             type: "lookit",
@@ -951,24 +927,11 @@ function init() {
             object: objects[2],
             item_name: item_name[2],
             item_number: item_number[0],
+            speaker: speakers[2]
         }
     ];
 
-    temp_counter = 2;
-    exp.trials3_data = exp.trials3_data.concat([ 
-        _.extend(
-            {
-                type: "trial",
-                item_presentation: item_presentation[0],
-                agent: agents[2],
-                object: objects[2],
-                item_name: item_name[2],
-                item_number: item_number[0],
-                exemplar_num: 1
-            }
-        )
-    ]);
-
+    temp_counter = 1;
     while (temp_counter < item_number[0] + 1) {
         exp.trials3_data = exp.trials3_data.concat([ 
             _.extend(
@@ -979,7 +942,8 @@ function init() {
                     object: objects[2],
                     item_name: item_name[2],
                     item_number: item_number[0],
-                    exemplar_num: temp_counter
+                    exemplar_num: temp_counter,
+                    speaker: speakers[2]
                 }
             )
         ]);
@@ -991,8 +955,6 @@ function init() {
         _.extend(
             {
                 type: "response",
-                background: back[2],
-                agent: agents[2],
                 object: objects[2],
                 item_name: item_name[2],
                 item_number: item_number[0],
