@@ -1,7 +1,7 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
-var speakers =          shuffle(["mh", "teresa"]);
+var speakers =          shuffle(["mh", "teresa", "sophie"]);
 
 var artifacts =         shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           shuffle([ ["flower", "flower01", "purple petals"] ]);
@@ -60,7 +60,7 @@ function agent_poke_r(agent_class) {
     return deferred.promise();
 }
 
-function agent_say(display_text, duration=2000) {
+function agent_say(display_text, trial_number, duration=2000) {
     let deferred = new $.Deferred();
 
     $(".speech").show();
@@ -69,6 +69,15 @@ function agent_say(display_text, duration=2000) {
     setTimeout (function() {
         deferred.resolve();
     }, duration);
+
+    // Log data to MTurk
+    exp.trials_data_logged["subtrial" + trial_number]["spoken_text"] = exp.trials_data_logged[("subtrial" + trial_number)]["spoken_text"].concat([
+        {
+            text: display_text,
+            duration: duration
+        }
+    ]);
+    
 
     return deferred.promise();
 }
@@ -162,7 +171,7 @@ function effect(stim) {
     return deferred.promise();
 }
 
-function effect_remark_close(stim) {
+function effect_remark_close(stim, trial_number) {
     
     effect(stim).then(
 
@@ -200,7 +209,7 @@ function effect_remark_close(stim) {
             remark = new Audio("../_shared/audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
             remark.play();
 
-            agent_say(say_text, delay_time);
+            agent_say(say_text, trial_number, delay_time);
 
             setTimeout (function() {
                 deferred.resolve();
@@ -242,7 +251,7 @@ function effect_remark_close(stim) {
     );
 }
 
-function run_trial(stim, exp_this) {
+function run_trial(stim, trial_number, exp_this) {
 
     $("button").hide();
     $(".object, .error, .speech, .slider, .blanket, .label").hide();
@@ -269,7 +278,7 @@ function run_trial(stim, exp_this) {
             hello.play();
         }
 
-        agent_say(greeting, 2250).then(
+        agent_say(greeting, trial_number, 2250).then(
             function() {
                 $(".continue_button1").show();
             }
@@ -307,7 +316,7 @@ function run_trial(stim, exp_this) {
             there_on_table.play();
         }
 
-        agent_say(lookit, wait_time);
+        agent_say(lookit, trial_number, wait_time);
 
         setTimeout (function() {
             _stream.apply(exp_this);
@@ -354,7 +363,7 @@ function run_trial(stim, exp_this) {
                 function() {
                     let deferred = new $.Deferred();
 
-                    agent_say("Oops!");
+                    agent_say("Oops!", trial_number);
                     oops = new Audio("../_shared/audio/" + stim.speaker + "_recordings/oops.mp3");
                     oops.play();
 
@@ -367,7 +376,7 @@ function run_trial(stim, exp_this) {
             ).then(
                 function() {
                     $(".speech").hide();
-                    effect_remark_close(stim);
+                    effect_remark_close(stim, trial_number);
                 }
             );
 
@@ -376,7 +385,7 @@ function run_trial(stim, exp_this) {
             show_you = new Audio("../_shared/audio/" + stim.speaker + "_recordings/let_me_show_you_something.mp3");
             show_you.play();
 
-            agent_say("Let me show you something.", 2000).then(
+            agent_say("Let me show you something.", trial_number, 2000).then(
                 function() {
                     let deferred = new $.Deferred();
 
@@ -395,7 +404,7 @@ function run_trial(stim, exp_this) {
                     watch = new Audio("../_shared/audio/" + stim.speaker + "_recordings/watch_this.mp3");
                     watch.play();
                     
-                    agent_say("Watch this!");
+                    agent_say("Watch this!", trial_number);
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -406,7 +415,7 @@ function run_trial(stim, exp_this) {
             ).then(
                 function() {
                     $(".speech").hide();
-                    effect_remark_close(stim);
+                    effect_remark_close(stim, trial_number);
                 }
             );
         }
@@ -428,7 +437,11 @@ function make_slides(f) {
     slides.botcaptcha = slide({
         name : "botcaptcha",
         bot_trials : 0,
+        all_responses: [],
         start: function() {
+
+            exp.botcaptcha_startT = Date.now();
+
             $(".error").hide();
             // list of speaker names to be sampled from
             speaker = _.sample(["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles"]);
@@ -455,38 +468,47 @@ function make_slides(f) {
          button: function() {
             // get the participants' input
             bot_response = $("#botresponse").val();
-            // append data if response correct
+
             if (bot_response.toLowerCase() == "") {
                 $(".error_incorrect").hide();
                 $(".write_something").show();
-            } else if (bot_response.toLowerCase() == listener.toLowerCase()) {
-                /*
+            } else {
+                this.all_responses.push(bot_response);
+                if (bot_response.toLowerCase() == listener.toLowerCase()) {
+                
+                // Log data to MTurk
                 exp.catch_trials.push({
                     condition: "botcaptcha",
-                    n_fails: this.bot_trials,
-                    response: bot_response,
-                    bot_sentence: this.bot_utterance,
-                    bot_question: this.bot_question
+                    prompt: {
+                        info: this.bot_utterance,
+                        question: this.bot_question
+                    },
+                    response: {
+                        n_fails: this.bot_trials,
+                        all_responses: this.all_responses,
+                        time_in_seconds: (Date.now() - exp.botcaptcha_startT) / 1000
+                    }
                 });
-                */
+
                 exp.go();
                 // gives participant two more trials if the response was incorrect
-            } else {
-                this.bot_trials++;
-                $(".error").hide();
-                $(".error_incorrect").show();
-                if (this.bot_trials == 1) {
-                        $(".error_2more").show();
-                } else if (this.bot_trials == 2) {
-                        $(".error_1more").show();
                 } else {
-                    // if participant fails, they cannot proceed
-                        $(".error").hide();
-                        $("#sound_button").hide();
-                        $("#sound_test_button").hide();
-                        $(".progress").hide();
-                        $('#sound_response').prop("disabled", true);
-                        $(".error_final").show();
+                    this.bot_trials++;
+                    $(".error").hide();
+                    $(".error_incorrect").show();
+                    if (this.bot_trials == 1) {
+                            $(".error_2more").show();
+                    } else if (this.bot_trials == 2) {
+                            $(".error_1more").show();
+                    } else {
+                        // if participant fails, they cannot proceed
+                            $(".error").hide();
+                            $("#sound_button").hide();
+                            $("#sound_test_button").hide();
+                            $(".progress").hide();
+                            $('#sound_response').prop("disabled", true);
+                            $(".error_final").show();
+                    }
                 }
             }
         }
@@ -495,7 +517,9 @@ function make_slides(f) {
     slides.sound_check = slide({
         name: "sound_check",
         sound_trials: 0,
+        all_responses: [],
         start: function() {
+            exp.sound_startT = Date.now();
             exp.sound_word = _.sample(["tiger", "evergreen"]);
             exp.sound = new Audio("../_shared/audio/"+exp.sound_word+".mp3");
             $('.error').hide();
@@ -506,47 +530,59 @@ function make_slides(f) {
         button: function() {
             // get the participants' input
             sound_response = $("#sound_response").val();
-            // append data if response correct
             
             if (sound_response.toLowerCase() == "") {
                 $(".error_incorrect").hide();
                 $(".write_something").show();
-            } else if (sound_response.toLowerCase() == exp.sound_word) {
-                /* TO-DO: fix this MTurk data-pushing
+            } else {
+                this.all_responses.push(sound_response);
+                if (sound_response.toLowerCase() == exp.sound_word) {
+
+                // Log data to MTurk
                 exp.catch_trials.push({
                     condition: "sound_response",
-                    n_fails: this.bot_trials,
-                    response: bot_response,
-                    bot_sentence: this.bot_utterance,
-                    bot_question: this.bot_question
+                    prompt: {
+                        word: exp.sound_word,
+                        filename: exp.sound_word + ".mp3"
+                    },
+                    response: {
+                        n_fails: this.sound_trials,
+                        all_responses: this.all_responses,
+                        time_in_seconds: (Date.now() - exp.sound_startT) / 1000
+                    }
                 });
-                */
+
                 exp.go();
                 // gives participant two more trials if the response was incorrect
-            } else {
-                this.sound_trials++;
-                $(".error").hide();
-                $(".error_incorrect").show();
-                if (this.sound_trials == 1) {
-                        $(".error_2more").show();
-                } else if (this.sound_trials == 2) {
-                        $(".error_1more").show();
                 } else {
-                    // if participant fails, they cannot proceed
-                        $(".error").hide();
-                        $("#sound_button").hide();
-                        $("#sound_test_button").hide();
-                        $(".progress").hide();
-                        $('#sound_response').prop("disabled", true);
-                        $(".error_final").show();
-                };
+                    this.sound_trials++;
+                    $(".error").hide();
+                    $(".error_incorrect").show();
+                    if (this.sound_trials == 1) {
+                            $(".error_2more").show();
+                    } else if (this.sound_trials == 2) {
+                            $(".error_1more").show();
+                    } else {
+                        // if participant fails, they cannot proceed
+                            $(".error").hide();
+                            $("#sound_button").hide();
+                            $("#sound_test_button").hide();
+                            $(".progress").hide();
+                            $('#sound_response').prop("disabled", true);
+                            $(".error_final").show();
+                    };
+                }
             }
         }
     });
 
     slides.introduction = slide({
         name : "introduction",
+        start: function() {
+            exp.intro_startT = Date.now();
+        },
         button : function() {
+            exp.intro_endT = Date.now();
             exp.go(); //use exp.go() if and only if there is no "present" data.
         }
     });
@@ -554,11 +590,13 @@ function make_slides(f) {
     slides.trials1 = slide({
         name : "trials1",
         present: exp.trials1_data,
+        start: function() {
+            exp.trials1_startT = Date.now();
+        },
         present_handle : function(stim) {
             this.stim = stim;
 
-            console.log(this.stim);
-            run_trial(this.stim, this);
+            run_trial(this.stim, 1, this);
 
             // Capture user response (prediction)
             if (this.stim.type == "response") {
@@ -580,7 +618,7 @@ function make_slides(f) {
                 }
 
                 this.init_sliders();
-                exp.sliderPost = null;
+                exp.sliderPost1 = null;
 
                 $(".continue_button2").show();
             };
@@ -591,15 +629,17 @@ function make_slides(f) {
         },
 
         init_sliders: function() {
+            exp.trials1_slidersT = Date.now();
             utils.make_slider("#single_slider1", function(event, ui) {
-                exp.sliderPost = ui.value;
+                exp.sliderPost1 = ui.value;
             });
         },
 
         continue_button2 : function() {
-            if (exp.sliderPost == null) {
+            if (exp.sliderPost1 == null) {
                 $(".error").show();
             } else {
+                exp.trials1_endT = Date.now();
                 _stream.apply(this);      
             }
         }
@@ -608,11 +648,13 @@ function make_slides(f) {
     slides.trials2 = slide({
         name : "trials2",
         present: exp.trials2_data,
+        start: function() {
+            exp.trials2_startT = Date.now();
+        },
         present_handle : function(stim) {
             this.stim = stim;
 
-            console.log(this.stim);
-            run_trial(this.stim, this);
+            run_trial(this.stim, 2, this);
 
             // Capture user response (prediction)
             if (this.stim.type == "response") {
@@ -634,7 +676,7 @@ function make_slides(f) {
                 }
 
                 this.init_sliders();
-                exp.sliderPost = null;
+                exp.sliderPost2 = null;
 
                 $(".continue_button2").show();
             };
@@ -645,15 +687,17 @@ function make_slides(f) {
         },
 
         init_sliders: function() {
+            exp.trials2_slidersT = Date.now();
             utils.make_slider("#single_slider2", function(event, ui) {
-                exp.sliderPost = ui.value;
+                exp.sliderPost2 = ui.value;
             });
         },
 
         continue_button2 : function() {
-            if (exp.sliderPost == null) {
+            if (exp.sliderPost2 == null) {
                 $(".error").show();
             } else {
+                exp.trials2_endT = Date.now();
                 _stream.apply(this);      
             }
         }
@@ -662,11 +706,13 @@ function make_slides(f) {
     slides.trials3 = slide({
         name : "trials3",
         present: exp.trials3_data,
+        start: function() {
+            exp.trials3_startT = Date.now();
+        },
         present_handle : function(stim) {
             this.stim = stim;
 
-            console.log(this.stim);
-            run_trial(this.stim, this);
+            run_trial(this.stim, 3, this);
 
             // Capture user response (prediction)
             if (this.stim.type == "response") {
@@ -688,7 +734,7 @@ function make_slides(f) {
                 }
 
                 this.init_sliders();
-                exp.sliderPost = null;
+                exp.sliderPost3 = null;
 
                 $(".continue_button2").show();
             };
@@ -699,15 +745,17 @@ function make_slides(f) {
         },
 
         init_sliders: function() {
+            exp.trials3_slidersT = Date.now();
             utils.make_slider("#single_slider3", function(event, ui) {
-                exp.sliderPost = ui.value;
+                exp.sliderPost3 = ui.value;
             });
         },
 
         continue_button2 : function() {
-            if (exp.sliderPost == null) {
+            if (exp.sliderPost3 == null) {
                 $(".error").show();
             } else {
+                exp.trials3_endT = Date.now();
                 _stream.apply(this);      
             }
         }
@@ -739,15 +787,62 @@ function make_slides(f) {
         name : "thanks",
         start : function() {
             $("progress").hide();
-            exp.data= {
-                    "trials1" : exp.trials1_data,
-                    "trials2" : exp.trials2_data,
-                    "trials3" : exp.trials3_data,
-                    "catch_trials" : exp.catch_trials,
-                    "system" : exp.system,
-                    "condition" : exp.condition,
-                    "subject_information" : exp.subj_data,
-                    "time_in_minutes" : (Date.now() - exp.startT)/60000
+            
+            _.extend(exp.trials_data_logged["subtrial1"], 
+                {
+                    user_response: {
+                        in_trial: {
+                            time_in_seconds: (exp.trials1_slidersT - exp.trials1_startT) / 1000
+                        },
+                        slider_response: {
+                            response: exp.sliderPost1,
+                            time_in_seconds: (exp.trials1_endT - exp.trials1_slidersT) / 1000
+                        }
+                    }
+                }
+            );
+
+            _.extend(exp.trials_data_logged["subtrial2"], 
+                {
+                    user_response: {
+                        in_trial: {
+                            time_in_seconds: (exp.trials2_slidersT - exp.trials2_startT) / 1000
+                        },
+                        slider_response: {
+                            response: exp.sliderPost2,
+                            time_in_seconds: (exp.trials2_endT - exp.trials2_slidersT) / 1000
+                        }
+                    }
+                }
+            );
+
+            _.extend(exp.trials_data_logged["subtrial3"], 
+                {
+                    user_response: {
+                        in_trial: {
+                            time_in_seconds: (exp.trials3_slidersT - exp.trials3_startT) / 1000
+                        },
+                        slider_response: {
+                            response: exp.sliderPost3,
+                            time_in_seconds: (exp.trials3_endT - exp.trials3_slidersT) / 1000
+                        }
+                    }
+                }
+            );
+
+            exp.data = {
+                condition: exp.condition,
+                display_data: exp.trials_data_logged,
+                system: exp.system,
+                catch_trials: exp.catch_trials,
+                subject_information: exp.subj_data,
+                introduction: {
+                    time_in_seconds: (exp.intro_endT - exp.intro_startT) / 1000
+                },
+                total_time: {
+                    time_in_seconds: (Date.now() - exp.startT) / 1000
+                }
+                    
             };
             setTimeout(function() {turk.submit(exp.data);}, 1000);
         }
@@ -783,23 +878,25 @@ function init() {
             }
     })();
 
-    exp.trials1 = [];
     exp.catch_trials = [];
-    exp.condition = _.sample(["CONDITION 1", "condition 2"]); //can randomize between subject conditions here
+    exp.condition = {
+        item_presentation: item_presentation[0],
+        item_number: item_number[0]
+    }
     exp.system = {
-            Browser : BrowserDetect.browser,
-            OS : BrowserDetect.OS,
-            screenH: screen.height,
-            screenUH: exp.height,
-            screenW: screen.width,
-            screenUW: exp.width
-        };
+        Browser : BrowserDetect.browser,
+        OS : BrowserDetect.OS,
+        screenH: screen.height,
+        screenUH: exp.height,
+        screenW: screen.width,
+        screenUW: exp.width
+    };
 
     // Blocks of the experiment:
     exp.structure=[
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
+        "i0",
+        "botcaptcha",
+        "sound_check",
         "introduction",
         "trials1",
         "trials2",
@@ -808,7 +905,90 @@ function init() {
         "thanks"
     ];
 
-    // First trial
+    // Data to submit to MTurk
+    exp.trials_data_logged = 
+        
+        {
+            subtrial1: {
+                item_presentation: item_presentation[0],
+                agent: {
+                    name: agents[0],
+                    straight_filename: agents[0] + "_straight.png",
+                    point_r_filename: agents[0] + "_point_r.png"
+                },
+                object: {
+                    name: objects[0][0],
+                    property: objects[0][2],
+                    open_filename: objects[0][1] + "_open.svg",
+                    closed_filename: objects[0][1] + "_closed.svg"
+                },
+                item_name: {
+                    singular: item_name[0][0],
+                    plural: item_name[0][1]
+                },
+                item_number: item_number[0],
+                speaker: speakers[0],
+                background: {
+                    number: back[0],
+                    filename: "back" + back[0] + ".jpg"
+                },
+                spoken_text: []
+            },
+
+            subtrial2: {
+                item_presentation: item_presentation[0],
+                agent: {
+                    name: agents[1],
+                    straight_filename: agents[1] + "_straight.png",
+                    point_r_filename: agents[1] + "_point_r.png"
+                },
+                object: {
+                    name: objects[1][0],
+                    property: objects[1][2],
+                    open_filename: objects[1][1] + "_open.svg",
+                    closed_filename: objects[1][1] + "_closed.svg"
+                },
+                item_name: {
+                    singular: item_name[1][0],
+                    plural: item_name[1][1]
+                },
+                item_number: item_number[0],
+                speaker: speakers[1],
+                background: {
+                    number: back[1],
+                    filename: "back" + back[1] + ".jpg"
+                },
+                spoken_text: []
+            },
+
+            subtrial3: {
+                item_presentation: item_presentation[0],
+                agent: {
+                    name: agents[2],
+                    straight_filename: agents[2] + "_straight.png",
+                    point_r_filename: agents[2] + "_point_r.png"
+                },
+                object: {
+                    name: objects[2][0],
+                    property: objects[2][2],
+                    open_filename: objects[2][1] + "_open.svg",
+                    closed_filename: objects[2][1] + "_closed.svg"
+                },
+                item_name: {
+                    singular: item_name[2][0],
+                    plural: item_name[2][1]
+                },
+                item_number: item_number[0],
+                speaker: speakers[2],
+                background: {
+                    number: back[2],
+                    filename: "back" + back[2] + ".jpg"
+                },
+                spoken_text: []
+            }
+        };
+
+    // First trial; to run present_handle
     exp.trials1_data = [
         {
             type: "greeting",
@@ -854,7 +1034,7 @@ function init() {
                 type: "response",
                 object: objects[0],
                 item_name: item_name[0],
-                item_number: item_number[0],
+                item_number: item_number[0]
             }
         )
     ]);
@@ -906,7 +1086,7 @@ function init() {
                 object: objects[1],
                 item_name: item_name[1],
                 item_number: item_number[0],
-                item_presentation: item_presentation[0],
+                item_presentation: item_presentation[0]
             }
         )
     ]);
