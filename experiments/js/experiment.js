@@ -868,6 +868,7 @@ function init() {
     xhr.send();
     */
 
+    /* commented out for Sandbox testing purposes
     repeatWorker = false;
     (function(){
             var ut_id = "tg-2020-04-20-genex";
@@ -877,6 +878,7 @@ function init() {
                 alert("You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.");
             }
     })();
+    */
 
     exp.catch_trials = [];
     exp.condition = {
