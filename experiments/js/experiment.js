@@ -920,7 +920,7 @@ function init() {
                 },
                 object: {
                     name: objects[0][0],
-                    property: objects[0][2],
+                    property: Array(item_number[0]).fill(objects[0][2]),
                     open_filename: objects[0][1] + "_open.svg",
                     closed_filename: objects[0][1] + "_closed.svg"
                 },
@@ -946,7 +946,7 @@ function init() {
                 },
                 object: {
                     name: objects[1][0],
-                    property: objects[1][2],
+                    property: Array(item_number[0]).fill(objects[1][2]),
                     open_filename: objects[1][1] + "_open.svg",
                     closed_filename: objects[1][1] + "_closed.svg"
                 },
@@ -972,7 +972,7 @@ function init() {
                 },
                 object: {
                     name: objects[2][0],
-                    property: objects[2][2],
+                    property: Array(item_number[0]).fill(objects[2][2]),
                     open_filename: objects[2][1] + "_open.svg",
                     closed_filename: objects[2][1] + "_closed.svg"
                 },
