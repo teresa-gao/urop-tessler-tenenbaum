@@ -428,9 +428,6 @@ function make_slides(f) {
 
     slides.i0 = slide({
         name : "i0",
-        start: function() {
-            exp.startT = Date.now();
-        }
     });
 
     // simple language comprehension check to include at beginning of experiment
@@ -1159,6 +1156,7 @@ function init() {
             $("#mustaccept").show();
         } else {
             $("#start_button").click(function() {$("#mustaccept").show();});
+            exp.startT = Date.now();
             exp.go();
         }
     });
