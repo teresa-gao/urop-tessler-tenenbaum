@@ -1,7 +1,7 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
-var speakers =          shuffle(["mh", "teresa", "sophie"]);
+var speakers =          shuffle(["mh", "tg", "sb"]);
 
 var artifacts =         shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           shuffle([ ["flower", "flower01", "purple petals"] ]);
@@ -294,10 +294,10 @@ function run_trial(stim, trial_number, exp_this) {
 
         if (stim.item_number > 1) {
             lookit = "There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
-            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/there_are_" + stim.item_number + "_" + stim.item_name[1] + ".mp3");
+            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_number + "_" + stim.item_name[1] + ".mp3");
         } else {
             lookit = "There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
-            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/there_is_" + stim.item_number + "_" + stim.item_name[0] + ".mp3");
+            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_number + "_" + stim.item_name[0] + ".mp3");
         }
 
         if (stim.item_presentation == "accidental") {
