@@ -829,7 +829,7 @@ function make_slides(f) {
 
             exp.data = {
                 condition: exp.condition,
-                display_data: exp.trials_data_logged,
+                trials_data: exp.trials_data_logged,
                 system: exp.system,
                 catch_trials: exp.catch_trials,
                 subject_information: exp.subj_data,
