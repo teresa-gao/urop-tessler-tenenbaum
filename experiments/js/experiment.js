@@ -1,7 +1,7 @@
 // Experiment variables and randomization
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
-var speakers =          shuffle(["mh", "teresa", "sophie"]);
+var speakers =          shuffle(["mh", "tg", "sb"]);
 
 var artifacts =         shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           shuffle([ ["flower", "flower01", "purple petals"] ]);
@@ -294,10 +294,10 @@ function run_trial(stim, trial_number, exp_this) {
 
         if (stim.item_number > 1) {
             lookit = "There are " + stim.item_number + " " + stim.item_name[1] + " on the table.";
-            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/there_are_" + stim.item_number + "_" + stim.item_name[1] + ".mp3");
+            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_number + "_" + stim.item_name[1] + ".mp3");
         } else {
             lookit = "There is " + stim.item_number + " " + stim.item_name[0] + " on the table.";
-            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/there_is_" + stim.item_number + "_" + stim.item_name[0] + ".mp3");
+            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_number + "_" + stim.item_name[0] + ".mp3");
         }
 
         if (stim.item_presentation == "accidental") {
@@ -428,9 +428,6 @@ function make_slides(f) {
 
     slides.i0 = slide({
         name : "i0",
-        start: function() {
-            exp.startT = Date.now();
-        }
     });
 
     // simple language comprehension check to include at beginning of experiment
@@ -832,7 +829,7 @@ function make_slides(f) {
 
             exp.data = {
                 condition: exp.condition,
-                display_data: exp.trials_data_logged,
+                trials_data: exp.trials_data_logged,
                 system: exp.system,
                 catch_trials: exp.catch_trials,
                 subject_information: exp.subj_data,
@@ -868,15 +865,17 @@ function init() {
     xhr.send();
     */
 
+    /* commented out for Sandbox testing purposes
     repeatWorker = false;
     (function(){
-            var ut_id = "[INSERT uniqueTurkerID]";
+            var ut_id = "tg-2020-04-20-genex";
             if (UTWorkerLimitReached(ut_id)) {
                 $('.slide').empty();
                 repeatWorker = true;
                 alert("You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.");
             }
     })();
+    */
 
     exp.catch_trials = [];
     exp.condition = {
@@ -918,7 +917,7 @@ function init() {
                 },
                 object: {
                     name: objects[0][0],
-                    property: objects[0][2],
+                    property: Array(item_number[0]).fill(objects[0][2]),
                     open_filename: objects[0][1] + "_open.svg",
                     closed_filename: objects[0][1] + "_closed.svg"
                 },
@@ -944,7 +943,7 @@ function init() {
                 },
                 object: {
                     name: objects[1][0],
-                    property: objects[1][2],
+                    property: Array(item_number[0]).fill(objects[1][2]),
                     open_filename: objects[1][1] + "_open.svg",
                     closed_filename: objects[1][1] + "_closed.svg"
                 },
@@ -970,7 +969,7 @@ function init() {
                 },
                 object: {
                     name: objects[2][0],
-                    property: objects[2][2],
+                    property: Array(item_number[0]).fill(objects[2][2]),
                     open_filename: objects[2][1] + "_open.svg",
                     closed_filename: objects[2][1] + "_closed.svg"
                 },
@@ -1157,6 +1156,7 @@ function init() {
             $("#mustaccept").show();
         } else {
             $("#start_button").click(function() {$("#mustaccept").show();});
+            exp.startT = Date.now();
             exp.go();
         }
     });
