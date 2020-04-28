@@ -1,4 +1,6 @@
 // Experiment variables and randomization
+var total_trials_num =  3;
+
 var back =              shuffle([1,2,3,4,5,6,7,8,9,10]);
 var agents =            shuffle(["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"]); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width
 var speakers =          shuffle(["mh", "tg", "sb"]);
@@ -60,7 +62,7 @@ function agent_poke_r(agent_class) {
     return deferred.promise();
 }
 
-function agent_say(display_text, trial_number, duration=2000) {
+function agent_say(display_text, duration=2000) {
     let deferred = new $.Deferred();
 
     $(".speech").show();
@@ -69,15 +71,6 @@ function agent_say(display_text, trial_number, duration=2000) {
     setTimeout (function() {
         deferred.resolve();
     }, duration);
-
-    // Log data to MTurk
-    exp.trials_data_logged["subtrial" + trial_number]["spoken_text"] = exp.trials_data_logged[("subtrial" + trial_number)]["spoken_text"].concat([
-        {
-            text: display_text,
-            duration: duration
-        }
-    ]);
-    
 
     return deferred.promise();
 }
@@ -171,7 +164,7 @@ function effect(stim) {
     return deferred.promise();
 }
 
-function effect_remark_close(stim, trial_number) {
+function effect_remark_close(stim) {
     
     effect(stim).then(
 
@@ -209,7 +202,7 @@ function effect_remark_close(stim, trial_number) {
             remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
             remark.play();
 
-            agent_say(say_text, trial_number, delay_time);
+            agent_say(say_text, delay_time);
 
             setTimeout (function() {
                 deferred.resolve();
@@ -251,7 +244,7 @@ function effect_remark_close(stim, trial_number) {
     );
 }
 
-function run_trial(stim, trial_number, exp_this) {
+function run_trial(stim, exp_this) {
 
     $("button").hide();
     $(".object, .error, .speech, .slider, .blanket, .label").hide();
@@ -278,7 +271,7 @@ function run_trial(stim, trial_number, exp_this) {
             hello.play();
         }
 
-        agent_say(greeting, trial_number, 2250).then(
+        agent_say(greeting, 2250).then(
             function() {
                 $(".continue_button1").show();
             }
@@ -316,7 +309,7 @@ function run_trial(stim, trial_number, exp_this) {
             there_on_table.play();
         }
 
-        agent_say(lookit, trial_number, wait_time);
+        agent_say(lookit, wait_time);
 
         setTimeout (function() {
             _stream.apply(exp_this);
@@ -363,7 +356,7 @@ function run_trial(stim, trial_number, exp_this) {
                 function() {
                     let deferred = new $.Deferred();
 
-                    agent_say("Oops!", trial_number);
+                    agent_say("Oops!");
                     oops = new Audio("audio/" + stim.speaker + "_recordings/oops.mp3");
                     oops.play();
 
@@ -376,7 +369,7 @@ function run_trial(stim, trial_number, exp_this) {
             ).then(
                 function() {
                     $(".speech").hide();
-                    effect_remark_close(stim, trial_number);
+                    effect_remark_close(stim);
                 }
             );
 
@@ -385,7 +378,7 @@ function run_trial(stim, trial_number, exp_this) {
             show_you = new Audio("audio/" + stim.speaker + "_recordings/let_me_show_you_something.mp3");
             show_you.play();
 
-            agent_say("Let me show you something.", trial_number, 2000).then(
+            agent_say("Let me show you something.", 2000).then(
                 function() {
                     let deferred = new $.Deferred();
 
@@ -404,7 +397,7 @@ function run_trial(stim, trial_number, exp_this) {
                     watch = new Audio("audio/" + stim.speaker + "_recordings/watch_this.mp3");
                     watch.play();
                     
-                    agent_say("Watch this!", trial_number);
+                    agent_say("Watch this!");
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -415,7 +408,7 @@ function run_trial(stim, trial_number, exp_this) {
             ).then(
                 function() {
                     $(".speech").hide();
-                    effect_remark_close(stim, trial_number);
+                    effect_remark_close(stim);
                 }
             );
         }
@@ -476,15 +469,10 @@ function make_slides(f) {
                 // Log data to MTurk
                 exp.catch_trials.push({
                     condition: "botcaptcha",
-                    prompt: {
-                        info: this.bot_utterance,
-                        question: this.bot_question
-                    },
-                    response: {
-                        n_fails: this.bot_trials,
-                        all_responses: this.all_responses,
-                        time_in_seconds: (Date.now() - exp.botcaptcha_startT) / 1000
-                    }
+                    bot_prompt: this.bot_question,
+                    bot_num_fails: this.bot_trials,
+                    bot_responses: this.all_responses,
+                    bot_time_in_seconds: (Date.now() - exp.botcaptcha_startT) / 1000
                 });
 
                 exp.go();
@@ -538,15 +526,10 @@ function make_slides(f) {
                 // Log data to MTurk
                 exp.catch_trials.push({
                     condition: "sound_response",
-                    prompt: {
-                        word: exp.sound_word,
-                        filename: exp.sound_word + ".mp3"
-                    },
-                    response: {
-                        n_fails: this.sound_trials,
-                        all_responses: this.all_responses,
-                        time_in_seconds: (Date.now() - exp.sound_startT) / 1000
-                    }
+                    sound_prompt: exp.sound_word,
+                    sound_num_fails: this.sound_trials,
+                    sound_responses: this.all_responses,
+                    sound_time_in_seconds: (Date.now() - exp.sound_startT) / 1000
                 });
 
                 exp.go();
@@ -580,42 +563,43 @@ function make_slides(f) {
         },
         button : function() {
             exp.intro_endT = Date.now();
-            exp.go(); //use exp.go() if and only if there is no "present" data.
+
+            _.extend(exp.trials_data_streamlined[0],
+                {
+                    trial_num: 0, // Introduction
+                    intro_time_in_seconds: (exp.intro_endT - exp.intro_startT) / 1000
+                }
+            );
+
+            exp.go();
         }
     });
 
-    slides.trials1 = slide({
-        name : "trials1",
-        present: exp.trials1_data,
+    slides.trials = slide({
+        name : "trials",
+        present: exp.trials_data,
         start: function() {
-            exp.trials1_startT = Date.now();
+            exp.trials_startT = Date.now();
         },
         present_handle : function(stim) {
-            this.stim = stim;
 
-            run_trial(this.stim, 1, this);
+            this.stim = stim;
+            run_trial(this.stim, this);
 
             // Capture user response (prediction)
             if (this.stim.type == "response") {
-                $(".agent").hide();
-                $(".object").hide();
-                $(".error").hide();
-                $(".speech").hide();
-                $(".blanket").hide();
-                $(".label").hide();
-                $(".table").hide();
-                $(".background").hide();
+                $(".agent, .object, .error, .speech, .blanket, .label, .table, .background").hide();
 
                 $(".slider").show();
 
                 if (this.stim.object[0] == "artifact") {
                     $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
                 } else {
-                    $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + stim.object[2] + "?");
+                    $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + this.stim.object[2] + "?");
                 }
 
                 this.init_sliders();
-                exp.sliderPost1 = null;
+                exp.sliderPost = null;
 
                 $(".continue_button2").show();
             };
@@ -626,134 +610,28 @@ function make_slides(f) {
         },
 
         init_sliders: function() {
-            exp.trials1_slidersT = Date.now();
-            utils.make_slider("#single_slider1", function(event, ui) {
-                exp.sliderPost1 = ui.value;
+            exp.trials_slidersT = Date.now();
+            utils.make_slider("#single_slider", function(event, ui) {
+                exp.sliderPost = ui.value;
             });
         },
 
         continue_button2 : function() {
-            if (exp.sliderPost1 == null) {
+            if (exp.sliderPost == null) {
                 $(".error").show();
             } else {
-                exp.trials1_endT = Date.now();
-                _stream.apply(this);      
-            }
-        }
-    });
-    
-    slides.trials2 = slide({
-        name : "trials2",
-        present: exp.trials2_data,
-        start: function() {
-            exp.trials2_startT = Date.now();
-        },
-        present_handle : function(stim) {
-            this.stim = stim;
+                exp.trials_endT = Date.now();
 
-            run_trial(this.stim, 2, this);
+                _.extend(exp.trials_data_streamlined[this.stim.trial_num], 
+                    {
+                        trial_time_in_seconds: (exp.trials_slidersT - exp.trials_startT) / 1000,
+                        slider_response: exp.sliderPost,
+                        slider_time_in_seconds: (exp.trials_endT - exp.trials_slidersT) / 1000
+                    }
+                );
 
-            // Capture user response (prediction)
-            if (this.stim.type == "response") {
-                $(".agent").hide();
-                $(".object").hide();
-                $(".error").hide();
-                $(".speech").hide();
-                $(".blanket").hide();
-                $(".label").hide();
-                $(".table").hide();
-                $(".background").hide();
-
-                $(".slider").show();
-
-                if (this.stim.object[0] == "artifact") {
-                    $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
-                } else {
-                    $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + stim.object[2] + "?");
-                }
-
-                this.init_sliders();
-                exp.sliderPost2 = null;
-
-                $(".continue_button2").show();
-            };
-        },
-
-        continue_button1 : function() {
-            _stream.apply(this);
-        },
-
-        init_sliders: function() {
-            exp.trials2_slidersT = Date.now();
-            utils.make_slider("#single_slider2", function(event, ui) {
-                exp.sliderPost2 = ui.value;
-            });
-        },
-
-        continue_button2 : function() {
-            if (exp.sliderPost2 == null) {
-                $(".error").show();
-            } else {
-                exp.trials2_endT = Date.now();
-                _stream.apply(this);      
-            }
-        }
-    });
-
-    slides.trials3 = slide({
-        name : "trials3",
-        present: exp.trials3_data,
-        start: function() {
-            exp.trials3_startT = Date.now();
-        },
-        present_handle : function(stim) {
-            this.stim = stim;
-
-            run_trial(this.stim, 3, this);
-
-            // Capture user response (prediction)
-            if (this.stim.type == "response") {
-                $(".agent").hide();
-                $(".object").hide();
-                $(".error").hide();
-                $(".speech").hide();
-                $(".blanket").hide();
-                $(".label").hide();
-                $(".table").hide();
-                $(".background").hide();
-
-                $(".slider").show();
-
-                if (this.stim.object[0] == "artifact") {
-                    $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
-                } else {
-                    $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + stim.object[2] + "?");
-                }
-
-                this.init_sliders();
-                exp.sliderPost3 = null;
-
-                $(".continue_button2").show();
-            };
-        },
-
-        continue_button1 : function() {
-            _stream.apply(this);
-        },
-
-        init_sliders: function() {
-            exp.trials3_slidersT = Date.now();
-            utils.make_slider("#single_slider3", function(event, ui) {
-                exp.sliderPost3 = ui.value;
-            });
-        },
-
-        continue_button2 : function() {
-            if (exp.sliderPost3 == null) {
-                $(".error").show();
-            } else {
-                exp.trials3_endT = Date.now();
-                _stream.apply(this);      
+                _stream.apply(this);
+                exp.trials_startT = Date.now();
             }
         }
     });
@@ -784,58 +662,13 @@ function make_slides(f) {
         name : "thanks",
         start : function() {
             $("progress").hide();
-            
-            _.extend(exp.trials_data_logged["subtrial1"], 
-                {
-                    user_response: {
-                        in_trial: {
-                            time_in_seconds: (exp.trials1_slidersT - exp.trials1_startT) / 1000
-                        },
-                        slider_response: {
-                            response: exp.sliderPost1,
-                            time_in_seconds: (exp.trials1_endT - exp.trials1_slidersT) / 1000
-                        }
-                    }
-                }
-            );
-
-            _.extend(exp.trials_data_logged["subtrial2"], 
-                {
-                    user_response: {
-                        in_trial: {
-                            time_in_seconds: (exp.trials2_slidersT - exp.trials2_startT) / 1000
-                        },
-                        slider_response: {
-                            response: exp.sliderPost2,
-                            time_in_seconds: (exp.trials2_endT - exp.trials2_slidersT) / 1000
-                        }
-                    }
-                }
-            );
-
-            _.extend(exp.trials_data_logged["subtrial3"], 
-                {
-                    user_response: {
-                        in_trial: {
-                            time_in_seconds: (exp.trials3_slidersT - exp.trials3_startT) / 1000
-                        },
-                        slider_response: {
-                            response: exp.sliderPost3,
-                            time_in_seconds: (exp.trials3_endT - exp.trials3_slidersT) / 1000
-                        }
-                    }
-                }
-            );
 
             exp.data = {
                 condition: exp.condition,
-                trials_data: exp.trials_data_logged,
+                trials_data: exp.trials_data_streamlined,
                 system: exp.system,
                 catch_trials: exp.catch_trials,
                 subject_information: exp.subj_data,
-                introduction: {
-                    time_in_seconds: (exp.intro_endT - exp.intro_startT) / 1000
-                },
                 total_time: {
                     time_in_seconds: (Date.now() - exp.startT) / 1000
                 }
@@ -897,250 +730,96 @@ function init() {
         "botcaptcha",
         "sound_check",
         "introduction",
-        "trials1",
-        "trials2",
-        "trials3",
+        "trials",
         "subj_info",
         "thanks"
     ];
 
-    // Data to submit to MTurk
-    exp.trials_data_logged = 
-        
-        {
-            subtrial1: {
-                item_presentation: item_presentation[0],
-                agent: {
-                    name: agents[0],
-                    straight_filename: agents[0] + "_straight.png",
-                    point_r_filename: agents[0] + "_point_r.png"
-                },
-                object: {
-                    name: objects[0][0],
-                    property: Array(item_number[0]).fill(objects[0][2]),
-                    open_filename: objects[0][1] + "_open.svg",
-                    closed_filename: objects[0][1] + "_closed.svg"
-                },
-                item_name: {
-                    singular: item_name[0][0],
-                    plural: item_name[0][1]
-                },
-                item_number: item_number[0],
-                speaker: speakers[0],
-                background: {
-                    number: back[0],
-                    filename: "back" + back[0] + ".jpg"
-                },
-                spoken_text: []
-            },
+    // Data used to run present_handle
+    exp.trials_data = [];
 
-            subtrial2: {
-                item_presentation: item_presentation[0],
-                agent: {
-                    name: agents[1],
-                    straight_filename: agents[1] + "_straight.png",
-                    point_r_filename: agents[1] + "_point_r.png"
-                },
-                object: {
-                    name: objects[1][0],
-                    property: Array(item_number[0]).fill(objects[1][2]),
-                    open_filename: objects[1][1] + "_open.svg",
-                    closed_filename: objects[1][1] + "_closed.svg"
-                },
-                item_name: {
-                    singular: item_name[1][0],
-                    plural: item_name[1][1]
-                },
-                item_number: item_number[0],
-                speaker: speakers[1],
-                background: {
-                    number: back[1],
-                    filename: "back" + back[1] + ".jpg"
-                },
-                spoken_text: []
-            },
+    // Data to submit to MTurk — streamlined and flattened
+    exp.trials_data_streamlined = [{}];
 
-            subtrial3: {
-                item_presentation: item_presentation[0],
-                agent: {
-                    name: agents[2],
-                    straight_filename: agents[2] + "_straight.png",
-                    point_r_filename: agents[2] + "_point_r.png"
-                },
-                object: {
-                    name: objects[2][0],
-                    property: Array(item_number[0]).fill(objects[2][2]),
-                    open_filename: objects[2][1] + "_open.svg",
-                    closed_filename: objects[2][1] + "_closed.svg"
-                },
-                item_name: {
-                    singular: item_name[2][0],
-                    plural: item_name[2][1]
-                },
-                item_number: item_number[0],
-                speaker: speakers[2],
-                background: {
-                    number: back[2],
-                    filename: "back" + back[2] + ".jpg"
-                },
-                spoken_text: []
-            }
-        };
+    let big_temp_counter = 0;
+    while (big_temp_counter < total_trials_num) {
 
-    // First trial; to run present_handle
-    exp.trials1_data = [
-        {
-            type: "greeting",
-            item_presentation: item_presentation[0],
-            background: back[0],
-            agent: agents[0],
-            speaker: speakers[0]
-        },
-        {
-            type: "lookit",
-            item_presentation: item_presentation[0],
-            agent: agents[0],
-            object: objects[0],
-            item_name: item_name[0],
-            item_number: item_number[0],
-            speaker: speakers[0]
-        }
-    ];
-
-    let temp_counter = 1;
-    while (temp_counter < item_number[0] + 1) {
-        exp.trials1_data = exp.trials1_data.concat([ 
+        exp.trials_data = exp.trials_data.concat([ 
             _.extend(
                 {
-                    type: "trial",
+                    trial_num: big_temp_counter + 1,
+                    type: "greeting",
                     item_presentation: item_presentation[0],
-                    agent: agents[0],
-                    object: objects[0],
-                    item_name: item_name[0],
+                    background: back[big_temp_counter],
+                    agent: agents[big_temp_counter],
+                    speaker: speakers[big_temp_counter]
+                }
+            ),
+            _.extend(
+                {
+                    trial_num: big_temp_counter + 1,
+                    type: "lookit",
+                    item_presentation: item_presentation[0],
+                    agent: agents[big_temp_counter],
+                    object: objects[big_temp_counter],
+                    item_name: item_name[big_temp_counter],
                     item_number: item_number[0],
-                    exemplar_num: temp_counter,
-                    speaker: speakers[0]
+                    speaker: speakers[big_temp_counter]
                 }
             )
         ]);
 
-        temp_counter += 1;
-    }
+        let temp_counter = 1;
+        while (temp_counter < item_number[0] + 1) {
 
-    exp.trials1_data = exp.trials1_data.concat([
-        _.extend(
-            {
-                type: "response",
-                object: objects[0],
-                item_name: item_name[0],
-                item_number: item_number[0]
-            }
-        )
-    ]);
+            exp.trials_data = exp.trials_data.concat([ 
+                _.extend(
+                    {
+                        trial_num: big_temp_counter + 1,
+                        type: "trial",
+                        item_presentation: item_presentation[0],
+                        agent: agents[big_temp_counter],
+                        object: objects[big_temp_counter],
+                        item_name: item_name[big_temp_counter],
+                        item_number: item_number[0],
+                        speaker: speakers[big_temp_counter],
+                        exemplar_num: temp_counter
+                    }
+                )
+            ]);
 
-    // Second trial
-    exp.trials2_data = [
-        {
-            type: "greeting",
-            item_presentation: item_presentation[0],
-            background: back[1],
-            agent: agents[1],
-            speaker: speakers[1]
-        },
-        {
-            type: "lookit",
-            item_presentation: item_presentation[0],
-            agent: agents[1],
-            object: objects[1],
-            item_name: item_name[1],
-            item_number: item_number[0],
-            speaker: speakers[1]
+            temp_counter += 1;
         }
-    ];
 
-    temp_counter = 1;
-    while (temp_counter < item_number[0] + 1) {
-        exp.trials2_data = exp.trials2_data.concat([ 
+        exp.trials_data_streamlined = exp.trials_data_streamlined.concat([
             _.extend(
                 {
-                    type: "trial",
+                    trial_num: big_temp_counter + 1,
                     item_presentation: item_presentation[0],
-                    agent: agents[1],
-                    object: objects[1],
-                    item_name: item_name[1],
+                    agent: agents[big_temp_counter],
+                    object: objects[big_temp_counter][0],
+                    item_name: item_name[big_temp_counter][0],
                     item_number: item_number[0],
-                    exemplar_num: temp_counter,
-                    speaker: speakers[1]
+                    speaker: speakers[big_temp_counter],
+                    background: back[big_temp_counter]
                 }
             )
         ]);
 
-        temp_counter += 1;
-    }
-
-    exp.trials2_data = exp.trials2_data.concat([
-        _.extend(
-            {
-                type: "response",
-                object: objects[1],
-                item_name: item_name[1],
-                item_number: item_number[0],
-                item_presentation: item_presentation[0]
-            }
-        )
-    ]);
-
-    // Third trial
-    exp.trials3_data = [
-        {
-            type: "greeting",
-            item_presentation: item_presentation[0],
-            background: back[2],
-            agent: agents[2],
-            speaker: speakers[2]
-        },
-        {
-            type: "lookit",
-            item_presentation: item_presentation[0],
-            agent: agents[2],
-            object: objects[2],
-            item_name: item_name[2],
-            item_number: item_number[0],
-            speaker: speakers[2]
-        }
-    ];
-
-    temp_counter = 1;
-    while (temp_counter < item_number[0] + 1) {
-        exp.trials3_data = exp.trials3_data.concat([ 
+        exp.trials_data = exp.trials_data.concat([
             _.extend(
                 {
-                    type: "trial",
-                    item_presentation: item_presentation[0],
-                    agent: agents[2],
-                    object: objects[2],
-                    item_name: item_name[2],
-                    item_number: item_number[0],
-                    exemplar_num: temp_counter,
-                    speaker: speakers[2]
+                    trial_num: big_temp_counter + 1,
+                    type: "response",
+                    object: objects[big_temp_counter],
+                    item_name: item_name[big_temp_counter],
+                    item_number: item_number[0]
                 }
             )
         ]);
 
-        temp_counter += 1;
+        big_temp_counter += 1;
     }
-
-    exp.trials3_data = exp.trials3_data.concat([
-        _.extend(
-            {
-                type: "response",
-                object: objects[2],
-                item_name: item_name[2],
-                item_number: item_number[0],
-                item_presentation: item_presentation[0],
-            }
-        )
-    ]);
 
     //make corresponding slides:
     exp.slides = make_slides(exp);
