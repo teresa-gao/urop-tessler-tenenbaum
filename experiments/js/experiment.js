@@ -505,7 +505,7 @@ function make_slides(f) {
         all_responses: [],
         start: function() {
             exp.sound_startT = Date.now();
-            exp.sound_word = _.sample(["tiger", "evergreen"]);
+            exp.sound_word = _.sample(["tiger", "shadow"]);
             exp.sound = new Audio("audio/"+exp.sound_word+".mp3");
             $('.error').hide();
         },
