@@ -469,10 +469,10 @@ function make_slides(f) {
                 // Log data to MTurk
                 exp.catch_trials.push({
                     condition: "botcaptcha",
-                    bot_prompt: this.bot_question,
-                    bot_num_fails: this.bot_trials,
-                    bot_responses: this.all_responses,
-                    bot_time_in_seconds: (Date.now() - exp.botcaptcha_startT) / 1000
+                    correct_answer: listener,
+                    num_fails: this.bot_trials,
+                    responses: this.all_responses,
+                    time_in_seconds: (Date.now() - exp.botcaptcha_startT) / 1000
                 });
 
                 exp.go();
@@ -526,10 +526,10 @@ function make_slides(f) {
                 // Log data to MTurk
                 exp.catch_trials.push({
                     condition: "sound_response",
-                    sound_prompt: exp.sound_word,
-                    sound_num_fails: this.sound_trials,
-                    sound_responses: this.all_responses,
-                    sound_time_in_seconds: (Date.now() - exp.sound_startT) / 1000
+                    correct_answer: exp.sound_word,
+                    num_fails: this.sound_trials,
+                    responses: this.all_responses,
+                    time_in_seconds: (Date.now() - exp.sound_startT) / 1000
                 });
 
                 exp.go();

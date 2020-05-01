@@ -9,10 +9,17 @@ folder_path = "../mturk/sandbox-results/"
 files <- dir(folder_path)
 
 # Extract trials_data from each of the MTurk files
+catch_df <- data.frame()
 combined_df <- data.frame()
 for(file_name in files) {
   full_file_name <- paste(path, file_name, sep="/")
   test_file <- fromJSON(full_file_name)
+  
+  # For catch_trials
+  file_catch_data <- test_file$answers$catch_trials
+  catch_df <- rbind(catch_df, file_catch_data)
+  
+  # For trials_data
   file_trials_data <- test_file$answers$trials_data
   combined_df <- rbind(combined_df, file_trials_data)
 }

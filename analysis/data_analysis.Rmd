@@ -1,18 +1,24 @@
 ---
-title: "R Notebook"
+title: "Genex Analysis"
+author: "Teresa Gao"
+date: "1 May 2020"
 output: html_notebook
 ---
 
-This is an [R Markdown](http://rmarkdown.rstudio.com) Notebook. When you execute code within the notebook, the results appear beneath the code. 
+# Setup
 
-Try executing this chunk by clicking the *Run* button within the chunk or by placing your cursor inside it and pressing *Ctrl+Shift+Enter*. 
+Go to Session > Set Working Directory > To Source File Location. This ensures that we can find and access the files we need!
 
-```{r}
-plot(cars)
+The code below imports the experimental data, as extracted by data_extraction.R.
+
+```{r Import data (CSV)}
+trials_data <- read.csv("combined_trials_data.csv")
 ```
 
-Add a new chunk by clicking the *Insert Chunk* button on the toolbar or by pressing *Ctrl+Alt+I*.
+# Visualization
 
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
+Below are visuals plotting user slider response for the estimated probability of a future instance of the class having the given property, grouped by the number of items used in the trial.
 
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
+```{r Create histogram}
+plot(trials_data$item_num, trials_data$slider_response)
+```
