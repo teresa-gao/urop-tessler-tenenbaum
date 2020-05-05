@@ -628,6 +628,14 @@ function make_slides(f) {
             } else {
                 this.trials_endT = Date.now();
 
+                _.extend(exp.trials_stimuli_full[this.stim.trial_num], 
+                    {
+                        trial_time_in_seconds: (this.trials_slidersT - this.trials_startT) / 1000,
+                        slider_response: exp.sliderPost,
+                        slider_time_in_seconds: (this.trials_endT - this.trials_slidersT) / 1000
+                    }
+                );
+
                 _.extend(exp.trials_stimuli_streamlined[this.stim.trial_num], 
                     {
                         trial_time_in_seconds: (this.trials_slidersT - this.trials_startT) / 1000,
@@ -705,17 +713,15 @@ function init() {
     xhr.send();
     */
 
-    /* commented out for Sandbox testing purposes
     repeatWorker = false;
     (function(){
-            var ut_id = "tg-2020-04-20-genex";
+            var ut_id = "tg-2020-05-04-genex";
             if (UTWorkerLimitReached(ut_id)) {
                 $('.slide').empty();
                 repeatWorker = true;
                 alert("You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.");
             }
     })();
-    */
 
     exp.catch_trials = [];
     exp.condition = {
