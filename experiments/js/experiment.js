@@ -470,7 +470,7 @@ function make_slides(f) {
                     correct_answer: listener,
                     num_fails: this.bot_trials,
                     responses: this.all_responses,
-                    time_in_seconds: (Date.now() - this.botcaptcha_startT) / 1000
+                    trial_time_in_seconds: (Date.now() - this.botcaptcha_startT) / 1000
                 });
 
                 exp.go();
@@ -524,7 +524,7 @@ function make_slides(f) {
                     correct_answer: this.sound_word,
                     num_fails: this.sound_trials,
                     responses: this.all_responses,
-                    time_in_seconds: (Date.now() - this.sound_startT) / 1000
+                    trial_time_in_seconds: (Date.now() - this.sound_startT) / 1000
                 });
 
                 exp.go();
@@ -715,7 +715,7 @@ function init() {
 
     repeatWorker = false;
     (function(){
-            var ut_id = "tg-2020-05-04-genex";
+            var ut_id = "tg-2020-05-05-genex";
             if (UTWorkerLimitReached(ut_id)) {
                 $('.slide').empty();
                 repeatWorker = true;
