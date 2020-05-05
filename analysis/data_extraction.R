@@ -5,8 +5,8 @@ library("jsonlite")
 library("tidyverse")
 library("plyr")
 
-# Extract all file names in the MTurk sandbox-results directory
-folder_path = "../mturk/sandbox-results/"
+# Extract all file names in the MTurk production-results directory
+folder_path = "../mturk/production-results/"
 files <- dir(folder_path)
 
 # Extract trials_data from each of the MTurk files
@@ -36,7 +36,6 @@ for(file_name in files) {
 
 # Exclude the intro "trial"
 combined_df = combined_df %>% filter(trial_num != 0)
-combined_df = subset(combined_df, select = -c(intro_time_in_seconds))
 
 # Write data to CSV file, for use in data_analysis.Rmd
 write.csv(catch_df, "catch_trials_data.csv")
