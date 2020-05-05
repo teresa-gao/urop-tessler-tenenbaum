@@ -11,7 +11,7 @@ var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]);
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
-var n_examples =       _.shuffle([1, 2, 3, 4]);
+var n_examples =        [1]; // Should be "_.shuffle([1, 2, 3, 4]);" for future, non-pilot trials
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 
 function change_image(class_name, source) {
@@ -466,7 +466,7 @@ function make_slides(f) {
                 
                 // Log data to MTurk
                 exp.catch_trials.push({
-                    condition: "botcaptcha",
+                    trial_type: "botcaptcha",
                     correct_answer: listener,
                     num_fails: this.bot_trials,
                     responses: this.all_responses,
@@ -520,7 +520,7 @@ function make_slides(f) {
 
                 // Log data to MTurk
                 exp.catch_trials.push({
-                    condition: "sound_response",
+                    trial_type: "sound_response",
                     correct_answer: this.sound_word,
                     num_fails: this.sound_trials,
                     responses: this.all_responses,
@@ -559,10 +559,20 @@ function make_slides(f) {
         button : function() {
             this.intro_endT = Date.now();
 
+            _.extend(exp.trials_stimuli_full[0],
+                {
+                    trial_num: 0, // Introduction
+                    trial_type: "introduction",
+                    trial_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000,
+                    display_text: "You are a scientist being deployed to a remote field site. Your job is to catalogue and describe new kinds of plants, animals, and objects that have been discovered on the planet. When you arrive at the field site, you meet other scientists there."
+                }
+            );
+
             _.extend(exp.trials_stimuli_streamlined[0],
                 {
                     trial_num: 0, // Introduction
-                    intro_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000
+                    trial_type: "introduction",
+                    trial_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000
                 }
             );
 
@@ -802,6 +812,7 @@ function init() {
             _.extend(
                 {
                     trial_num: trial_num + 1,
+                    trial_type: "trial",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: {
                         name: agents[trial_num],
@@ -831,6 +842,7 @@ function init() {
             _.extend(
                 {
                     trial_num: trial_num + 1,
+                    trial_type: "trial",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: agents[trial_num],
                     object: objects[trial_num][0],

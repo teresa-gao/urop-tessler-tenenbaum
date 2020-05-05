@@ -1,47 +1,43 @@
----
-title: "Genex Analysis"
-author: "Teresa Gao"
-date: "4 May 2020"
-output: github_document
----
+Genex Analysis
+================
+Teresa Gao
+4 May 2020
 
 # Setup
 
 Load required libraries
-```{r Load libraries}
 
+``` r
 library("ggplot2")
 library("gridExtra")
-
 ```
 
+Go to Session \> Set Working Directory \> To Source File Location. This
+ensures that we can find and access the files we need\!
 
-Go to Session > Set Working Directory > To Source File Location. This ensures that we can find and access the files we need!
+The code below imports the experimental data, as extracted by
+data\_extraction.R
 
-The code below imports the experimental data, as extracted by data_extraction.R
-
-```{r Import data (CSVs)}
-
+``` r
 catch_trials_dada <- read.csv("catch_trials_data.csv")
 combined_trials_data <- read.csv("combined_trials_data.csv")
 subject_info_data <- read.csv("subject_info_data.csv")
-
 ```
 
 # Visualization
 
-Box plot of slider response vs. number of examples
+Box plot of slider response vs. number of examples
 
-```{r Slider response vs. num. examples}
-
+``` r
 ggplot(data=combined_trials_data, aes(x=slider_response, y=n_examples, group=n_examples, fill=as.factor(n_examples))) + geom_boxplot() + labs(title="Slider response vs. number of examples", x="Slider response", y="Number of examples") + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
-
 ```
 
-Histogram and box plot of average time per slider response for each subject
+![](data_analysis_files/figure-gfm/Slider%20response%20vs.%20num.%20examples-1.png)<!-- -->
 
-```{r Average time per slider response}
+Histogram and box plot of average time per slider response for each
+subject
 
+``` r
 # Initialize empty data frame for subject average time per trial
 subject_average_time <- data.frame()
 
@@ -70,37 +66,41 @@ histogram <- ggplot(subject_average_time, aes(x=time_in_seconds)) + geom_histogr
 box_plot <- ggplot(data=subject_average_time, aes(x=time_in_seconds, group=n_examples, fill=as.factor(n_examples))) + geom_boxplot() + labs(title="Average time per slider response", x="Average time (sec)", y="Number of examples") + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 
 grid.arrange(histogram, box_plot, ncol=2)
-
 ```
 
-Box plot of total trial time per participant vs. number of examples displayed
+![](data_analysis_files/figure-gfm/Average%20time%20per%20slider%20response-1.png)<!-- -->
 
-```{r Total trial time vs. num. examples}
+Box plot of total trial time per participant vs. number of examples
+displayed
 
+``` r
 ggplot(data=combined_trials_data, aes(x=trial_time_in_seconds, y=n_examples, group=n_examples, fill=as.factor(n_examples))) + geom_boxplot() + labs(title="Total trial time vs. number of examples", x="Total trial time (sec)", y="Number of examples") + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
-
 ```
 
-Facet grid of slider response plotted on number of examples vs. item presentation condition
+![](data_analysis_files/figure-gfm/Total%20trial%20time%20vs.%20num.%20examples-1.png)<!-- -->
 
-```{r Slider response on num. examples vs. condition}
+Facet grid of slider response plotted on number of examples vs. item
+presentation condition
 
+``` r
 ggplot(combined_trials_data, aes(x=slider_response)) + geom_histogram(fill="cornflowerblue", color="black", bins=12) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition)
-
 ```
 
-Facet grid of slider response plotted on number of examples vs. item presentation condition and item property
+![](data_analysis_files/figure-gfm/Slider%20response%20on%20num.%20examples%20vs.%20condition-1.png)<!-- -->
 
-```{r Slider response on num examples vs. condition and property}
+Facet grid of slider response plotted on number of examples vs. item
+presentation condition and item property
 
+``` r
 ggplot(combined_trials_data, aes(x=slider_response)) + geom_histogram(fill="cornflowerblue", color="black", bins=6) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition+property)
-
 ```
 
-Facet grid of slider resopnse plotted on speaker vs. condition
+![](data_analysis_files/figure-gfm/Slider%20response%20on%20num%20examples%20vs.%20condition%20and%20property-1.png)<!-- -->
 
-```{r Slider response on speaker vs. condition}
+Facet grid of slider resopnse plotted on speaker vs. condition
 
+``` r
 ggplot(combined_trials_data, aes(x=slider_response)) + geom_histogram(fill="cornflowerblue", color="black", bins=12) + labs(x="Slider Response", y="Count") + facet_grid(speaker ~ item_presentation_condition)
-
 ```
+
+![](data_analysis_files/figure-gfm/Slider%20response%20on%20speaker%20vs.%20condition-1.png)<!-- -->
