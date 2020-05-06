@@ -26,6 +26,14 @@ subject_info_data <- read.csv("subject_info_data.csv")
 
 # Visualization
 
+``` r
+n_examples_labels <- c("n_examples: 1", "n_examples: 2", "n_examples:3")
+names(n_examples_labels) <- c("1", "2", "3")
+
+trial_num_labels <- c("trial_num: 1", "trial_num: 2", "trial_num: 3")
+names(trial_num_labels) <- c("1", "2", "3")
+```
+
 Box plot of slider response vs. number of examples
 
 ``` r
@@ -83,24 +91,34 @@ Facet grid of slider response plotted on number of examples vs. item
 presentation condition
 
 ``` r
-ggplot(combined_trials_data, aes(x=slider_response)) + geom_histogram(fill="cornflowerblue", color="black", bins=12) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition)
+ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
 ![](data_analysis_files/figure-gfm/Slider%20response%20on%20num.%20examples%20vs.%20condition-1.png)<!-- -->
+
+Facet grid of slider response plotted on trial number vs. item
+presentation condition
+
+``` r
+ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(trial_num ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+```
+
+![](data_analysis_files/figure-gfm/slider%20response%20on%20trial%20number%20vs.%20condition-1.png)<!-- -->
 
 Facet grid of slider response plotted on number of examples vs. item
 presentation condition and item property
 
 ``` r
-ggplot(combined_trials_data, aes(x=slider_response)) + geom_histogram(fill="cornflowerblue", color="black", bins=6) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition+property)
+ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=6) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition+property, labeller=labeller(n_examples=n_examples_labels)) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
 ![](data_analysis_files/figure-gfm/Slider%20response%20on%20num%20examples%20vs.%20condition%20and%20property-1.png)<!-- -->
 
-Facet grid of slider resopnse plotted on speaker vs. condition
+Facet grid of slider resopnse plotted on speaker vs. item presentation
+condition
 
 ``` r
-ggplot(combined_trials_data, aes(x=slider_response)) + geom_histogram(fill="cornflowerblue", color="black", bins=12) + labs(x="Slider Response", y="Count") + facet_grid(speaker ~ item_presentation_condition)
+ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(speaker ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
 ![](data_analysis_files/figure-gfm/Slider%20response%20on%20speaker%20vs.%20condition-1.png)<!-- -->
