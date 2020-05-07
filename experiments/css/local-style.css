@@ -3,6 +3,10 @@
 	text-align: left;
 }
 
+#please_note {
+    
+}
+
 .slide {
 	width: 600px;
 	margin-top: 50px;
@@ -38,7 +42,7 @@ h3 {
     width:          600px;
     height:         400px;
     z-index:        0;
-    opacity:        0.5;
+    opacity:        0.6;
     filter:         grayscale(50%);
 }
 
