@@ -11,10 +11,10 @@ Load required libraries
 ```{r Load libraries}
 
 library("dplyr")
+library(tidyverse)
 library("ggplot2")
 library("gridExtra")
 library("tidyboot")
-
 ```
 
 Go to Session > Set Working Directory > To Source File Location. This ensures that we can find and access the files we need!
@@ -34,7 +34,7 @@ subject_info_data <- read.csv("subject_info_data.csv")
 
 CIs <- combined_trials_data %>%
   group_by(item_presentation_condition, n_examples) %>%
-  tidyboot_mean(column=slider_response)
+  tidyboot_mean(column = slider_response)
 
 ```
 
@@ -56,7 +56,17 @@ Box plot of slider response vs. number of examples
 
 ```{r Slider response vs. num. examples}
 
-ggplot(data=combined_trials_data, aes(x=slider_response, y=n_examples, group=n_examples, fill=as.factor(n_examples))) + geom_boxplot() + labs(title="Slider response vs. number of examples", x="Slider response", y="Number of examples") + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(data = combined_trials_data, 
+       aes(x=slider_response, y=n_examples, 
+           group=n_examples, fill=as.factor(n_examples))) +
+  geom_boxplot() + 
+  labs(
+    title="Slider response vs. number of examples", 
+    x="Slider response", 
+    y="Number of examples"
+    ) + 
+  scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) +
+  theme(legend.position="none")
 
 ```
 
@@ -66,6 +76,11 @@ Histogram and box plot of average time per slider response for each subject
 
 # Initialize empty data frame for subject average time per trial
 subject_average_time <- data.frame()
+
+## forloop can be replaced with this:
+combined_trials_data %>%
+  group_by(worker_id) %>%
+  summarize(ave_time_slider_response = mean(slider_time_in_seconds))
 
 # Combine every three rows of trials_data, as there are three trials per participant
 for(i in 1:nrow(combined_trials_data)) {
@@ -111,17 +126,39 @@ ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count
 
 ```
 
+Observations:
+- Accidental weaker than pedagogical
+- Accidental has many responses < 0.5
+
+
 Facet grid of slider response plotted on trial number vs. item presentation condition
 
 ```{r slider response on trial number vs. condition}
 ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider response", y="Fraction of total count") + facet_grid(trial_num ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
+Observations:
+- In pedagogical: perhaps there are weaker inferences on trials 2 & 3.
+- In accidental: looks like, trial 1 - strong, trial 2 - weak, trial 3 - strong.
+
+
+
 Facet grid of slider response plotted on number of examples vs. item presentation condition and item property
 
 ```{r Slider response on num examples vs. condition and property}
 
-ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=6) + labs(x="Slider response", y="Fraction of total count") + facet_grid(n_examples ~ item_presentation_condition+property, labeller=labeller(n_examples=n_examples_labels)) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+combined_trials_data %>%
+  mutate(item_presentation_condition =
+           factor(item_presentation_condition, 
+                  levels = c("pedagogical", "accidental"),
+                  labels = c("Pedagogical", "Accidental"))) %>%
+ ggplot(., 
+       aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) +
+  geom_histogram(color="black", bins=16) + 
+  labs(x="Slider response", y="Fraction of total count") + 
+  facet_grid(
+    property+ n_examples ~ item_presentation_condition) +
+  scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 
 ```
 
@@ -148,3 +185,45 @@ Line range of slider response means and confidence intervals grouped by number o
 ggplot() + geom_linerange(data=CIs, mapping=aes(x=n_examples, ymin=ci_lower, ymax=ci_upper, color=as.factor(item_presentation_condition)), size=1) + geom_point(data=CIs, mapping=aes(x=n_examples, y=mean), alpha=0.5, size=2) + labs(y="Slider response", x="Number of examples", color="Item presentation condition") + scale_color_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="bottom")
 
 ```
+
+
+
+```{r}
+ggplot(combined_trials_data, 
+       aes(x = slider_response, 
+           y = item_presentation_condition, fill = ..x..)) +
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = '|', point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = 'binline', bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(data = CIs,
+    inherit.aes = F,
+    aes(xmin = ci_lower, xmax = ci_upper, 
+        y = as.numeric(item_presentation_condition)+0.8),
+    size = 1.25, color = 'black')+
+  # geom_vline(data = df.bs %>% filter(condition == "Generic"), 
+  #            inherit.aes = F, linetype = 2, alpha = 0.4,
+  #            aes(xintercept = ci_lower))+
+  # geom_vline(data = df.bs %>% filter(condition == "Generic"), 
+  #            inherit.aes = F, linetype = 2, alpha = 0.4,
+  #            aes(xintercept = ci_upper))+
+  geom_point(data = CIs,
+    inherit.aes = F,
+    aes(x = mean,
+        y = as.numeric(item_presentation_condition)+0.8),
+    size = 3, color = 'black', shape = 3)+
+  scale_x_continuous(expand = c(0.01, 0), 
+                     limits = c(0, 1.02), 
+                     breaks = c(0, 0.25, 0.5, 0.75, 1)) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(name = "Implied Prevalence", option = "D",
+                     breaks = c(0, 1)) +
+  guides(fill = F)+
+  theme(axis.title.y = element_blank(),
+        axis.title.x = element_text(hjust = 0.5, vjust = 0))+
+  labs(x = "Probability of Future Instance having Property")
+```
+
