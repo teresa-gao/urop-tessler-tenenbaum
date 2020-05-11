@@ -8,8 +8,34 @@ Teresa Gao
 Load required libraries
 
 ``` r
+library("dplyr")
+```
+
+    ## 
+    ## Attaching package: 'dplyr'
+
+    ## The following objects are masked from 'package:stats':
+    ## 
+    ##     filter, lag
+
+    ## The following objects are masked from 'package:base':
+    ## 
+    ##     intersect, setdiff, setequal, union
+
+``` r
 library("ggplot2")
 library("gridExtra")
+```
+
+    ## 
+    ## Attaching package: 'gridExtra'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     combine
+
+``` r
+library("tidyboot")
 ```
 
 Go to Session \> Set Working Directory \> To Source File Location. This
@@ -19,14 +45,38 @@ The code below imports the experimental data, as extracted by
 data\_extraction.R
 
 ``` r
-catch_trials_dada <- read.csv("catch_trials_data.csv")
+catch_trials_data <- read.csv("catch_trials_data.csv")
 combined_trials_data <- read.csv("combined_trials_data.csv")
 subject_info_data <- read.csv("subject_info_data.csv")
 ```
 
+# Calculations
+
+``` r
+CIs <- combined_trials_data %>%
+  group_by(item_presentation_condition, n_examples) %>%
+  tidyboot_mean(column=slider_response)
+```
+
+    ## Warning: `data_frame()` is deprecated as of tibble 1.1.0.
+    ## Please use `tibble()` instead.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
+
+    ## Warning: `as_data_frame()` is deprecated as of tibble 2.0.0.
+    ## Please use `as_tibble()` instead.
+    ## The signature and semantics have changed, see `?as_tibble`.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
+
+    ## Warning: `cols` is now required.
+    ## Please use `cols = c(strap)`
+
 # Visualization
 
 ``` r
+# This is used on facet_grid plots
+
 n_examples_labels <- c("n_examples: 1", "n_examples: 2", "n_examples:3")
 names(n_examples_labels) <- c("1", "2", "3")
 
@@ -91,7 +141,7 @@ Facet grid of slider response plotted on number of examples vs. item
 presentation condition
 
 ``` r
-ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider response", y="Fraction of total count") + facet_grid(n_examples ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
 ![](data_analysis_files/figure-gfm/Slider%20response%20on%20num.%20examples%20vs.%20condition-1.png)<!-- -->
@@ -100,7 +150,7 @@ Facet grid of slider response plotted on trial number vs. item
 presentation condition
 
 ``` r
-ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(trial_num ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider response", y="Fraction of total count") + facet_grid(trial_num ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
 ![](data_analysis_files/figure-gfm/slider%20response%20on%20trial%20number%20vs.%20condition-1.png)<!-- -->
@@ -109,7 +159,7 @@ Facet grid of slider response plotted on number of examples vs. item
 presentation condition and item property
 
 ``` r
-ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=6) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition+property, labeller=labeller(n_examples=n_examples_labels)) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=6) + labs(x="Slider response", y="Fraction of total count") + facet_grid(n_examples ~ item_presentation_condition+property, labeller=labeller(n_examples=n_examples_labels)) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
 ![](data_analysis_files/figure-gfm/Slider%20response%20on%20num%20examples%20vs.%20condition%20and%20property-1.png)<!-- -->
@@ -118,7 +168,25 @@ Facet grid of slider resopnse plotted on speaker vs. item presentation
 condition
 
 ``` r
-ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(speaker ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider response", y="Fraction of total count") + facet_grid(speaker ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
 ![](data_analysis_files/figure-gfm/Slider%20response%20on%20speaker%20vs.%20condition-1.png)<!-- -->
+
+Line range of slider response means and confidence intervals grouped by
+item presentation condition
+
+``` r
+ggplot() + geom_linerange(data=CIs, mapping=aes(x=item_presentation_condition, ymin=ci_lower, ymax=ci_upper, color=as.factor(item_presentation_condition)), size=1) + geom_point(data=CIs, mapping=aes(x=item_presentation_condition, y=mean), alpha=0.5, size=2) + scale_color_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + labs(y="Slider response", x="Item presentation condition") + theme(legend.position="none")
+```
+
+![](data_analysis_files/figure-gfm/Slider%20response%20means%20and%20CIs%20vs.%20condition-1.png)<!-- -->
+
+Line range of slider response means and confidence intervals grouped by
+number of examples
+
+``` r
+ggplot() + geom_linerange(data=CIs, mapping=aes(x=n_examples, ymin=ci_lower, ymax=ci_upper, color=as.factor(item_presentation_condition)), size=1) + geom_point(data=CIs, mapping=aes(x=n_examples, y=mean), alpha=0.5, size=2) + labs(y="Slider response", x="Number of examples", color="Item presentation condition") + scale_color_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="bottom")
+```
+
+![](data_analysis_files/figure-gfm/Slider%20response%20means%20and%20CIs%20vs.%20num%20examples-1.png)<!-- -->

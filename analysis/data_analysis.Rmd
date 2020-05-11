@@ -10,11 +10,12 @@ output: rmarkdown::github_document
 Load required libraries
 ```{r Load libraries}
 
+library("dplyr")
 library("ggplot2")
 library("gridExtra")
+library("tidyboot")
 
 ```
-
 
 Go to Session > Set Working Directory > To Source File Location. This ensures that we can find and access the files we need!
 
@@ -22,15 +23,26 @@ The code below imports the experimental data, as extracted by data_extraction.R
 
 ```{r Import data (CSVs)}
 
-catch_trials_dada <- read.csv("catch_trials_data.csv")
+catch_trials_data <- read.csv("catch_trials_data.csv")
 combined_trials_data <- read.csv("combined_trials_data.csv")
 subject_info_data <- read.csv("subject_info_data.csv")
+
+```
+
+# Calculations
+```{r Compute boostrapped confidence intervals}
+
+CIs <- combined_trials_data %>%
+  group_by(item_presentation_condition, n_examples) %>%
+  tidyboot_mean(column=slider_response)
 
 ```
 
 # Visualization
 
 ```{r Rename facet labels}
+
+# This is used on facet_grid plots
 
 n_examples_labels <- c("n_examples: 1", "n_examples: 2", "n_examples:3")
 names(n_examples_labels) <- c("1", "2", "3")
@@ -95,21 +107,21 @@ Facet grid of slider response plotted on number of examples vs. item presentatio
 
 ```{r Slider response on num. examples vs. condition}
 
-ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider response", y="Fraction of total count") + facet_grid(n_examples ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 
 ```
 
 Facet grid of slider response plotted on trial number vs. item presentation condition
 
 ```{r slider response on trial number vs. condition}
-ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(trial_num ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider response", y="Fraction of total count") + facet_grid(trial_num ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 ```
 
 Facet grid of slider response plotted on number of examples vs. item presentation condition and item property
 
 ```{r Slider response on num examples vs. condition and property}
 
-ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=6) + labs(x="Slider Response", y="Count") + facet_grid(n_examples ~ item_presentation_condition+property, labeller=labeller(n_examples=n_examples_labels)) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=6) + labs(x="Slider response", y="Fraction of total count") + facet_grid(n_examples ~ item_presentation_condition+property, labeller=labeller(n_examples=n_examples_labels)) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
 
 ```
 
@@ -117,6 +129,22 @@ Facet grid of slider resopnse plotted on speaker vs. item presentation condition
 
 ```{r Slider response on speaker vs. condition}
 
-ggplot(combined_trials_data, aes(x=slider_response, fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider Response", y="Count") + facet_grid(speaker ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+ggplot(combined_trials_data, aes(x=slider_response, y=(..count..)/tapply(..count..,..PANEL..,sum)[..PANEL..], fill=as.factor(item_presentation_condition))) + geom_histogram(color="black", bins=16) + labs(x="Slider response", y="Fraction of total count") + facet_grid(speaker ~ item_presentation_condition, labeller=label_both) + scale_fill_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="none")
+
+```
+
+Line range of slider response means and confidence intervals grouped by item presentation condition
+
+```{r Slider response means and CIs vs. condition}
+
+ggplot() + geom_linerange(data=CIs, mapping=aes(x=item_presentation_condition, ymin=ci_lower, ymax=ci_upper, color=as.factor(item_presentation_condition)), size=1) + geom_point(data=CIs, mapping=aes(x=item_presentation_condition, y=mean), alpha=0.5, size=2) + scale_color_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + labs(y="Slider response", x="Item presentation condition") + theme(legend.position="none")
+
+```
+
+Line range of slider response means and confidence intervals grouped by number of examples
+
+```{r Slider response means and CIs vs. num examples}
+
+ggplot() + geom_linerange(data=CIs, mapping=aes(x=n_examples, ymin=ci_lower, ymax=ci_upper, color=as.factor(item_presentation_condition)), size=1) + geom_point(data=CIs, mapping=aes(x=n_examples, y=mean), alpha=0.5, size=2) + labs(y="Slider response", x="Number of examples", color="Item presentation condition") + scale_color_manual(values=c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")) + theme(legend.position="bottom")
 
 ```
