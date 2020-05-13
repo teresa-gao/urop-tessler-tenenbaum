@@ -11,7 +11,7 @@ var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]);
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
-var n_examples =        [1]; // Should be "_.shuffle([1, 2, 3, 4]);" for future, non-pilot trials
+var n_examples =        [2]; // Should be "_.shuffle([1, 2, 3, 4]);" for future, non-pilot trials
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 
 function change_image(class_name, source) {
