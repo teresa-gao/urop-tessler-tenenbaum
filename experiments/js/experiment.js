@@ -12,7 +12,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]);
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]);
 var n_examples =        [2]; // Should be "_.shuffle([1, 2, 3, 4]);" for future, non-pilot trials
-var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
+var item_presentation_condition = ["gen+ped", "generic", "accidental", "pedagogical"]; // Should be shuffled on actual trials
 
 function change_image(class_name, source) {
     changing_images = document.getElementsByClassName(class_name);
@@ -179,11 +179,12 @@ function effect_remark_close(stim) {
             if (stim.item_presentation_condition == "accidental") {
                 say_text += "Oh wow! ";
                 audio_file_name += "oh_wow_";
-            } else if (stim.item_presentation_condition == "pedagogical") {
+            } else {
                 say_text += "See? ";
                 audio_file_name += "see_";
                 delay_time = 2250;
             }
+
             if (stim.object[0] == "artifact") {
                 say_text += "Squeaking!";
                 audio_file_name += "squeaking";
@@ -259,13 +260,13 @@ function run_trial(stim, exp_this) {
         
         // Greeting text and audio (under 2000 ms)
         let greeting = "";
-        if (stim.item_presentation_condition == "pedagogical") {
-            greeting += "Hello! I've been here for a while.";
-            hello = new Audio("audio/" + stim.speaker + "_recordings/hello_ive_been_here.mp3");
-            hello.play();
-        } else if (stim.item_presentation_condition == "accidental") {
+        if (stim.item_presentation_condition == "accidental") {
             greeting += "Hello! I just arrived here.";
             hello = new Audio("audio/" + stim.speaker + "_recordings/hello_i_just_arrived.mp3");
+            hello.play();
+        } else {
+            greeting += "Hello! I've been here for a while.";
+            hello = new Audio("audio/" + stim.speaker + "_recordings/hello_ive_been_here.mp3");
             hello.play();
         }
 
@@ -312,6 +313,39 @@ function run_trial(stim, exp_this) {
         setTimeout (function() {
             _stream.apply(exp_this);
         }, wait_time);
+
+    } else if (stim.type == "tell_you") {
+
+        set_table(stim);
+
+        let property = stim.object[2];
+        let say_text = ""
+        if (property == "squeaking") {
+            say_text = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak.";
+        } else {
+            say_text = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + property + ".";
+        }
+        
+        agent_say("Let me tell you something.", stim.trial_num).then(
+            function() {
+                let deferred = new $.Deferred();
+
+                agent_say(say_text, stim.trial_num, 1500);
+
+                setTimeout (function() {
+                    deferred.resolve();
+                }, 1500);
+
+                return deferred.promise();
+            }
+        ).then(
+
+            // Continues to next
+            function() {
+                $(".continue_button1").show();
+            }
+
+        );
 
     // Trial
     } else if (stim.type == "trial") {
@@ -371,7 +405,7 @@ function run_trial(stim, exp_this) {
                 }
             );
 
-        } else if (stim.item_presentation_condition == "pedagogical") { // Pedagogical item presentation
+        } else if ((stim.item_presentation_condition == "pedagogical") || (stim.item_presentation_condition == "gen+ped")) { // Pedagogical item presentation
 
             show_you = new Audio("audio/" + stim.speaker + "_recordings/let_me_show_you_something.mp3");
             show_you.play();
@@ -409,6 +443,7 @@ function run_trial(stim, exp_this) {
                     effect_remark_close(stim);
                 }
             );
+
         }
     }
 }
@@ -739,9 +774,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        "i0",
-        "botcaptcha",
-        "sound_check",
+        // "i0",
+        // "botcaptcha",
+        // "sound_check",
         "introduction",
         "trials",
         "subj_info",
@@ -788,6 +823,24 @@ function init() {
                 }
             )
         ]);
+
+        // For generic condition: create slide for agent teaching property
+        if ((item_presentation_condition[0] == "generic") || (item_presentation_condition[0] == "gen+ped")) {
+            exp.trials_stimuli = exp.trials_stimuli.concat([
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        type: "tell_you",
+                        item_presentation_condition: item_presentation_condition[0],
+                        agent: agents[trial_num],
+                        object: objects[trial_num],
+                        item_name: item_name[trial_num],
+                        n_examples: n_examples[0],
+                        speaker: speakers[trial_num]
+                    }
+                )
+            ]);
+        }
 
         // Creates subtrial for each of the exemplars
         // (This allows the agent to interact with each exemplar object)
