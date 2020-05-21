@@ -13,6 +13,7 @@
     <body onload="init();">
         <noscript>This task requires JavaScript.</noscript>
 
+        <!-- Title page with general instructions and contact info -->
         <div class="slide" id="i0">
 
             <img src="images/cpl.png" alt="MIT Computational Psycholinguistics Lab" id="cpl_logo"></img>
@@ -29,6 +30,7 @@
             </p>
         </div>
 
+        <!-- Botcaptcha slide, which blocks the user if they are clearly not paying attention -->
         <div class="slide" id="botcaptcha">
 
             <h3>Are you a bot?</h3>
@@ -36,6 +38,7 @@
             <input type="text" id="botresponse" size="30"></input>
             <button onclick="_s.button()" id="bot_button">Continue</button>
 
+            <!-- Errors -->
             <p class="error write_something">Please write something in the text box before clicking <b>Continue</b>.</p>
             <p class="error error_incorrect">This is incorrect.</p>
             <p class="error error_2more">You have 2 more trials.</p>
@@ -44,10 +47,11 @@
                 Error: You failed the comprehension questions too many times.
                 You are not permitted to complete the HIT. Please click 'Return HIT' to avoid any impact on your approval rating.
                 <br/><br/>
-                If you believe you are receiving this message in error, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a>
+                If you believe you are receiving this message in error, please email <a href="mailto:mitcpllab@gmail.com">mitcpllab@gmail.com</a>.
             </p>
         </div>
 
+        <!-- Sound check slide, which makes sure the user has a suitable system volume for the trials -->
         <div class="slide" id="sound_check">
             <h3>Sound Check</h3>
 
@@ -56,6 +60,7 @@
             <input type="text" id="sound_response"></input><br><br><br>
             <button onclick="_s.button()" id="sound_button">Continue</button>
             
+            <!-- Errors -->
             <p class="error write_something">Please write something in the text box before clicking <b>Continue</b>.</p>
             <p class="error error_incorrect">This is incorrect.</p>
             <p class="error error_2more">You have 2 more trials.</p>
@@ -64,10 +69,11 @@
                 Error: You failed the comprehension questions too many times.
                 You are not permitted to complete the HIT. Please click 'Return HIT' to avoid any impact on your approval rating.
                 <br/><br/>
-                If you believe you are receiving this message in error, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a>
+                If you believe you are receiving this message in error, please email <a href="mailto:mitcpllab@gmail.com">mitcpllab@gmail.com</a>.
             </p>
         </div>
 
+        <!-- Background and instructions for "trial" -->
         <div class="slide" id="introduction">
             <h3>Introduction</h3>
             <p>
@@ -82,10 +88,14 @@
             <button onclick="_s.button()">Continue</button>
         </div>
 
+        <!-- Trials slides, containing background, agent, table, and object images -->
         <div class="slide" id="trials">
             <div class="background-container">
+                
+                <!-- Background, whose source image is determined within experiment.js -->
                 <img class="background" src="">
 
+                <!-- Objects, whose source images are determined within experiment.js -->
                 <img class="object object1 closed" src="">
                 <img class="object object1 open" src="">
                 <img class="object object2 closed" src="">
@@ -95,12 +105,14 @@
                 <img class="object object4 closed" src="">
                 <img class="object object4 open" src="">
                 
+                <!-- Object labels, which display the object names when the blanket is shown -->
                 <img class="table" src="images/table.svg">
                 <div class="label label1">{{}}</div>
                 <div class="label label2">{{}}</div>
                 <div class="label label3">{{}}</div>
                 <div class="label label4">{{}}</div>
 
+                <!-- Blankets, which initially conceal the objects -->
                 <img class="blanket blanket1 blanket_up" src="images/blanket_up.png">
                 <img class="blanket blanket1 blanket_down" src="images/blanket_down.png">
                 <img class="blanket blanket2 blanket_up" src="images/blanket_up.png">
@@ -110,6 +122,7 @@
                 <img class="blanket blanket4 blanket_up" src="images/blanket_up.png">
                 <img class="blanket blanket4 blanket_down" src="images/blanket_down.png">
 
+                <!-- Animal agents (note that more are included here than are used in experiment.js) -->
                 <img class="agent straight_agent Mouse_straight"  src="images/Mouse_straight.png">
                 <img class="agent point_agent_r Mouse_point_r"  src="images/Mouse_point_r.png">
                     
@@ -146,11 +159,13 @@
                 <img class="agent straight_agent Frog_straight"  src="images/Frog_straight.png">
                 <img class="agent point_agent_r Frog_point_r"  src="images/Frog_point_r.png">
 
+                <!-- Speech bubble, used to display agent spoken text -->
                 <div class="speech speech-bubble"></div>
                 <div class="speech speech-bubble-outline"></div>
                 <div class="speech speech-bubble-tail"></div>
             </div>
 
+            <!-- Slider used to gauge user response after examples are shown -->
             <div class="slider" style="width:100%">
                 <p class="prompt"></p>
                 <table class="slider slider_table" style="width:100%">
@@ -165,15 +180,17 @@
                 </table>
             </div>
 
+            <!-- Error shown if the user does not provide a response on the slider -->
             <div class="error">Please adjust the slider before continuing.</div>
 
-            <!-- <button id="continue_button" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button> -->
-
+            <!-- Continues to next slide within subtrial -->
             <button class="continue_button continue_button1" onclick="_s.continue_button1()" style="margin-top:20px; position:relative">Continue</button>
 
+            <!-- Submits user slider response and continues to next subtrial -->
             <button class="continue_button continue_button2" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button>
         </div>
 
+        <!-- Optional form to collect subject demographic information -->
         <div class="slide"  id="subj_info">
             <div class="long_form">
                 <h3>Post-HIT Survey</h3>
@@ -221,10 +238,12 @@
             </div>
         </div>
 
+        <!-- Displays simple thank-you message -->
         <div class="slide" id="thanks">
             <h3>Thank you for your participation!</h3>
         </div>
 
+        <!-- Displays black progress bar at top of screen throughout experiment -->
         <div class="progress">
             <div class="bar-wrapper">
                 <div class="bar" width="0%">
@@ -232,14 +251,13 @@
             </div>
         </div>
 
+
         <!--JS-->
 
         <!-- external general utilities -->
         <script src="_shared/js/jquery-1.11.1.min.js "></script>
         <script src="_shared/full-projects/jquery-ui/jquery-ui.min.js"></script>
         <script src="_shared/js/underscore-min.js"></script>
-        <!-- if you want to draw stuff: -->
-        <!-- <script src="_shared/js/raphael-min.js"></script> -->
 
         <!-- cocolab experiment logic -->
         <script src="_shared/js/exp-V2.js"></script>
@@ -250,10 +268,6 @@
         <script src="_shared/js/browserCheck.js"></script>
         <script src="_shared/js/utils.js"></script>
         <script src="_shared/js/uniqueturker.js"></script>
-        <!-- if you want to draw cute creatures (depends on raphael): -->
-        <!-- <script src="_shared/js/ecosystem.js"></script> -->
-        <!-- experiment specific helper functions -->
-        <!-- <script src="js/local-utils.js"></script> -->
 
         <!-- experiment file -->
         <script type="text/javascript" src="js/experiment.js"></script>
