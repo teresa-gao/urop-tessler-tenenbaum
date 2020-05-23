@@ -13,7 +13,7 @@ var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]); // 
 var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Selects first object from artifacts, flowers, and birds group
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
-var n_examples =        [2]; // Should be "_.shuffle([1, 2, 3, 4]);" for future, non-pilot trials
+var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
 var item_presentation_condition = _.shuffle( ["gen+ped", "generic", "accidental", "pedagogical"] ); // gen+ped is generic statement of property and pedagogical demonstration, generic is only generic statement of property, accidental is "oops" presentation, pedagogical is teaching-style presentation
 
 // Changes all elements of an HTML class to have the same source image; used for stimuli objects
@@ -374,7 +374,7 @@ function run_trial(stim, exp_this) {
             say_text = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + property + ".";
         }
         
-        agent_say("Let me tell you something.", stim.trial_num).then(
+        agent_say("I have something to tell you.", stim.trial_num).then(
             
             function() {
 
@@ -726,6 +726,7 @@ function make_slides(f) {
         }
     });
 
+    // Run experiment (sub)trials
     slides.trials = slide({
         name : "trials",
         present: exp.trials_stimuli,
@@ -806,6 +807,50 @@ function make_slides(f) {
         }
     });
 
+    // Quiz user by asking them to identify the first object they saw, by name — this checks if they were paying attention!
+    slides.attention_check = slide({
+        name : "attention_check",
+        start: function() {
+            
+            this.attention_startT = Date.now();
+
+            // Reshuffle objects array so that they do not necessarily appear in the same order as in the trials
+            this.reshuffled_objects = _.shuffle(objects);
+
+            // Display objects, in reshuffled order
+            $("#item1").attr("src", "images/" + this.reshuffled_objects[0][1] + "_closed.svg");
+            $("#item2").attr("src", "images/" + this.reshuffled_objects[1][1] + "_closed.svg");
+            $("#item3").attr("src", "images/" + this.reshuffled_objects[2][1] + "_closed.svg");
+
+            // Ask user to identify the first object that was presented to them
+            let instructions = "Which one of these objects is a " + item_name[0][0] + "?";
+            $("#attention_check_instructions").text(instructions);
+
+        },
+        continue: function(choice_number) {
+
+            // User's choice is correct if it matches the presented order
+            this.is_correct = false;
+            if (this.reshuffled_objects[choice_number - 1] == objects[0]) {
+                this.is_correct = true;
+            }
+
+            // Log data to MTurk
+            exp.attention_checks.push({
+                trial_type: "name_object",
+                correct_answer: objects[0][0],
+                responses: this.reshuffled_objects[choice_number - 1][0],
+                trial_time_in_seconds: (Date.now() - this.attention_startT) / 1000,
+                is_correct: this.is_correct,
+                item_name: item_name[0][0]
+            });
+
+            // Regardless of choice correctness, we continue!
+            exp.go();
+
+        }
+    });
+
     // Form to collect optional subject data
     slides.subj_info = slide({
         name : "subj_info",
@@ -842,6 +887,7 @@ function make_slides(f) {
                 trials_stimuli_streamlined: exp.trials_stimuli_streamlined,
                 system: exp.system,
                 catch_trials: exp.catch_trials,
+                attention_checks: exp.attention_checks,
                 subject_information: exp.subj_data,
                 total_time_in_seconds: (Date.now() - exp.startT) / 1000
             };
@@ -870,6 +916,7 @@ function init() {
 
     // Initialize data frames — data will be added as slides are run
     exp.catch_trials = [];
+    exp.attention_checks = [];
     exp.condition = {
         item_presentation_condition: item_presentation_condition[0],
         n_examples: n_examples[0]
@@ -892,6 +939,7 @@ function init() {
         "sound_check",
         "introduction",
         "trials",
+        "attention_check",
         "subj_info",
         "thanks"
     ];
