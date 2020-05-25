@@ -151,7 +151,7 @@ h3 {
 
 .speech-bubble {
 	z-index:		3;
-	font-size:	1rem;
+	font-size:		1rem;
 	padding:		15px;
 	border-radius:	4px;
 	border:			1px solid black;
@@ -188,23 +188,52 @@ h3 {
 	z-index:		3;
 }
 
-.item_container {
-	width:			80%;
-	margin:			auto;
-	text-align:		justify;
+.image_container {
+	text-align:		center;
+	display:		flex;
+	justify-content:space-evenly;
+	align-items:	center;
 }
 
-.stretch {
-	width:			100%;
+.refimage {
 	display:		inline-block;
-	font-size:		0;
-	line-height:	0;
-}
-
-.item {
-	height:			171px;
+	height:			100px;
 }
 
 .item:hover {
 	outline:		dashed black 4px;
+}
+
+.mc_label {
+	display:		block;
+}
+
+.multiple_choice {
+	display:		inline-block;
+}
+
+.slider {
+	width:			100%;
+}
+
+.slider_table {
+	margin:			auto;
+}
+
+.slider_label_l {
+	text-align:		left;
+}
+
+.slider_label_r {
+	text-align:		right;
+}
+
+.slider_slider {
+	width:			100%;
+	margin:			auto;
+}
+
+.continue_button {
+	margin-top:		20px;
+	position:		relative
 }

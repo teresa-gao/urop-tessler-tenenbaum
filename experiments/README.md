@@ -22,7 +22,7 @@ See back (line 5), agents (line 6), and speakers (line 7)
 
 More options for backgrounds, agents, and speaker voices may be added arbitrarily, as only the first n are considered, n being the number of subtrials (total_trials_num on line 2). Additional speaker voice files should be included in the *audio* folder, named "xx\_recordings", where "xx" are representative initials of the speaker.
 
-If a left-pointing agent condition were desired, then the layout (in experiment.css) and a method analogous to agent_point_r() (line 34) may need to be adapted; run_trial() (line 284) should also take into account the direction of the agent. A left-pointing version of each agent image (e.g., "Frog_point_l.png") should also be added to *images*, probably by horizontally mirroring its right-pointing counterpart (e.g., "Frog_point_r.png"). As this would also require manipulating the math in local-style.css as well as any part of experiment.js in which object locations are set, this is not recommended.
+If a left-pointing agent condition were desired, then the layout (in experiment.css) and a method analogous to agent_point_r() (line 34) may need to be adapted; run_trial() (line 284) should also take into account the direction of the agent. The \_point\_l versions of each agent must be cropped; alternatively, they can be rederived from the correctly cropped \_point\_r versions by reflecting horizontally. As this would also require manipulating the math in local-style.css as well as any part of experiment.js in which object locations are set, this is not recommended.
 
 ### Stimuli/exemplars/objects
 

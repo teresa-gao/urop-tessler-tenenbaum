@@ -166,15 +166,16 @@
             </div>
 
             <!-- Slider used to gauge user response after examples are shown -->
-            <div class="slider" style="width:100%">
-                <p class="prompt"></p>
-                <table class="slider slider_table" style="width:100%">
+            <div class="slider">
+                <p class="trials_prompt"></p>
+                <table class="slider slider_table">
                     <tr>
-                        <td class="slider_label left">0% (not likely at all)</td>
-                        <td class="slider_label right">100% (extremely likely)</td>
+                        <td id="attention_slider_label_l" class="slider_label_l">0% (not likely at all)</td>
+                        <td id="attention_slider_label_r" class="slider_label_r">100% (extremely likely)</td>
                     </tr>
                     <tr>
-                        <td colspan="2"><div id="single_slider" style="width:90%"></div>
+                        <td colspan="2">
+                        	<div id="trials_slider" class="slider_slider"></div>
                         </td>
                     </tr>
                 </table>
@@ -184,23 +185,101 @@
             <div class="error">Please adjust the slider before continuing.</div>
 
             <!-- Continues to next slide within subtrial -->
-            <button class="continue_button continue_button1" onclick="_s.continue_button1()" style="margin-top:20px; position:relative">Continue</button>
+            <button class="continue_button continue_button1" onclick="_s.continue_button1()">Continue</button>
 
             <!-- Submits user slider response and continues to next subtrial -->
-            <button class="continue_button continue_button2" onclick="_s.continue_button2()" style="margin-top:20px; position:relative">Continue</button>
+            <button class="continue_button continue_button2" onclick="_s.continue_button2()">Continue</button>
+
         </div>
 
         <!-- Attention check, where user is asked to match name with item -->
         <div class="slide" id="attention_check">
+
         	<h3>Attention check</h3>
+
         	<p id="attention_check_instructions"></p>
-        	<br>
-        	<div class="item_container">
-	        	<img class="item" id="item1" src="" onclick="_s.continue(1)">
-	        	<img class="item" id="item2" src="" onclick="_s.continue(2)">
-	        	<img class="item" id="item3" src="" onclick="_s.continue(3)">
-	        	<span class="stretch"></span>
+
+        	<div class="image_container">
+	        	<img class="refimage item" id="item1" src="" onclick="_s.continue(1)">
+	        	<img class="refimage item" id="item2" src="" onclick="_s.continue(2)">
+	        	<img class="refimage item" id="item3" src="" onclick="_s.continue(3)">
         	</div>
+
+        </div>
+
+        <div class="slide" id="manipulation_check">
+
+        	<h3>Comprehension check</h3>
+
+        	<p id="manipulation_check_instructions">
+        		Please answer the following question based on the image(s) displayed below.
+        	</p>
+        	
+        	<div class="image_container">
+
+        		<!-- Animal agent heads (note that more are included here than are used in experiment.js) -->
+	            <img class="refimage head Mouse"  src="images/Mouse_head.png">
+	            <img class="refimage head Monkey"  src="images/Monkey_head.png">
+	            <img class="refimage head Bunny"  src="images/Bunny_head.png">
+	            <img class="refimage head Dog"  src="images/Dog_head.png">
+	            <img class="refimage head Elephant"  src="images/Elephant_head.png">
+	            <img class="refimage head Pig"  src="images/Pig_head.png">
+	            <img class="refimage head Bear"  src="images/Bear_head.png">
+	            <img class="refimage head Beaver"  src="images/Beaver_head.png">
+	            <img class="refimage head Cat"  src="images/Cat_head.png">
+	            <img class="refimage head Sheep"  src="images/Sheep_head.png">
+	            <img class="refimage head Tiger"  src="images/Tiger_head.png">
+	            <img class="refimage head Frog"  src="images/Frog_head.png">
+
+	            <!-- Exemplar items/objects (we use class "exemplar" and not "object" for ease of CSS formatting) -->
+	            <img class="refimage exemplar" src="">
+
+        	</div>
+
+        	<!-- Question -->
+        	<p id="manipulation_check_question"></p>
+        	
+        	<!-- Multiple choice options (modified in experiment.js) -->
+        	<div>
+	        	<label for="choice1" class="mc_label">
+	        		<input type="radio" name="choice" id="choice1" class="multiple_choice"/>
+	        		<span id="mc_label1">{1}</span>
+	        	</label>
+	            <label for="choice2" class="mc_label">
+	            	<input type="radio" name="choice" id="choice2" class="multiple_choice"/>
+	            	<span id="mc_label2">{2}</span>
+	            </label>
+	            <label for="choice3" class="mc_label">
+	            	<input type="radio" name="choice" id="choice3" class="multiple_choice"/>
+	            	<span id="mc_label3">{3}</span>
+	            </label>
+	        </div>
+
+            <!-- Slider (set up in experiment.js) -->
+            <div class="slider">
+                <p class="manipulation_prompt"></p>
+                <table class="slider slider_table">
+                    <tr>
+                        <td id="manipulation_slider_label_l" class="slider_label_l"></td>
+                        <td id="manipulation_slider_label_r" class="slider_label_r"></td>
+                    </tr>
+                    <tr>
+                        <td colspan="2">
+                        	<div id="manipulation_slider" class="slider_slider"></div>
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Error shown is the user does not provide a response with MC options -->
+            <div class="error" id="mc_error">Please select an option before continuing.</div>
+
+            <!-- Error shown if the user does not provide a response on the slider -->
+            <div class="error" id="slider_error">Please adjust the slider before continuing.</div>
+
+            <!-- Submits user response and continues to next subtrial -->
+            <button id="continue_button" class="continue_button" onclick="_s.continue_button()">Continue</button>
+
         </div>
 
         <!-- Optional form to collect subject demographic information -->
@@ -258,7 +337,7 @@
 
         <!-- Displays black progress bar at top of screen throughout experiment -->
         <div class="progress">
-            <div class="bar-wrapper">
+            <div class="bar-wrapper" style="margin:auto">
                 <div class="bar" width="0%">
                 </div>
             </div>

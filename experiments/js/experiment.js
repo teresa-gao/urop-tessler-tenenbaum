@@ -1,5 +1,11 @@
+// TL;DR "README" OVERVIEW OF experiment.js FILE:
+// * Variable declarations — Much of the experiment can be modified solely by changing these variable values
+// * Functions — These are used primarily in slides.trials (trials slide)
+// * Slides — These include intro slide, catch trials, (experimental) trial slides, attention checks, manipulation checks, info, and thank-you (data submission to MTurk)
+// * Setup — Here, we create the data frames which are passed as stim into slides.trials, slides.attention_check, and slides.manipulation_check and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker
+
 // Experiment variables and randomization
-var total_trials_num =  3; // Number of subtrials, each with a unique background, agent, speaker, and exemplar
+var total_trials_num =  3; // Number of trials, each with a unique background, agent, speaker, and exemplar
 
 // Aesthetic setup
 var back =              _.shuffle( [1,2,3,4,5,6,7,8,9,10] ); // Background images of the form backx.jpg, where x is is the image number
@@ -14,7 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
 var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = _.shuffle( ["gen+ped", "generic", "accidental", "pedagogical"] ); // gen+ped is generic statement of property and pedagogical demonstration, generic is only generic statement of property, accidental is "oops" presentation, pedagogical is teaching-style presentation
+var item_presentation_condition = _.shuffle(["generic", "gen+ped", "accidental", "pedagogical"]); // gen+ped is generic statement of property and pedagogical demonstration, generic is only generic statement of property, accidental is "oops" presentation, pedagogical is teaching-style presentation
 
 // Changes all elements of an HTML class to have the same source image; used for stimuli objects
 function change_image(class_name, source) {
@@ -747,9 +753,9 @@ function make_slides(f) {
 
                 // Creates grammatically correct statement
                 if (this.stim.object[0] == "artifact") {
-                    $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
+                    $(".trials_prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
                 } else {
-                    $(".prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + this.stim.object[2] + "?");
+                    $(".trials_prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + this.stim.object[2] + "?");
                 }
 
                 // Create slider, initialized without position
@@ -769,7 +775,7 @@ function make_slides(f) {
         // Create slider
         init_sliders: function() {
             this.trials_slidersT = Date.now();
-            utils.make_slider("#single_slider", function(event, ui) {
+            utils.make_slider("#trials_slider", function(event, ui) {
                 exp.sliderPost = ui.value;
             });
         },
@@ -836,10 +842,11 @@ function make_slides(f) {
             }
 
             // Log data to MTurk
-            exp.attention_checks.push({
+            exp.attention_data.push({
                 trial_type: "name_object",
+                trial_num: 1,
                 correct_answer: objects[0][0],
-                responses: this.reshuffled_objects[choice_number - 1][0],
+                response: this.reshuffled_objects[choice_number - 1][0],
                 trial_time_in_seconds: (Date.now() - this.attention_startT) / 1000,
                 is_correct: this.is_correct,
                 item_name: item_name[0][0]
@@ -849,6 +856,126 @@ function make_slides(f) {
             exp.go();
 
         }
+    });
+
+    // Run manipulation checks to make sure the experiment is working as intended; titled as "Comprehension Check" to user
+    slides.manipulation_check = slide({
+        name : "manipulation_check",
+        present: exp.manipulation_check,
+
+        start: function() {
+            
+            // Record start time
+            this.manipulation_startT = Date.now();
+
+            // Continue to next subtrial
+            $(".continue_button").show();
+
+        },
+
+        present_handle : function(stim) {
+
+            this.stim = stim;
+
+            // Hide some things by default
+            $(".error").hide();
+            $(".multiple_choice").hide();
+            $(".mc_label").hide();
+
+            // Show relevant agent head
+            $(".refimage").hide();
+            $("." + agents[this.stim.trial_based_on - 1]).show();
+
+            // Show relevant exemplar object
+            if (this.stim.trial_num != 1) {
+                $(".exemplar").show();
+                change_image("exemplar", "images/" + objects[this.stim.trial_based_on - 1][1] + "_closed.svg");
+            }
+
+            // Display question
+            $("#manipulation_check_question").text(this.stim.question);
+
+            // Display user answer input options
+            if (this.stim.type == "multiple_choice") {
+
+                // Display correct mc options and labels
+                let temp_counter = 0;
+                for (temp_counter = 0; temp_counter < this.stim.options.length; temp_counter++) {
+                    $("#choice" + (temp_counter + 1)).show();
+                    $("#choice" + (temp_counter + 1)).attr("value", this.stim.options[temp_counter][1]);
+                    $("#choice" + (temp_counter + 1)).parent().show();
+                    $("#mc_label" + (temp_counter + 1)).text(this.stim.options[temp_counter][0]);
+                }
+
+                // Clear previous multiple choice responses
+                $("input[name=choice]").prop("checked", false);
+
+            } else if (this.stim.type == "slider") {
+
+                // Create slider, initialized without position
+                $(".slider").show();
+                this.init_sliders();
+                exp.sliderPost = null;
+
+                // Display correct slider labels
+                $("#manipulation_slider_label_l").html(this.stim.options[0]);
+                $("#manipulation_slider_label_r").html(this.stim.options[1]);
+
+            }
+
+        },
+
+        // Create slider
+        init_sliders: function() {
+            this.trials_slidersT = Date.now();
+            utils.make_slider("#manipulation_slider", function(event, ui) {
+                exp.sliderPost = ui.value;
+            });
+        },
+
+        continue_button: function() {
+
+            // User has not given response on multiple choice
+            if (!($("input[name='choice']").is(":checked"))) { // TO-DO: Insert check if (MC) and (no choice)
+
+                $("#mc_error").show();
+
+            // User has not given response on slider
+            } else if ((this.stim.type == "slider") && (exp.sliderPost == null)) {
+                $("#slider_error").show();
+
+            // User has responded!
+            } else {
+
+                // Collect user response depending on response method (MC or slider)
+                if (this.stim.type == "multiple_choice") {
+                    this.response = $("input[name='choice']:checked").val();
+                } else if (this.stim.type == "slider") {
+                    this.response = exp.sliderPost;
+                }
+
+                this.is_correct = (this.response == this.stim.correct_answer);
+                if (this.stim.correct_answer == null) {
+                    this.is_correct = true; // All answers are considered correct on the slider
+                }
+
+                // Log data to MTurk
+                exp.manipulation_data.push({
+                    trial_type: this.stim.trial_name,
+                    trial_num: this.stim.trial_num,
+                    correct_answer: this.stim.correct_answer,
+                    response: this.response,
+                    trial_time_in_seconds: (Date.now() - this.manipulation_startT) / 1000,
+                    is_correct: this.is_correct,
+                    item_name: item_name[0][0]
+                });
+
+                _stream.apply(this);
+
+            }
+
+        }
+
     });
 
     // Form to collect optional subject data
@@ -887,7 +1014,8 @@ function make_slides(f) {
                 trials_stimuli_streamlined: exp.trials_stimuli_streamlined,
                 system: exp.system,
                 catch_trials: exp.catch_trials,
-                attention_checks: exp.attention_checks,
+                attention_checks: exp.attention_data,
+                manipulation_checks: exp.manipulation_data,
                 subject_information: exp.subj_data,
                 total_time_in_seconds: (Date.now() - exp.startT) / 1000
             };
@@ -914,14 +1042,6 @@ function init() {
             }
     })();
 
-    // Initialize data frames — data will be added as slides are run
-    exp.catch_trials = [];
-    exp.attention_checks = [];
-    exp.condition = {
-        item_presentation_condition: item_presentation_condition[0],
-        n_examples: n_examples[0]
-    }
-
     // Log user system information
     exp.system = {
         Browser : BrowserDetect.browser,
@@ -940,6 +1060,7 @@ function init() {
         "introduction",
         "trials",
         "attention_check",
+        "manipulation_check",
         "subj_info",
         "thanks"
     ];
@@ -1006,7 +1127,7 @@ function init() {
 
         // Creates subtrial for each of the exemplars (allows agent to interact with each exemplar object)
         let exemplar_num = 1;
-        while (exemplar_num < n_examples[0] + 1) {
+        while ((exemplar_num < n_examples[0] + 1) && (item_presentation_condition[0] != "generic")) {
 
             // Create subtrial with given exemplar_num (number of object agent interacts with on this slide of the subtrial)
             exp.trials_stimuli = exp.trials_stimuli.concat([ 
@@ -1091,6 +1212,70 @@ function init() {
 
         trial_num += 1;
     }
+
+    // Initialize data frames to be submitted to MTurk — data will be added as slides are run
+    exp.catch_trials = [];
+    exp.attention_data = [];
+    exp.manipulation_data = [];
+    exp.condition = {
+        item_presentation_condition: item_presentation_condition[0],
+        n_examples: n_examples[0]
+    }
+
+    // Used to run manipulation check "trials"
+    var trial_based_on = 2; // These manipulation checks are all based on experimental trial 2, as trial 1 was used for the attention check
+    exp.manipulation_check = [{}, {}, // Leave space for first and second manipulation checks (filled in below)
+        // Third manipulation check: "How much does this character know about this item?"
+        {
+            trial_name: "how_much_does_character_know",
+            trial_num: 3,
+            trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
+            question: "How much does this character know about this object?",
+            type: "slider",
+            options: ["This character knows a little", "This character knows a lot"],
+            correct_answer: null
+        }
+    ]
+
+    // Create first manipulation check: "Did this character just arrive here or have they been here for a while?"
+    var correct_answer = "been_here_for_a_while";
+    if (item_presentation_condition[0] == "accidental") {
+        correct_answer = "just_arrived_here";
+    };
+    exp.manipulation_check[0] = {
+        trial_name: "just_arrived_or_been_while",
+        trial_num: 1,
+        trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
+        question: "Did this character just arrive here or have they been here for a while?",
+        type: "multiple_choice",
+        options: [ ["This character just arrived here", "just_arrived_here"], ["This character has been here for a while", "been_here_for_a_while"] ],
+        correct_answer: correct_answer
+    };
+
+    // Create correct answer of agent action intentionality
+    var correct_answer = "on_purpose";
+    if (item_presentation_condition[0] == "accidental") {
+        correct_answer = "by_accident";
+    } else if (item_presentation_condition[0] == "generic") {
+        correct_answer = "NA";
+    };
+    // Enable construction of grammatically correct sentence
+    var property_verb = "squeak";
+    if (objects[trial_based_on - 1][2] == "purple petals") {
+        property_verb = "show its purple petals";
+    } else if (objects[trial_based_on - 1][2] == "green feathers") {
+        property_verb = "show its green feathers";
+    };
+    // Create second manipulation check: E.g., "Did this character make this object squeak on purpose or by accident?"
+    exp.manipulation_check[1] = {
+        trial_name: "on_purpose_or_accident",
+        trial_num: 2,
+        trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
+        question: "Did this character make this object " + property_verb + " on purpose or by accident?",
+        type: "multiple_choice",
+        options: [ ["They made this object " + property_verb + " on purpose", "on_purpose"], ["They made this object " + property_verb + " by accident", "by_accident"], ["N/A - They did not interact with this object", "NA"] ],
+        correct_answer: correct_answer
+    };
 
     //make corresponding slides:
     exp.slides = make_slides(exp);
