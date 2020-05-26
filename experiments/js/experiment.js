@@ -22,6 +22,9 @@ var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket
 var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
 var item_presentation_condition = _.shuffle(["generic", "gen+ped", "accidental", "pedagogical"]); // gen+ped is generic statement of property and pedagogical demonstration, generic is only generic statement of property, accidental is "oops" presentation, pedagogical is teaching-style presentation
 
+var trial_based_on = 2; // Manipulation checks are all based on experimental trial 2, as trial 1 is used for the attention check
+var reshuffled_objects = _.shuffle(objects); // Used in manipulation checks likely different from original trial order
+
 // Changes all elements of an HTML class to have the same source image; used for stimuli objects
 function change_image(class_name, source) {
     changing_images = document.getElementsByClassName(class_name);
@@ -816,44 +819,60 @@ function make_slides(f) {
     // Quiz user by asking them to identify the first object they saw, by name — this checks if they were paying attention!
     slides.attention_check = slide({
         name : "attention_check",
+        present: exp.attention_stimuli,
         start: function() {
-            
             this.attention_startT = Date.now();
+            this.user_response = null;
+            $("#attention_error").hide();
+        },
+        present_handle : function(stim) {
 
-            // Reshuffle objects array so that they do not necessarily appear in the same order as in the trials
-            this.reshuffled_objects = _.shuffle(objects);
+            this.stim = stim;
 
             // Display objects, in reshuffled order
-            $("#item1").attr("src", "images/" + this.reshuffled_objects[0][1] + "_closed.svg");
-            $("#item2").attr("src", "images/" + this.reshuffled_objects[1][1] + "_closed.svg");
-            $("#item3").attr("src", "images/" + this.reshuffled_objects[2][1] + "_closed.svg");
+            $("#item1").attr("src", this.stim.images[0]);
+            $("#item2").attr("src", this.stim.images[1]);
+            $("#item3").attr("src", this.stim.images[2]);
 
             // Ask user to identify the first object that was presented to them
-            let instructions = "Which one of these objects is a " + item_name[0][0] + "?";
-            $("#attention_check_instructions").text(instructions);
+            $("#attention_check_instructions").text(this.stim.instructions);
 
         },
-        continue: function(choice_number) {
+        set_choice: function(choice_number) {
+            
+            this.user_response = reshuffled_objects[choice_number-1];
 
             // User's choice is correct if it matches the presented order
             this.is_correct = false;
-            if (this.reshuffled_objects[choice_number - 1] == objects[0]) {
+            if (reshuffled_objects[choice_number - 1] == this.stim.correct_answer) {
                 this.is_correct = true;
             }
 
-            // Log data to MTurk
-            exp.attention_data.push({
-                trial_type: "name_object",
-                trial_num: 1,
-                correct_answer: objects[0][0],
-                response: this.reshuffled_objects[choice_number - 1][0],
-                trial_time_in_seconds: (Date.now() - this.attention_startT) / 1000,
-                is_correct: this.is_correct,
-                item_name: item_name[0][0]
-            });
+        },
+        continue_button: function() {
 
-            // Regardless of choice correctness, we continue!
-            exp.go();
+            if (this.user_response == null) {
+
+                $("#attention_error").show();
+
+            } else {
+                console.log(reshuffled_objects);
+
+                // Log data to MTurk
+                exp.attention_data.push({
+                    trial_type: "name_object",
+                    trial_num: 1,
+                    correct_answer: this.stim.correct_answer[0],
+                    response: this.user_response,
+                    trial_time_in_seconds: (Date.now() - this.attention_startT) / 1000,
+                    is_correct: this.is_correct,
+                    item_name: this.stim.item_name
+                });
+
+                // Regardless of choice correctness, we continue!
+                _stream.apply(this);
+
+            }
 
         }
     });
@@ -1054,11 +1073,11 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        "i0",
-        "botcaptcha",
-        "sound_check",
-        "introduction",
-        "trials",
+        // "i0",
+        // "botcaptcha",
+        // "sound_check",
+        // "introduction",
+        // "trials",
         "attention_check",
         "manipulation_check",
         "subj_info",
@@ -1222,8 +1241,18 @@ function init() {
         n_examples: n_examples[0]
     }
 
+    // Used to run attention checks
+    exp.attention_stimuli = [
+        {
+            trial_name: "identify_object",
+            images: ["images/"+reshuffled_objects[0][1]+"_closed.svg", "images/"+reshuffled_objects[1][1]+"_closed.svg", "images/"+reshuffled_objects[2][1]+"_closed.svg"],
+            instructions: "Which one of these objects is a " + item_name[0][0] + "?",
+            correct_answer: objects[0],
+            item_name: item_name[0][0]
+        }
+    ];
+
     // Used to run manipulation check "trials"
-    var trial_based_on = 2; // These manipulation checks are all based on experimental trial 2, as trial 1 was used for the attention check
     exp.manipulation_check = [{}, {}, // Leave space for first and second manipulation checks (filled in below)
         // Third manipulation check: "How much does this character know about this item?"
         {

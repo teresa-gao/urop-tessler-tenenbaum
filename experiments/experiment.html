@@ -199,11 +199,18 @@
 
         	<p id="attention_check_instructions"></p>
 
+        	<!-- Contains reference images -->
         	<div class="image_container">
-	        	<img class="refimage item" id="item1" src="" onclick="_s.continue(1)">
-	        	<img class="refimage item" id="item2" src="" onclick="_s.continue(2)">
-	        	<img class="refimage item" id="item3" src="" onclick="_s.continue(3)">
+	        	<img class="refimage item" id="item1" src="" tabindex="1" onclick="_s.set_choice(1)">
+	        	<img class="refimage item" id="item2" src="" tabindex="2" onclick="_s.set_choice(2)">
+	        	<img class="refimage item" id="item3" src="" tabindex="3" onclick="_s.set_choice(3)">
         	</div>
+
+        	<!-- Error shown is the user does not provide a response with MC options -->
+            <div class="error" id="attention_error">Please select an option before continuing.</div>
+
+        	<!-- Submits user response and continues to next subtrial -->
+            <button class="continue_button" onclick="_s.continue_button()">Continue</button>
 
         </div>
 
@@ -278,7 +285,7 @@
             <div class="error" id="slider_error">Please adjust the slider before continuing.</div>
 
             <!-- Submits user response and continues to next subtrial -->
-            <button id="continue_button" class="continue_button" onclick="_s.continue_button()">Continue</button>
+            <button class="continue_button" onclick="_s.continue_button()">Continue</button>
 
         </div>
 
