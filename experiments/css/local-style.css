@@ -201,7 +201,7 @@ h3 {
 	height:			100px;
 }
 
-.item:focus {
+.item:hover {
 	outline:		dashed black 4px;
 }
 

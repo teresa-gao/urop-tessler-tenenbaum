@@ -90,6 +90,9 @@
 
         <!-- Trials slides, containing background, agent, table, and object images -->
         <div class="slide" id="trials">
+            
+            <p id="trials_text">{{}}</p>
+
             <div class="background-container">
                 
                 <!-- Background, whose source image is determined within experiment.js -->
@@ -185,10 +188,10 @@
             <div class="error">Please adjust the slider before continuing.</div>
 
             <!-- Continues to next slide within subtrial -->
-            <button class="continue_button continue_button1" onclick="_s.continue_button1()">Continue</button>
+            <button class="continue_button" id="continue_button1" onclick="_s.continue_button1()">Continue</button>
 
             <!-- Submits user slider response and continues to next subtrial -->
-            <button class="continue_button continue_button2" onclick="_s.continue_button2()">Continue</button>
+            <button class="continue_button" id="continue_button2" onclick="_s.continue_button2()">Continue</button>
 
         </div>
 
@@ -201,16 +204,10 @@
 
         	<!-- Contains reference images -->
         	<div class="image_container">
-	        	<img class="refimage item" id="item1" src="" tabindex="1" onclick="_s.set_choice(1)">
-	        	<img class="refimage item" id="item2" src="" tabindex="2" onclick="_s.set_choice(2)">
-	        	<img class="refimage item" id="item3" src="" tabindex="3" onclick="_s.set_choice(3)">
+	        	<img class="refimage item" id="item1" src="" tabindex="1" onclick="_s.continue(1)">
+	        	<img class="refimage item" id="item2" src="" tabindex="2" onclick="_s.continue(2)">
+	        	<img class="refimage item" id="item3" src="" tabindex="3" onclick="_s.continue(3)">
         	</div>
-
-        	<!-- Error shown is the user does not provide a response with MC options -->
-            <div class="error" id="attention_error">Please select an option before continuing.</div>
-
-        	<!-- Submits user response and continues to next subtrial -->
-            <button class="continue_button" onclick="_s.continue_button()">Continue</button>
 
         </div>
 
@@ -244,21 +241,21 @@
         	</div>
 
         	<!-- Question -->
-        	<p id="manipulation_check_question"></p>
+        	<p id="manipulation_check_question">{{}}</p>
         	
         	<!-- Multiple choice options (modified in experiment.js) -->
         	<div>
 	        	<label for="choice1" class="mc_label">
 	        		<input type="radio" name="choice" id="choice1" class="multiple_choice"/>
-	        		<span id="mc_label1">{1}</span>
+	        		<span id="mc_label1">{{}}</span>
 	        	</label>
 	            <label for="choice2" class="mc_label">
 	            	<input type="radio" name="choice" id="choice2" class="multiple_choice"/>
-	            	<span id="mc_label2">{2}</span>
+	            	<span id="mc_label2">{{}}</span>
 	            </label>
 	            <label for="choice3" class="mc_label">
 	            	<input type="radio" name="choice" id="choice3" class="multiple_choice"/>
-	            	<span id="mc_label3">{3}</span>
+	            	<span id="mc_label3">{{}}</span>
 	            </label>
 	        </div>
 

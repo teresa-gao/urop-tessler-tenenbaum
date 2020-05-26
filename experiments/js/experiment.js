@@ -20,10 +20,11 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
 var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = _.shuffle(["generic", "gen+ped", "accidental", "pedagogical"]); // gen+ped is generic statement of property and pedagogical demonstration, generic is only generic statement of property, accidental is "oops" presentation, pedagogical is teaching-style presentation
+var item_presentation_condition = ["generic+text", "generic", "gen+ped", "accidental", "pedagogical"]; // gen+ped is generic statement of property and pedagogical demonstration, generic is only generic statement of property, accidental is "oops" presentation, pedagogical is teaching-style presentation
 
 var trial_based_on = 2; // Manipulation checks are all based on experimental trial 2, as trial 1 is used for the attention check
 var reshuffled_objects = _.shuffle(objects); // Used in manipulation checks likely different from original trial order
+var reshuffled_item_names = _.shuffle(item_name);
 
 // Changes all elements of an HTML class to have the same source image; used for stimuli objects
 function change_image(class_name, source) {
@@ -284,7 +285,7 @@ function effect_remark_close(stim) {
 
         // Continues to next slide within subtrial
         function() {
-            $(".continue_button1").show();
+            $("#continue_button1").show();
         }
     );
 }
@@ -322,7 +323,7 @@ function run_trial(stim, exp_this) {
             
             // Continue to next subtrial slide
             function() {
-                $(".continue_button1").show();
+                $("#continue_button1").show();
             }
 
         );
@@ -404,7 +405,7 @@ function run_trial(stim, exp_this) {
 
             // Continues to next subtrial slide
             function() {
-                $(".continue_button1").show();
+                $("#continue_button1").show();
             }
 
         );
@@ -746,19 +747,41 @@ function make_slides(f) {
         present_handle : function(stim) {
 
             this.stim = stim;
-            run_trial(this.stim, this);
+            
+            if (this.stim.type == "text") {
+
+                $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
+
+                let generic_statement = "";
+                if (this.stim.property == "squeaking") {
+                    generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak";
+                } else {
+                    generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + this.stim.property;
+                }
+
+                $("#trials_text").text("You are told, \"" + generic_statement + ".\"");
+
+                // Continue to next subtrial
+                $("#trials_text, #continue_button1").show();
+
+            } else {
+
+                run_trial(this.stim, this);
+
+            }
 
             // Capture user response (prediction)
             if (this.stim.type == "response") {
-                $(".agent, .object, .error, .speech, .blanket, .label, .table, .background").hide();
+
+                $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, #trials_text").hide();
 
                 $(".slider").show();
 
                 // Creates grammatically correct statement
-                if (this.stim.object[0] == "artifact") {
+                if (this.stim.property == "squeaking") {
                     $(".trials_prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
                 } else {
-                    $(".trials_prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + this.stim.object[2] + "?");
+                    $(".trials_prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + this.stim.property + "?");
                 }
 
                 // Create slider, initialized without position
@@ -766,8 +789,10 @@ function make_slides(f) {
                 exp.sliderPost = null;
 
                 // Continue to next subtrial
-                $(".continue_button2").show();
+                $("#continue_button2").show();
+
             };
+
         },
 
         // Continue to next slide within subtrial
@@ -823,9 +848,8 @@ function make_slides(f) {
         start: function() {
             this.attention_startT = Date.now();
             this.user_response = null;
-            $("#attention_error").hide();
         },
-        present_handle : function(stim) {
+        present_handle: function(stim) {
 
             this.stim = stim;
 
@@ -838,41 +862,38 @@ function make_slides(f) {
             $("#attention_check_instructions").text(this.stim.instructions);
 
         },
-        set_choice: function(choice_number) {
-            
+        continue: function(choice_number) {
+
             this.user_response = reshuffled_objects[choice_number-1];
 
             // User's choice is correct if it matches the presented order
             this.is_correct = false;
-            if (reshuffled_objects[choice_number - 1] == this.stim.correct_answer) {
-                this.is_correct = true;
+            if (this.stim.trial_type == "match_name_and_image")
+            {
+                if (reshuffled_objects[choice_number - 1] == this.stim.correct_answer) {
+                    this.is_correct = true;
+                }
+            } else if (this.stim.trial_type == "match_name_and_property") {
+                if (reshuffled_item_names[choice_number - 1] == this.stim.correct_answer) {
+                    this.is_correct = true;
+                }
             }
 
-        },
-        continue_button: function() {
+            console.log(this.is_correct);
 
-            if (this.user_response == null) {
+            // Log data to MTurk
+            exp.attention_data.push({
+                trial_type: this.stim.trial_type,
+                trial_num: 1,
+                correct_answer: this.stim.correct_answer[0],
+                response: this.user_response,
+                trial_time_in_seconds: (Date.now() - this.attention_startT) / 1000,
+                is_correct: this.is_correct,
+                item_name: this.stim.item_name
+            });
 
-                $("#attention_error").show();
-
-            } else {
-                console.log(reshuffled_objects);
-
-                // Log data to MTurk
-                exp.attention_data.push({
-                    trial_type: "name_object",
-                    trial_num: 1,
-                    correct_answer: this.stim.correct_answer[0],
-                    response: this.user_response,
-                    trial_time_in_seconds: (Date.now() - this.attention_startT) / 1000,
-                    is_correct: this.is_correct,
-                    item_name: this.stim.item_name
-                });
-
-                // Regardless of choice correctness, we continue!
-                _stream.apply(this);
-
-            }
+            // Regardless of choice correctness, we continue!
+            _stream.apply(this);
 
         }
     });
@@ -980,7 +1001,7 @@ function make_slides(f) {
 
                 // Log data to MTurk
                 exp.manipulation_data.push({
-                    trial_type: this.stim.trial_name,
+                    trial_type: this.stim.trial_type,
                     trial_num: this.stim.trial_num,
                     correct_answer: this.stim.correct_answer,
                     response: this.response,
@@ -1076,8 +1097,8 @@ function init() {
         // "i0",
         // "botcaptcha",
         // "sound_check",
-        // "introduction",
-        // "trials",
+        "introduction",
+        "trials",
         "attention_check",
         "manipulation_check",
         "subj_info",
@@ -1093,46 +1114,115 @@ function init() {
     // Used to submit to MTurk — streamlined and flattened
     exp.trials_stimuli_streamlined = [{}]; // Initialized with empty {} so trial_num 0 (introduction) can be filled in later
 
-    // Adds data to run present_handle, based on the number of trials we want (specified at top of doc)
-    let trial_num = 0;
-    while (trial_num < total_trials_num) {
+    if (item_presentation_condition[0] == "generic+text") {
 
-        exp.trials_stimuli = exp.trials_stimuli.concat([ 
-            
-            // Adds agent greeting slide to trial
-            _.extend(
-                {
-                    trial_num: trial_num + 1,
-                    type: "greeting",
-                    item_presentation_condition: item_presentation_condition[0],
-                    background: back[trial_num],
-                    agent: agents[trial_num],
-                    speaker: speakers[trial_num]
-                }
-            ),
+        let trial_num = 0;
+        while (trial_num < total_trials_num) {
 
-            // Adds agent "look at that" slide to trial
-            _.extend(
-                {
-                    trial_num: trial_num + 1,
-                    type: "lookit",
-                    item_presentation_condition: item_presentation_condition[0],
-                    agent: agents[trial_num],
-                    object: objects[trial_num],
-                    item_name: item_name[trial_num],
-                    n_examples: n_examples[0],
-                    speaker: speakers[trial_num]
-                }
-            )
-        ]);
+            exp.trials_stimuli = exp.trials_stimuli.concat([
 
-        // For generic and gen+ped conditions: create slide for agent teaching property via generic statement
-        if ((item_presentation_condition[0] == "generic") || (item_presentation_condition[0] == "gen+ped")) {
+                // Adds agent greeting slide to trial
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        type: "text",
+                        item_presentation_condition: item_presentation_condition[0],
+                        property: objects[trial_num][2],
+                        item_name: item_name[trial_num],
+                    }
+                )
+
+            ]);
+
+            // Logs each trial's stimuli to data to be submitted to MTurk — full version
+            exp.trials_stimuli_full = exp.trials_stimuli_full.concat([
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        trial_type: "text",
+                        item_presentation_condition: item_presentation_condition[0],
+                        agent: {
+                            name: null,
+                            straight_image: null,
+                            point_r_image: null
+                        },
+                        object: {
+                            name: null,
+                            property: objects[trial_num][2],
+                            closed_image: null,
+                            open_image: null
+                        },
+                        item_name: {
+                            singular: item_name[trial_num][0],
+                            plural: item_name[trial_num][1]
+                        },
+                        n_examples: 0,
+                        speaker: null,
+                        background: null,
+                        spoken_text: []
+                    }
+                )
+            ]);
+    
+            // Logs each trial's stimuli to data to be submitted to MTurk — streamlined version
+            exp.trials_stimuli_streamlined = exp.trials_stimuli_streamlined.concat([
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        trial_type: "text",
+                        item_presentation_condition: item_presentation_condition[0],
+                        agent: null,
+                        object: null,
+                        property: objects[trial_num][2],
+                        item_name: item_name[trial_num][0],
+                        n_examples: 0,
+                        speaker: null,
+                        background: null
+                    }
+                )
+            ]);
+
+            // Adds slider response slide
             exp.trials_stimuli = exp.trials_stimuli.concat([
                 _.extend(
                     {
                         trial_num: trial_num + 1,
-                        type: "tell_you",
+                        type: "response",
+                        property: objects[trial_num][2],
+                        item_name: item_name[trial_num]
+                    }
+                )
+            ]);
+
+            trial_num += 1;
+
+        }
+
+    } else { // For all non-"generic+text" conditions
+
+        // Adds data to run present_handle, based on the number of trials we want (specified at top of doc)
+        let trial_num = 0;
+        while (trial_num < total_trials_num) {
+    
+            exp.trials_stimuli = exp.trials_stimuli.concat([ 
+                
+                // Adds agent greeting slide to trial
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        type: "greeting",
+                        item_presentation_condition: item_presentation_condition[0],
+                        background: back[trial_num],
+                        agent: agents[trial_num],
+                        speaker: speakers[trial_num]
+                    }
+                ),
+    
+                // Adds agent "look at that" slide to trial
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        type: "lookit",
                         item_presentation_condition: item_presentation_condition[0],
                         agent: agents[trial_num],
                         object: objects[trial_num],
@@ -1142,95 +1232,112 @@ function init() {
                     }
                 )
             ]);
-        }
-
-        // Creates subtrial for each of the exemplars (allows agent to interact with each exemplar object)
-        let exemplar_num = 1;
-        while ((exemplar_num < n_examples[0] + 1) && (item_presentation_condition[0] != "generic")) {
-
-            // Create subtrial with given exemplar_num (number of object agent interacts with on this slide of the subtrial)
-            exp.trials_stimuli = exp.trials_stimuli.concat([ 
+    
+            // For generic and gen+ped conditions: create slide for agent teaching property via generic statement
+            if ((item_presentation_condition[0] == "generic") || (item_presentation_condition[0] == "gen+ped")) {
+                exp.trials_stimuli = exp.trials_stimuli.concat([
+                    _.extend(
+                        {
+                            trial_num: trial_num + 1,
+                            type: "tell_you",
+                            item_presentation_condition: item_presentation_condition[0],
+                            agent: agents[trial_num],
+                            object: objects[trial_num],
+                            item_name: item_name[trial_num],
+                            n_examples: n_examples[0],
+                            speaker: speakers[trial_num]
+                        }
+                    )
+                ]);
+            }
+    
+            // Creates subtrial for each of the exemplars (allows agent to interact with each exemplar object)
+            let exemplar_num = 1;
+            while ((exemplar_num < n_examples[0] + 1) && (item_presentation_condition[0] != "generic")) {
+    
+                // Create subtrial with given exemplar_num (number of object agent interacts with on this slide of the subtrial)
+                exp.trials_stimuli = exp.trials_stimuli.concat([ 
+                    _.extend(
+                        {
+                            trial_num: trial_num + 1,
+                            type: "trial",
+                            item_presentation_condition: item_presentation_condition[0],
+                            agent: agents[trial_num],
+                            object: objects[trial_num],
+                            item_name: item_name[trial_num],
+                            n_examples: n_examples[0],
+                            speaker: speakers[trial_num],
+                            exemplar_num: exemplar_num
+                        }
+                    )
+                ]);
+    
+                exemplar_num += 1;
+            }
+    
+            // Logs each trial's stimuli to data to be submitted to MTurk — full version
+            exp.trials_stimuli_full = exp.trials_stimuli_full.concat([
                 _.extend(
                     {
                         trial_num: trial_num + 1,
-                        type: "trial",
+                        trial_type: "trial",
                         item_presentation_condition: item_presentation_condition[0],
-                        agent: agents[trial_num],
-                        object: objects[trial_num],
-                        item_name: item_name[trial_num],
+                        agent: {
+                            name: agents[trial_num],
+                            straight_image: agents[trial_num] + "_straight.png",
+                            point_r_image: agents[trial_num] + "_point_r.png"
+                        },
+                        object: {
+                            name: objects[trial_num][0],
+                            property: objects[trial_num][2],
+                            closed_image: objects[trial_num][1] + "_closed.svg",
+                            open_image: objects[trial_num][1] + "_open.svg"
+                        },
+                        item_name: {
+                            singular: item_name[trial_num][0],
+                            plural: item_name[trial_num][1]
+                        },
                         n_examples: n_examples[0],
                         speaker: speakers[trial_num],
-                        exemplar_num: exemplar_num
+                        background: back[trial_num],
+                        spoken_text: [] // Will be fleshed out via agent_say()
                     }
                 )
             ]);
-
-            exemplar_num += 1;
-        }
-
-        // Logs each trial's stimuli to data to be submitted to MTurk — full version
-        exp.trials_stimuli_full = exp.trials_stimuli_full.concat([
-            _.extend(
-                {
-                    trial_num: trial_num + 1,
-                    trial_type: "trial",
-                    item_presentation_condition: item_presentation_condition[0],
-                    agent: {
-                        name: agents[trial_num],
-                        straight_image: agents[trial_num] + "_straight.png",
-                        point_r_image: agents[trial_num] + "_point_r.png"
-                    },
-                    object: {
-                        name: objects[trial_num][0],
+    
+            // Logs each trial's stimuli to data to be submitted to MTurk — streamlined version
+            exp.trials_stimuli_streamlined = exp.trials_stimuli_streamlined.concat([
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        trial_type: "trial",
+                        item_presentation_condition: item_presentation_condition[0],
+                        agent: agents[trial_num],
+                        object: objects[trial_num][0],
                         property: objects[trial_num][2],
-                        closed_image: objects[trial_num][1] + "_closed.svg",
-                        open_image: objects[trial_num][1] + "_open.svg"
-                    },
-                    item_name: {
-                        singular: item_name[trial_num][0],
-                        plural: item_name[trial_num][1]
-                    },
-                    n_examples: n_examples[0],
-                    speaker: speakers[trial_num],
-                    background: back[trial_num],
-                    spoken_text: [] // Will be fleshed out via agent_say()
-                }
-            )
-        ]);
-
-        // Logs each trial's stimuli to data to be submitted to MTurk — streamlined version
-        exp.trials_stimuli_streamlined = exp.trials_stimuli_streamlined.concat([
-            _.extend(
-                {
-                    trial_num: trial_num + 1,
-                    trial_type: "trial",
-                    item_presentation_condition: item_presentation_condition[0],
-                    agent: agents[trial_num],
-                    object: objects[trial_num][0],
-                    property: objects[trial_num][2],
-                    item_name: item_name[trial_num][0],
-                    n_examples: n_examples[0],
-                    speaker: speakers[trial_num],
-                    background: back[trial_num]
-                }
-            )
-        ]);
-
-        // Adds slider response slide
-        exp.trials_stimuli = exp.trials_stimuli.concat([
-            _.extend(
-                {
-                    trial_num: trial_num + 1,
-                    type: "response",
-                    object: objects[trial_num],
-                    item_name: item_name[trial_num],
-                    n_examples: n_examples[0]
-                }
-            )
-        ]);
-
-        trial_num += 1;
-    }
+                        item_name: item_name[trial_num][0],
+                        n_examples: n_examples[0],
+                        speaker: speakers[trial_num],
+                        background: back[trial_num]
+                    }
+                )
+            ]);
+    
+            // Adds slider response slide
+            exp.trials_stimuli = exp.trials_stimuli.concat([
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        type: "response",
+                        property: objects[trial_num][2],
+                        item_name: item_name[trial_num]
+                    }
+                )
+            ]);
+    
+            trial_num += 1;
+        }
+    };
 
     // Initialize data frames to be submitted to MTurk — data will be added as slides are run
     exp.catch_trials = [];
@@ -1242,21 +1349,42 @@ function init() {
     }
 
     // Used to run attention checks
-    exp.attention_stimuli = [
-        {
-            trial_name: "identify_object",
-            images: ["images/"+reshuffled_objects[0][1]+"_closed.svg", "images/"+reshuffled_objects[1][1]+"_closed.svg", "images/"+reshuffled_objects[2][1]+"_closed.svg"],
-            instructions: "Which one of these objects is a " + item_name[0][0] + "?",
-            correct_answer: objects[0],
-            item_name: item_name[0][0]
-        }
-    ];
+    if ((item_presentation_condition[0] == "generic+text") || (item_presentation_condition[0] == "generic")) {
+        // Enable construction of grammatically correct sentence
+        let property_verb = "squeaks";
+        if (objects[0][2] == "purple petals") {
+            property_verb = "has purple petals";
+        } else if (objects[0][2] == "green feathers") {
+            property_verb = "has green feathers";
+        };
+
+        exp.attention_stimuli = [
+            {
+                trial_type: "match_name_and_property",
+                images: ["images/"+reshuffled_item_names[0][0] + ".svg", "images/"+reshuffled_item_names[1][0] + ".svg", "images/"+reshuffled_item_names[2][0] + ".svg"],
+                instructions: "Which one of these " + property_verb + "?",
+                correct_answer: item_name[0],
+                item_name: item_name[0][0]
+            }
+        ];
+
+    } else {
+        exp.attention_stimuli = [
+            {
+                trial_type: "match_name_and_image",
+                images: ["images/"+reshuffled_objects[0][1]+"_closed.svg", "images/"+reshuffled_objects[1][1]+"_closed.svg", "images/"+reshuffled_objects[2][1]+"_closed.svg"],
+                instructions: "Which one of these objects is a " + item_name[0][0] + "?",
+                correct_answer: objects[0],
+                item_name: item_name[0][0]
+            }
+        ];
+    }
 
     // Used to run manipulation check "trials"
     exp.manipulation_check = [{}, {}, // Leave space for first and second manipulation checks (filled in below)
         // Third manipulation check: "How much does this character know about this item?"
         {
-            trial_name: "how_much_does_character_know",
+            trial_type: "how_much_does_character_know",
             trial_num: 3,
             trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
             question: "How much does this character know about this object?",
@@ -1272,7 +1400,7 @@ function init() {
         correct_answer = "just_arrived_here";
     };
     exp.manipulation_check[0] = {
-        trial_name: "just_arrived_or_been_while",
+        trial_type: "just_arrived_or_been_while",
         trial_num: 1,
         trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
         question: "Did this character just arrive here or have they been here for a while?",
@@ -1297,7 +1425,7 @@ function init() {
     };
     // Create second manipulation check: E.g., "Did this character make this object squeak on purpose or by accident?"
     exp.manipulation_check[1] = {
-        trial_name: "on_purpose_or_accident",
+        trial_type: "on_purpose_or_accident",
         trial_num: 2,
         trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
         question: "Did this character make this object " + property_verb + " on purpose or by accident?",
