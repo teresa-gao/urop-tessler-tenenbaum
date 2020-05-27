@@ -20,7 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
 var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = ["generic+text", "generic", "gen+ped", "accidental", "pedagogical"]; // gen+ped is generic statement of property and pedagogical demonstration, generic is only generic statement of property, accidental is "oops" presentation, pedagogical is teaching-style presentation
+var item_presentation_condition = _.shuffle(["generic+text", "generic", "gen+ped", "accidental", "pedagogical"]); // generic+text is generic statement only with no animations or visuals, generic is only generic statement of property, gen+ped is generic statement of property and pedagogical demonstration, accidental is "oops" presentation, pedagogical is teaching-style presentation
 
 var trial_based_on = 2; // Manipulation checks are all based on experimental trial 2, as trial 1 is used for the attention check
 var reshuffled_objects = _.shuffle(objects); // Used in manipulation checks likely different from original trial order
@@ -295,7 +295,7 @@ function run_trial(stim, exp_this) {
 
     // Sets up initial display (sans objects, etc.)
     $("button").hide();
-    $(".object, .error, .speech, .slider, .blanket, .label").hide();
+    $(".object, .error, .speech, .slider, .blanket, .label, #trials_text").hide();
     $(".table, .background").show();
 
     // Agent greets user
@@ -879,8 +879,6 @@ function make_slides(f) {
                 }
             }
 
-            console.log(this.is_correct);
-
             // Log data to MTurk
             exp.attention_data.push({
                 trial_type: this.stim.trial_type,
@@ -927,9 +925,11 @@ function make_slides(f) {
             $("." + agents[this.stim.trial_based_on - 1]).show();
 
             // Show relevant exemplar object
-            if (this.stim.trial_num != 1) {
+            if (this.stim.trial_type != "just_arrived_or_been_while") {
                 $(".exemplar").show();
-                change_image("exemplar", "images/" + objects[this.stim.trial_based_on - 1][1] + "_closed.svg");
+
+                change_image("exemplar", this.stim.object_image_src);
+                
             }
 
             // Display question
@@ -1094,9 +1094,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
+        "i0",
+        "botcaptcha",
+        "sound_check",
         "introduction",
         "trials",
         "attention_check",
@@ -1346,10 +1346,11 @@ function init() {
     exp.condition = {
         item_presentation_condition: item_presentation_condition[0],
         n_examples: n_examples[0]
-    }
+    };
 
     // Used to run attention checks
     if ((item_presentation_condition[0] == "generic+text") || (item_presentation_condition[0] == "generic")) {
+        
         // Enable construction of grammatically correct sentence
         let property_verb = "squeaks";
         if (objects[0][2] == "purple petals") {
@@ -1358,6 +1359,7 @@ function init() {
             property_verb = "has green feathers";
         };
 
+        // Used to run attention check "trials"
         exp.attention_stimuli = [
             {
                 trial_type: "match_name_and_property",
@@ -1369,6 +1371,8 @@ function init() {
         ];
 
     } else {
+
+        // Used to run attention check "trials"
         exp.attention_stimuli = [
             {
                 trial_type: "match_name_and_image",
@@ -1378,60 +1382,93 @@ function init() {
                 item_name: item_name[0][0]
             }
         ];
-    }
+
+    };
 
     // Used to run manipulation check "trials"
-    exp.manipulation_check = [{}, {}, // Leave space for first and second manipulation checks (filled in below)
-        // Third manipulation check: "How much does this character know about this item?"
-        {
-            trial_type: "how_much_does_character_know",
-            trial_num: 3,
-            trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
-            question: "How much does this character know about this object?",
-            type: "slider",
-            options: ["This character knows a little", "This character knows a lot"],
-            correct_answer: null
-        }
-    ]
+    exp.manipulation_check = [];
 
-    // Create first manipulation check: "Did this character just arrive here or have they been here for a while?"
-    var correct_answer = "been_here_for_a_while";
-    if (item_presentation_condition[0] == "accidental") {
-        correct_answer = "just_arrived_here";
-    };
-    exp.manipulation_check[0] = {
-        trial_type: "just_arrived_or_been_while",
-        trial_num: 1,
-        trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
-        question: "Did this character just arrive here or have they been here for a while?",
-        type: "multiple_choice",
-        options: [ ["This character just arrived here", "just_arrived_here"], ["This character has been here for a while", "been_here_for_a_while"] ],
-        correct_answer: correct_answer
-    };
+    if (item_presentation_condition[0] != "generic+text") { // Excluded since no images are shown in generic+text
 
-    // Create correct answer of agent action intentionality
-    var correct_answer = "on_purpose";
-    if (item_presentation_condition[0] == "accidental") {
-        correct_answer = "by_accident";
-    } else if (item_presentation_condition[0] == "generic") {
-        correct_answer = "NA";
-    };
-    // Enable construction of grammatically correct sentence
-    var property_verb = "squeak";
-    if (objects[trial_based_on - 1][2] == "purple petals") {
-        property_verb = "show its purple petals";
-    } else if (objects[trial_based_on - 1][2] == "green feathers") {
-        property_verb = "show its green feathers";
-    };
-    // Create second manipulation check: E.g., "Did this character make this object squeak on purpose or by accident?"
-    exp.manipulation_check[1] = {
-        trial_type: "on_purpose_or_accident",
-        trial_num: 2,
-        trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
-        question: "Did this character make this object " + property_verb + " on purpose or by accident?",
-        type: "multiple_choice",
-        options: [ ["They made this object " + property_verb + " on purpose", "on_purpose"], ["They made this object " + property_verb + " by accident", "by_accident"], ["N/A - They did not interact with this object", "NA"] ],
-        correct_answer: correct_answer
+        let added_trials = 0;
+
+        // Create first manipulation check: "Did this character just arrive here or have they been here for a while?"
+        let correct_answer = "been_here_for_a_while";
+        if (item_presentation_condition[0] == "accidental") {
+            correct_answer = "just_arrived_here";
+        };
+        exp.manipulation_check = exp.manipulation_check.concat([
+            _.extend(
+                {
+                    trial_type: "just_arrived_or_been_while",
+                    trial_num: ++added_trials,
+                    trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
+                    question: "Did this character just arrive here or have they been here for a while?",
+                    type: "multiple_choice",
+                    options: [ ["This character just arrived here", "just_arrived_here"], ["This character has been here for a while", "been_here_for_a_while"] ],
+                    correct_answer: correct_answer
+                }
+            )
+        ]);
+
+        if (item_presentation_condition[0] != "generic") { // Excluded since the agent doesn't interact with the object in either generic condition!
+
+            // Create correct answer of agent action intentionality
+            let correct_answer = "on_purpose";
+            if (item_presentation_condition[0] == "accidental") {
+                correct_answer = "by_accident";
+            } else if (item_presentation_condition[0] == "generic") {
+                correct_answer = "NA";
+            };
+
+            // Enable construction of grammatically correct sentence
+            let property_verb = "squeak";
+            if (objects[trial_based_on - 1][2] == "purple petals") {
+                property_verb = "show its purple petals";
+            } else if (objects[trial_based_on - 1][2] == "green feathers") {
+                property_verb = "show its green feathers";
+            };
+
+            // Create second manipulation check: E.g., "Did this character make this object squeak on purpose or by accident?"
+            exp.manipulation_check = exp.manipulation_check.concat([
+                _.extend(
+                    {
+                        trial_type: "on_purpose_or_accident",
+                        trial_num: ++added_trials,
+                        trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
+                        question: "Did this character make this object " + property_verb + " on purpose or by accident?",
+                        type: "multiple_choice",
+                        options: [ ["They made this object " + property_verb + " on purpose", "on_purpose"], ["They made this object " + property_verb + " by accident", "by_accident"], ["N/A - They did not interact with this object", "NA"] ],
+                        correct_answer: correct_answer,
+                        object_image_src: "images/" + objects[this.stim.trial_based_on - 1][1] + "_closed.svg"
+                    }
+                )
+            ]);
+        };
+
+        let object_image_src = "";
+        if (item_presentation_condition[0] == "generic") {
+            object_image_src = "images/" + item_name[trial_based_on - 1][0] + ".svg";
+        } else {
+            object_image_src = "images/" + objects[trial_based_on - 1][1] + "_closed.svg";
+        };
+
+        // Final manipulation check: "How much does this character know about this item?"
+        exp.manipulation_check = exp.manipulation_check.concat([
+            _.extend(
+                {
+                    trial_type: "how_much_does_character_know",
+                    trial_num: ++added_trials,
+                    trial_based_on: trial_based_on, // The experimental trial slides whose agent and/or object we are using
+                    question: "How much does this character know about this object?",
+                    type: "slider",
+                    options: ["This character knows a little", "This character knows a lot"],
+                    correct_answer: null,
+                    object_image_src: object_image_src
+                }
+            )
+        ]);
+
     };
 
     //make corresponding slides:
