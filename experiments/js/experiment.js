@@ -20,7 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
 var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = _.shuffle(["generic+text", "generic", "gen+ped", "accidental", "pedagogical"]); // generic+text is generic statement only with no animations or visuals, generic is only generic statement of property, gen+ped is generic statement of property and pedagogical demonstration, accidental is "oops" presentation, pedagogical is teaching-style presentation
+var item_presentation_condition = ["generic+text", "generic", "gen+ped", "accidental", "pedagogical"]; // generic+text is generic statement only with no animations or visuals, generic is only generic statement of property, gen+ped is generic statement of property and pedagogical demonstration, accidental is "oops" presentation, pedagogical is teaching-style presentation
 
 var trial_based_on = 2; // Manipulation checks are all based on experimental trial 2, as trial 1 is used for the attention check
 var reshuffled_objects = _.shuffle(objects); // Used in manipulation checks likely different from original trial order
@@ -864,27 +864,22 @@ function make_slides(f) {
         },
         continue: function(choice_number) {
 
-            this.user_response = reshuffled_objects[choice_number-1];
+            console.log(item_presentation_condition[0]);
+            if ((item_presentation_condition[0] == "generic") || (item_presentation_condition[0] == "generic+text")) {
+                this.user_response = reshuffled_item_names[choice_number-1];
+            } else {
+                this.user_response = reshuffled_objects[choice_number-1];
+            }
 
             // User's choice is correct if it matches the presented order
-            this.is_correct = false;
-            if (this.stim.trial_type == "match_name_and_image")
-            {
-                if (reshuffled_objects[choice_number - 1] == this.stim.correct_answer) {
-                    this.is_correct = true;
-                }
-            } else if (this.stim.trial_type == "match_name_and_property") {
-                if (reshuffled_item_names[choice_number - 1] == this.stim.correct_answer) {
-                    this.is_correct = true;
-                }
-            }
+            this.is_correct = (this.user_response == this.stim.correct_answer);
 
             // Log data to MTurk
             exp.attention_data.push({
                 trial_type: this.stim.trial_type,
                 trial_num: 1,
                 correct_answer: this.stim.correct_answer[0],
-                response: this.user_response,
+                response: this.user_response[0],
                 trial_time_in_seconds: (Date.now() - this.attention_startT) / 1000,
                 is_correct: this.is_correct,
                 item_name: this.stim.item_name
@@ -922,7 +917,7 @@ function make_slides(f) {
 
             // Show relevant agent head
             $(".refimage").hide();
-            $("." + agents[this.stim.trial_based_on - 1]).show();
+            $("." + this.stim.agent).show();
 
             // Show relevant exemplar object
             if (this.stim.trial_type != "just_arrived_or_been_while") {
@@ -995,8 +990,14 @@ function make_slides(f) {
                 }
 
                 this.is_correct = (this.response == this.stim.correct_answer);
-                if (this.stim.correct_answer == null) {
+                if (this.stim.correct_answer == "") {
                     this.is_correct = true; // All answers are considered correct on the slider
+                }
+
+                if (this.stim.trial_type == "just_arrived_or_been_while") {
+                    this.item_name = "";
+                } else {
+                    this.item_name = item_name[0][0];
                 }
 
                 // Log data to MTurk
@@ -1007,7 +1008,7 @@ function make_slides(f) {
                     response: this.response,
                     trial_time_in_seconds: (Date.now() - this.manipulation_startT) / 1000,
                     is_correct: this.is_correct,
-                    item_name: item_name[0][0]
+                    item_name: this.item_name
                 });
 
                 _stream.apply(this);
@@ -1142,23 +1143,23 @@ function init() {
                         trial_type: "text",
                         item_presentation_condition: item_presentation_condition[0],
                         agent: {
-                            name: null,
-                            straight_image: null,
-                            point_r_image: null
+                            name: "",
+                            straight_image: "",
+                            point_r_image: ""
                         },
                         object: {
-                            name: null,
+                            name: "",
                             property: objects[trial_num][2],
-                            closed_image: null,
-                            open_image: null
+                            closed_image: "",
+                            open_image: ""
                         },
                         item_name: {
                             singular: item_name[trial_num][0],
                             plural: item_name[trial_num][1]
                         },
                         n_examples: 0,
-                        speaker: null,
-                        background: null,
+                        speaker: "",
+                        background: "",
                         spoken_text: []
                     }
                 )
@@ -1171,13 +1172,13 @@ function init() {
                         trial_num: trial_num + 1,
                         trial_type: "text",
                         item_presentation_condition: item_presentation_condition[0],
-                        agent: null,
-                        object: null,
+                        agent: "",
+                        object: "",
                         property: objects[trial_num][2],
                         item_name: item_name[trial_num][0],
                         n_examples: 0,
-                        speaker: null,
-                        background: null
+                        speaker: "",
+                        background: ""
                     }
                 )
             ]);
@@ -1363,7 +1364,7 @@ function init() {
         exp.attention_stimuli = [
             {
                 trial_type: "match_name_and_property",
-                images: ["images/"+reshuffled_item_names[0][0] + ".svg", "images/"+reshuffled_item_names[1][0] + ".svg", "images/"+reshuffled_item_names[2][0] + ".svg"],
+                images: ["images/"+reshuffled_item_names[0][0] + ".png", "images/"+reshuffled_item_names[1][0] + ".png", "images/"+reshuffled_item_names[2][0] + ".png"],
                 instructions: "Which one of these " + property_verb + "?",
                 correct_answer: item_name[0],
                 item_name: item_name[0][0]
@@ -1406,7 +1407,8 @@ function init() {
                     question: "Did this character just arrive here or have they been here for a while?",
                     type: "multiple_choice",
                     options: [ ["This character just arrived here", "just_arrived_here"], ["This character has been here for a while", "been_here_for_a_while"] ],
-                    correct_answer: correct_answer
+                    correct_answer: correct_answer,
+                    agent: agents[trial_based_on - 1]
                 }
             )
         ]);
@@ -1440,7 +1442,8 @@ function init() {
                         type: "multiple_choice",
                         options: [ ["They made this object " + property_verb + " on purpose", "on_purpose"], ["They made this object " + property_verb + " by accident", "by_accident"], ["N/A - They did not interact with this object", "NA"] ],
                         correct_answer: correct_answer,
-                        object_image_src: "images/" + objects[this.stim.trial_based_on - 1][1] + "_closed.svg"
+                        object_image_src: "images/" + objects[trial_based_on - 1][1] + "_closed.svg",
+                        agent: agents[trial_based_on - 1]
                     }
                 )
             ]);
@@ -1448,7 +1451,7 @@ function init() {
 
         let object_image_src = "";
         if (item_presentation_condition[0] == "generic") {
-            object_image_src = "images/" + item_name[trial_based_on - 1][0] + ".svg";
+            object_image_src = "images/" + item_name[trial_based_on - 1][0] + ".png";
         } else {
             object_image_src = "images/" + objects[trial_based_on - 1][1] + "_closed.svg";
         };
@@ -1463,8 +1466,9 @@ function init() {
                     question: "How much does this character know about this object?",
                     type: "slider",
                     options: ["This character knows a little", "This character knows a lot"],
-                    correct_answer: null,
-                    object_image_src: object_image_src
+                    correct_answer: "",
+                    object_image_src: object_image_src,
+                    agent: agents[trial_based_on - 1]
                 }
             )
         ]);
