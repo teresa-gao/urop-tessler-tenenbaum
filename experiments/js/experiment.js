@@ -1,4 +1,4 @@
-// TL;DR "README" OVERVIEW OF experiment.js FILE:
+// TL;DR OVERVIEW OF experiment.js FILE:
 // * Variable declarations — Much of the experiment can be modified solely by changing these variable values
 // * Functions — These are used primarily in slides.trials (trials slide)
 // * Slides — These include intro slide, catch trials, (experimental) trial slides, attention checks, manipulation checks, info, and thank-you (data submission to MTurk)
@@ -20,7 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
 var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = ["generic+text", "generic", "gen+ped", "accidental", "pedagogical"]; // generic+text is generic statement only with no animations or visuals, generic is only generic statement of property, gen+ped is generic statement of property and pedagogical demonstration, accidental is "oops" presentation, pedagogical is teaching-style presentation
+var item_presentation_condition = _.shuffle(["generic+text", "generic", "gen+ped", "accidental", "pedagogical"]); // (See README for descriptions of each condition)
 
 var trial_based_on = 2; // Manipulation checks are all based on experimental trial 2, as trial 1 is used for the attention check
 var reshuffled_objects = _.shuffle(objects); // Used in manipulation checks likely different from original trial order
@@ -348,8 +348,8 @@ function run_trial(stim, exp_this) {
 
         if (stim.item_presentation_condition == "accidental") {
             lookit = "Oh! Look at that! " + lookit;
-            oh_look = new Audio("audio/" + stim.speaker + "_recordings/oh_look_at_that.mp3");
-            oh_look.play();
+            let oh_look = new Audio("audio/" + stim.speaker + "_recordings/oh_look_at_that.mp3");
+            let oh_look.play();
 
             // Add additional time to account for "Oh! Look at that!" statement
             wait_time += 1750;
@@ -380,10 +380,14 @@ function run_trial(stim, exp_this) {
         let say_text = ""
         if (property == "squeaking") {
             say_text = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak.";
+            say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1][0] + "_" + "squeak" + ".mp3");
         } else {
             say_text = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + property + ".";
+            say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1][0] + "_have_" + property + ".mp3");
         }
         
+        let something_to_tell = new Audio("audio/" + stim.speaker + "_recordings/i_have_something_to_tell_you.mp3");
+        something_to_tell.play();
         agent_say("I have something to tell you.", stim.trial_num).then(
             
             function() {
@@ -1072,7 +1076,7 @@ function make_slides(f) {
 /// init ///
 function init() {
 
-    // Unique Turker, to ensure that MTurk Workers are unique
+    // Unique Turker, to ensure that MTurk Workers are unique; may be commented out during Sandbox testing, but make sure to keep when uploaded to MTurk production website!
     repeatWorker = false;
     (function(){
             var ut_id = "tg-2020-05-05-genex";
