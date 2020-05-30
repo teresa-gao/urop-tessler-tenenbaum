@@ -47,6 +47,23 @@ More options for backgrounds, agents, and speaker voices may be added arbitraril
 * Additional speaker voice files should be included in the **\\audio** folder, named "xx\_recordings", where "xx" are representative initials of the speaker
 	* See preexisting files for script and file-naming
 
+##### Recording lengths
+
+| text (script) | duration in ms |
+| ------------- | -------------- |
+| hellos | 200ish (under 2250) |
+| I have something to tell you | under 1750 |
+| let me show you something | under 2000 |
+| oh look at that | 1500ish (under 1750) |
+| oh wow (not squeaking) | under 2500 |
+| oh wow (squeaking) | 2000ish (under 2250) |
+| oops | under 1000 |
+| \[generic property statement\] (not squeaking) | 1500ish (under 1750) |
+| \[generic property statement\] (squeaking) | under 1500 |
+| see? ... | 2000ish (under 2250) |
+| there are ... on the table | 2500ish (under 3000) |
+| watch this | 1000ish (under 1250) |
+
 
 ### Stimuli
 

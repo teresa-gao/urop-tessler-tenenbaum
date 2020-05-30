@@ -349,7 +349,7 @@ function run_trial(stim, exp_this) {
         if (stim.item_presentation_condition == "accidental") {
             lookit = "Oh! Look at that! " + lookit;
             let oh_look = new Audio("audio/" + stim.speaker + "_recordings/oh_look_at_that.mp3");
-            let oh_look.play();
+            oh_look.play();
 
             // Add additional time to account for "Oh! Look at that!" statement
             wait_time += 1750;
@@ -375,20 +375,28 @@ function run_trial(stim, exp_this) {
         // Display objects on table
         set_table(stim);
 
+        let audio_timeout = 1500;
+
         // Create grammatically correct generic statement
         let property = stim.object[2];
         let say_text = ""
         if (property == "squeaking") {
             say_text = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak.";
-            say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1][0] + "_" + "squeak" + ".mp3");
+            say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1] + "_" + "squeak" + ".mp3");
         } else {
             say_text = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + property + ".";
-            say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1][0] + "_have_" + property + ".mp3");
+            audio_timeout += 250;
+
+            if (property == "purple petals") {
+                say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1] + "_have_purple_petals.mp3");
+            } else if (property == "green feathers") {
+                say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1] + "_have_green_feathers.mp3");
+            }
         }
         
         let something_to_tell = new Audio("audio/" + stim.speaker + "_recordings/i_have_something_to_tell_you.mp3");
         something_to_tell.play();
-        agent_say("I have something to tell you.", stim.trial_num).then(
+        agent_say("I have something to tell you.", stim.trial_num, 1750).then(
             
             function() {
 
@@ -397,10 +405,11 @@ function run_trial(stim, exp_this) {
 
                 // Agent says generic statement
                 agent_say(say_text, stim.trial_num, 1500);
+                say_property.play();
 
                 setTimeout (function() {
                     deferred.resolve();
-                }, 1500);
+                }, audio_timeout);
 
                 return deferred.promise();
             }
