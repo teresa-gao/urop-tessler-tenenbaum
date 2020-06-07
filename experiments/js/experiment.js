@@ -20,7 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
 var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = _.shuffle(["generic+text", "generic", "gen+ped", "accidental", "pedagogical"]); // (See README for descriptions of each condition)
+var item_presentation_condition = _.shuffle(["generic_no_visual", "generic_text_only", "generic", "gen+ped", "accidental", "pedagogical"]); // (See README for descriptions of each condition)
 
 var trial_based_on = 2; // Manipulation checks are all based on experimental trial 2, as trial 1 is used for the attention check
 var reshuffled_objects = _.shuffle(objects); // Used in manipulation checks likely different from original trial order
@@ -369,17 +369,22 @@ function run_trial(stim, exp_this) {
             _stream.apply(exp_this);
         }, wait_time);
 
-    // Agent gives generic statement — this is only for gen+ped and generic conditions
+    // Agent gives generic statement — this is only for gen+ped, generic, and generic_no_visual conditions
     } else if (stim.type == "tell_you") {
 
         // Display objects on table
         set_table(stim);
+
+        if (stim.item_presentation_condition == "generic_no_visual") {
+            $(".object, .label, .blanket").hide();
+        };
 
         let audio_timeout = 1500;
 
         // Create grammatically correct generic statement
         let property = stim.object[2];
         let say_text = ""
+        let say_property;
         if (property == "squeaking") {
             say_text = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak.";
             say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1] + "_" + "squeak" + ".mp3");
@@ -772,7 +777,7 @@ function make_slides(f) {
                     generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + this.stim.property;
                 }
 
-                $("#trials_text").text("You are told, \"" + generic_statement + ".\"");
+                $("#trials_text").text("A scientist tells you: \"" + generic_statement + ".\"");
 
                 // Continue to next subtrial
                 $("#trials_text, #continue_button1").show();
@@ -790,12 +795,17 @@ function make_slides(f) {
 
                 $(".slider").show();
 
-                // Creates grammatically correct statement
-                if (this.stim.property == "squeaking") {
-                    $(".trials_prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
+                // Creates grammatically correct statement that makes sense based on the item presentation condition
+                if (this.stim.item_presentation_condition.includes("generic")) {
+                    this.article = " a ";
                 } else {
-                    $(".trials_prompt").text("Imagine that you have another " + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + this.stim.property + "?");
-                }
+                    this.article = " another ";
+                };
+                if (this.stim.property == "squeaking") {
+                    $(".trials_prompt").text("Imagine that you come across" + this.article + this.stim.item_name[0] + ". What do you think would be the likelihood that it squeaks?");
+                } else {
+                    $(".trials_prompt").text("Imagine that you come across" + this.article + this.stim.item_name[0] + ". What do you think would be the likelihood that it has " + this.stim.property + "?");
+                };
 
                 // Create slider, initialized without position
                 this.init_sliders();
@@ -877,8 +887,7 @@ function make_slides(f) {
         },
         continue: function(choice_number) {
 
-            console.log(item_presentation_condition[0]);
-            if ((item_presentation_condition[0] == "generic") || (item_presentation_condition[0] == "generic+text")) {
+            if ((item_presentation_condition[0] == "generic") || (item_presentation_condition[0] == "generic_text_only")) {
                 this.user_response = reshuffled_item_names[choice_number-1];
             } else {
                 this.user_response = reshuffled_objects[choice_number-1];
@@ -1128,7 +1137,8 @@ function init() {
     // Used to submit to MTurk — streamlined and flattened
     exp.trials_stimuli_streamlined = [{}]; // Initialized with empty {} so trial_num 0 (introduction) can be filled in later
 
-    if (item_presentation_condition[0] == "generic+text") {
+    // Text-only condition: includes no images at all!
+    if (item_presentation_condition[0] == "generic_text_only") {
 
         let trial_num = 0;
         while (trial_num < total_trials_num) {
@@ -1202,6 +1212,7 @@ function init() {
                     {
                         trial_num: trial_num + 1,
                         type: "response",
+                        item_presentation_condition: item_presentation_condition[0],
                         property: objects[trial_num][2],
                         item_name: item_name[trial_num]
                     }
@@ -1212,7 +1223,7 @@ function init() {
 
         }
 
-    } else { // For all non-"generic+text" conditions
+    } else { // For all non-"generic_text_only" conditions
 
         // Adds data to run present_handle, based on the number of trials we want (specified at top of doc)
         let trial_num = 0;
@@ -1230,25 +1241,32 @@ function init() {
                         agent: agents[trial_num],
                         speaker: speakers[trial_num]
                     }
-                ),
-    
-                // Adds agent "look at that" slide to trial
-                _.extend(
-                    {
-                        trial_num: trial_num + 1,
-                        type: "lookit",
-                        item_presentation_condition: item_presentation_condition[0],
-                        agent: agents[trial_num],
-                        object: objects[trial_num],
-                        item_name: item_name[trial_num],
-                        n_examples: n_examples[0],
-                        speaker: speakers[trial_num]
-                    }
                 )
+
             ]);
-    
-            // For generic and gen+ped conditions: create slide for agent teaching property via generic statement
-            if ((item_presentation_condition[0] == "generic") || (item_presentation_condition[0] == "gen+ped")) {
+
+            if (item_presentation_condition[0] != "generic_no_visual") {
+
+                // Adds agent "look at that" slide to trial
+                exp.trials_stimuli = exp.trials_stimuli.concat([
+                    _.extend(
+                        {
+                            trial_num: trial_num + 1,
+                            type: "lookit",
+                            item_presentation_condition: item_presentation_condition[0],
+                            agent: agents[trial_num],
+                            object: objects[trial_num],
+                            item_name: item_name[trial_num],
+                            n_examples: n_examples[0],
+                            speaker: speakers[trial_num]
+                        }
+                    )
+                ]);
+
+            };
+
+            // For generic, generic_no_visual, and gen+ped conditions: create slide for agent teaching property via generic statement
+            if (item_presentation_condition[0].includes("generic") || (item_presentation_condition[0] == "gen+ped")) {
                 exp.trials_stimuli = exp.trials_stimuli.concat([
                     _.extend(
                         {
@@ -1267,7 +1285,7 @@ function init() {
     
             // Creates subtrial for each of the exemplars (allows agent to interact with each exemplar object)
             let exemplar_num = 1;
-            while ((exemplar_num < n_examples[0] + 1) && (item_presentation_condition[0] != "generic")) {
+            while ((exemplar_num < n_examples[0] + 1) && (!(item_presentation_condition[0].includes("generic")))) {
     
                 // Create subtrial with given exemplar_num (number of object agent interacts with on this slide of the subtrial)
                 exp.trials_stimuli = exp.trials_stimuli.concat([ 
@@ -1343,6 +1361,7 @@ function init() {
                     {
                         trial_num: trial_num + 1,
                         type: "response",
+                        item_presentation_condition: item_presentation_condition[0],
                         property: objects[trial_num][2],
                         item_name: item_name[trial_num]
                     }
@@ -1363,7 +1382,7 @@ function init() {
     };
 
     // Used to run attention checks
-    if ((item_presentation_condition[0] == "generic+text") || (item_presentation_condition[0] == "generic")) {
+    if ((item_presentation_condition[0] == "generic_text_only") || (item_presentation_condition[0] == "generic")) {
         
         // Enable construction of grammatically correct sentence
         let property_verb = "squeaks";
@@ -1402,7 +1421,7 @@ function init() {
     // Used to run manipulation check "trials"
     exp.manipulation_check = [];
 
-    if (item_presentation_condition[0] != "generic+text") { // Excluded since no images are shown in generic+text
+    if (item_presentation_condition[0] != "generic_text_only") { // Excluded since no images are shown in generic_text_only
 
         let added_trials = 0;
 
