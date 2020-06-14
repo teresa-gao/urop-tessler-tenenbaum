@@ -91,9 +91,14 @@
         <!-- Trials slides, containing background, agent, table, and object images -->
         <div class="slide" id="trials">
             
+            <!-- Title; displayed only for comprehension checks -->
+            <h3 id="trials_title">Follow-up Question</h3>
+
+            <!-- Written instructions, if applicable -->
             <p id="trials_text">{{}}</p>
 
-            <div class="background-container">
+            <!-- This is the environment where animations appear! -->
+            <div class="container">
                 
                 <!-- Background, whose source image is determined within experiment.js -->
                 <img class="background" src="">
@@ -168,121 +173,91 @@
                 <div class="speech speech-bubble-tail"></div>
             </div>
 
-            <!-- Slider used to gauge user response after examples are shown -->
+            <!-- Slider (set up in experiment.js) -->
             <div class="slider">
-                <p class="trials_prompt"></p>
                 <table class="slider slider_table">
                     <tr>
-                        <td id="attention_slider_label_l" class="slider_label_l">0% (not likely at all)</td>
-                        <td id="attention_slider_label_r" class="slider_label_r">100% (extremely likely)</td>
+                        <td id="slider_label_l" class="slider_label_l"></td>
+                        <td id="slider_label_r" class="slider_label_r"></td>
                     </tr>
                     <tr>
                         <td colspan="2">
-                        	<div id="trials_slider" class="slider_slider"></div>
+                            <div id="trials_slider"></div>
                         </td>
                     </tr>
                 </table>
             </div>
 
+            <!-- Fixed "grid" for identification of item names and properties (separately) -->
+            <div class="grid">
+                <table class="grid grid_table">
+                    <tr>
+                        <td>
+
+                            <input type="checkbox" id="grid_choice1" value=""/>
+                            <span id="grid_label1">{{}}</span><br>
+
+                            <input type="checkbox" id="grid_choice4" value=""/>
+                            <span id="grid_label4">{{}}</span><br>
+
+                            <input type="checkbox" id="grid_choice7" value=""/>
+                            <span id="grid_label7">{{}}</span><br>
+
+                        <td>
+                            
+                            <input type="checkbox" id="grid_choice2" value=""/>
+                            <span id="grid_label2">{{}}</span><br>
+
+                            <input type="checkbox" id="grid_choice5" value=""/>
+                            <span id="grid_label5">{{}}</span><br>
+
+                            <input type="checkbox" id="grid_choice8" value=""/>
+                            <span id="grid_label8">{{}}</span><br>
+
+                        </td>
+                        <td>
+                            
+                            <input type="checkbox" id="grid_choice3" value=""/>
+                            <span id="grid_label3">{{}}</span><br>
+
+                            <input type="checkbox" id="grid_choice6" value=""/>
+                            <span id="grid_label6">{{}}</span><br>
+
+                            <input type="checkbox" id="grid_choice9" value=""/>
+                            <span id="grid_label9">{{}}</span><br>
+
+                        </td>
+                    </tr>
+                </table>
+            </div>
+
+            <!-- Multiple choice options (modified in experiment.js) -->
+            <div class="mc">
+                <label for="mc_choice1" class="mc_label">
+                    <input type="radio" name="mc_choice" id="mc_choice1" class="multiple_choice"/>
+                    <span id="mc_label1">{{}}</span>
+                </label>
+                <label for="mc_choice2" class="mc_label">
+                    <input type="radio" name="mc_choice" id="mc_choice2" class="multiple_choice"/>
+                    <span id="mc_label2">{{}}</span>
+                </label>
+                <label for="mc_choice3" class="mc_label">
+                    <input type="radio" name="mc_choice" id="mc_choice3" class="multiple_choice"/>
+                    <span id="mc_label3">{{}}</span>
+                </label>
+            </div>
+
+            <!-- Error shown is the user does not provide a response with MC options -->
+            <div class="error mc_error">Please select an option before continuing.</div>
+
             <!-- Error shown if the user does not provide a response on the slider -->
-            <div class="error">Please adjust the slider before continuing.</div>
+            <div class="error slider_error">Please adjust the slider before continuing.</div>
 
             <!-- Continues to next slide within subtrial -->
             <button class="continue_button" id="continue_button1" onclick="_s.continue_button1()">Continue</button>
 
             <!-- Submits user slider response and continues to next subtrial -->
             <button class="continue_button" id="continue_button2" onclick="_s.continue_button2()">Continue</button>
-
-        </div>
-
-        <!-- Attention check, where user is asked to match name with item -->
-        <div class="slide" id="attention_check">
-
-        	<h3>Attention check</h3>
-
-        	<p id="attention_check_instructions"></p>
-
-        	<!-- Contains reference images -->
-        	<div class="image_container">
-	        	<img class="refimage item" id="item1" src="" tabindex="1" onclick="_s.continue(1)">
-	        	<img class="refimage item" id="item2" src="" tabindex="2" onclick="_s.continue(2)">
-	        	<img class="refimage item" id="item3" src="" tabindex="3" onclick="_s.continue(3)">
-        	</div>
-
-        </div>
-
-        <div class="slide" id="manipulation_check">
-
-        	<h3>Comprehension check</h3>
-
-        	<p id="manipulation_check_instructions">
-        		Please answer the following question based on the image(s) displayed below.
-        	</p>
-        	
-        	<div class="image_container">
-
-        		<!-- Animal agent heads (note that more are included here than are used in experiment.js) -->
-	            <img class="refimage head Mouse"  src="images/Mouse_head.png">
-	            <img class="refimage head Monkey"  src="images/Monkey_head.png">
-	            <img class="refimage head Bunny"  src="images/Bunny_head.png">
-	            <img class="refimage head Dog"  src="images/Dog_head.png">
-	            <img class="refimage head Elephant"  src="images/Elephant_head.png">
-	            <img class="refimage head Pig"  src="images/Pig_head.png">
-	            <img class="refimage head Bear"  src="images/Bear_head.png">
-	            <img class="refimage head Beaver"  src="images/Beaver_head.png">
-	            <img class="refimage head Cat"  src="images/Cat_head.png">
-	            <img class="refimage head Sheep"  src="images/Sheep_head.png">
-	            <img class="refimage head Tiger"  src="images/Tiger_head.png">
-	            <img class="refimage head Frog"  src="images/Frog_head.png">
-
-	            <!-- Exemplar items/objects (we use class "exemplar" and not "object" for ease of CSS formatting) -->
-	            <img class="refimage exemplar" src="">
-
-        	</div>
-
-        	<!-- Question -->
-        	<p id="manipulation_check_question">{{}}</p>
-        	
-        	<!-- Multiple choice options (modified in experiment.js) -->
-        	<div>
-	        	<label for="choice1" class="mc_label">
-	        		<input type="radio" name="choice" id="choice1" class="multiple_choice"/>
-	        		<span id="mc_label1">{{}}</span>
-	        	</label>
-	            <label for="choice2" class="mc_label">
-	            	<input type="radio" name="choice" id="choice2" class="multiple_choice"/>
-	            	<span id="mc_label2">{{}}</span>
-	            </label>
-	            <label for="choice3" class="mc_label">
-	            	<input type="radio" name="choice" id="choice3" class="multiple_choice"/>
-	            	<span id="mc_label3">{{}}</span>
-	            </label>
-	        </div>
-
-            <!-- Slider (set up in experiment.js) -->
-            <div class="slider">
-                <p class="manipulation_prompt"></p>
-                <table class="slider slider_table">
-                    <tr>
-                        <td id="manipulation_slider_label_l" class="slider_label_l"></td>
-                        <td id="manipulation_slider_label_r" class="slider_label_r"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                        	<div id="manipulation_slider" class="slider_slider"></div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Error shown is the user does not provide a response with MC options -->
-            <div class="error" id="mc_error">Please select an option before continuing.</div>
-
-            <!-- Error shown if the user does not provide a response on the slider -->
-            <div class="error" id="slider_error">Please adjust the slider before continuing.</div>
-
-            <!-- Submits user response and continues to next subtrial -->
-            <button class="continue_button" onclick="_s.continue_button()">Continue</button>
 
         </div>
 
