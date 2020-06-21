@@ -19,8 +19,8 @@ var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]); // 
 var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Selects first object from artifacts, flowers, and birds group
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
-var n_examples =        ([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = (["generic_text_only", "generic_no_visual", "generic", "gen+ped", "accidental", "pedagogical"]); // (See README for descriptions of each condition)
+var n_examples =        ([2, 1, 3, 4]); // May be limited to single-item array for pilot trials
+var item_presentation_condition = (["gen+ped", "generic_no_visual", "generic_text_only", "generic", "accidental", "pedagogical"]); // (See README for descriptions of each condition)
 console.log(item_presentation_condition[0]);
 
 // Used during comprehension checks to label checkbox grid options with correct answers + distractors
@@ -302,7 +302,7 @@ function run_trial(stim, exp_this) {
 
     // Sets up initial display (sans objects, etc.)
     $("button, .grid, .object, .error, .speech, .slider, .mc, .blanket, .label, #trials_title, #trials_text").hide();
-    $(".table, .background").show();
+    $(".container, .table, .background").show();
 
     // Agent greets user
     if (stim.type == "greeting") {
@@ -800,10 +800,12 @@ function make_slides(f) {
                 $("#trials_text").text(this.stim.prompt);
 
                 if (this.stim.show_scene) {
-                    $(".container").show();
-                    agent_straight(stim.agent);
-                    change_image("background", "images/back" + stim.background + ".jpg");
+                    agent_straight(this.stim.agent);
+                    $("." + stim.agent + "_straight").css("right", 360);
+                    change_image("background", "images/back" + this.stim.background + ".jpg");
                     set_table(this.stim);
+                    $(".blanket, .label").hide();
+                    $(".container, .blanket_down").show();
                 };
 
                 // Display slider
@@ -822,6 +824,15 @@ function make_slides(f) {
                 } else if (this.stim.response_type == "mc") {
 
                     $(".mc").show();
+
+                    // Display correct mc options and labels
+                    let temp_counter = 0;
+                    for (temp_counter = 0; temp_counter < this.stim.options.length; temp_counter++) {
+                        $("#mc_choice" + (temp_counter + 1)).show();
+                        $("#mc_choice" + (temp_counter + 1)).attr("value", this.stim.options[temp_counter][1]);
+                        $("#mc_choice" + (temp_counter + 1)).parent().show();
+                        $("#mc_label" + (temp_counter + 1)).text(this.stim.options[temp_counter][0]);
+                    }
 
                 // Display checkbox grid
                 } else if (this.stim.response_type == "grid") {
@@ -1181,10 +1192,87 @@ function init() {
         )
     ]);
 
-    if (item_presentation_condition[0] != "generic_text_only") {
+    if (item_presentation_condition[0] != "generic_text_only") { // These checks are not applicable for the text-only generic condition
+        
+        let how_many_exemplars;
+        if (item_presentation_condition[0].includes("generic")) {
+            how_many_exemplars = 0;
+        } else {
+            how_many_exemplars = n_examples[0];
+        };
+
+        // Perceived agent arrival check: Just arrived vs. been here for a while
         exp.trials_stimuli = exp.trials_stimuli.concat([ 
             _.extend(
-                // PLACEHOLDER
+                {
+                    check_num: check_num++,
+                    type: "response",
+                    prompt: "Please refer to the image below. Did this character just arrive here, or have they been here for a while?",
+                    show_scene: true,
+                    agent: agents[1],
+                    background: back[1],
+                    object: objects[1],
+                    item_name: item_name[1],
+                    n_examples: how_many_exemplars,
+                    response_type: "mc",
+                    options: [ ["This character just arrived here", "just_arrived"], ["This character has been here for a while", "been_while"] ]
+                }
+            )
+        ]);
+
+        let object_statement;
+        if (n_examples[0] == 1) {
+            object_statement = "this object";
+        } else {
+            object_statement = "these objects";
+        };
+
+        let show_property;
+        if (objects[1][2] == " squeaking") {
+            show_property = " squeak";
+        } else {
+            show_property = " show its " + objects[1][2];
+        }
+
+        // Perceived agent intentionality check: on purpose vs. by accident
+        if (!(item_presentation_condition[0].includes("generic"))) {
+            exp.trials_stimuli = exp.trials_stimuli.concat([ 
+                _.extend(
+                    {
+                        check_num: check_num++,
+                        type: "response",
+                        prompt: "Please refer to the image below. Did this character make " + object_statement + show_property + " on purpose or by accident?",
+                        show_scene: true,
+                        agent: agents[1],
+                        background: back[1],
+                        object: objects[1],
+                        item_name: item_name[1],
+                        n_examples: how_many_exemplars,
+                        response_type: "mc",
+                        options: [ ["On purpose", "on_purpose"], ["By accident", "by_accident"] ]
+                    }
+                )
+            ]);
+        };
+
+        // Perceived agent knowledge check: how much do they know about this (these) object(s)?
+        exp.trials_stimuli = exp.trials_stimuli.concat([ 
+            _.extend(
+                {
+                    check_num: check_num++,
+                    type: "response",
+                    prompt: "Please refer to the image below. How much does this character know about " + object_statement + "?",
+                    show_scene: true,
+                    agent: agents[1],
+                    background: back[1],
+                    object: objects[1],
+                    item_name: item_name[1],
+                    n_examples: how_many_exemplars,
+                    response_type: "slider",
+                    slider_label_l: "This character knows very little",
+                    slider_label_r: "This character knows a lot",
+                    item_presentation_condition: item_presentation_condition[0]
+                }
             )
         ]);
     }
