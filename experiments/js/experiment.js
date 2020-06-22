@@ -1,8 +1,8 @@
 // TL;DR OVERVIEW OF experiment.js FILE:
 // * Variable declarations — Much of the experiment can be modified solely by changing these variable values
 // * Functions — These are used primarily in slides.trials (trials slide)
-// * Slides — These include intro slide, catch trials, (experimental) trial slides, attention checks, comprehension checks, info, and thank-you (data submission to MTurk)
-// * Setup — Here, we create the data frames which are passed as stim into slides.trials, and slides.comprehension_checks and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker
+// * Slides — These include intro slide, catch trials, (experimental) trial slides, attention checks, followup checks, info, and thank-you (data submission to MTurk)
+// * Setup — Here, we create the data frames which are passed as stim into slides.trials, and slides.followup_checks and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker
 
 // Experiment variables and randomization
 var total_trials_num =  3; // Number of trials, each with a unique background, agent, speaker, and exemplar
@@ -19,11 +19,11 @@ var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]); // 
 var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Selects first object from artifacts, flowers, and birds group
 
 var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
-var n_examples =        ([2, 1, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = (["gen+ped", "generic_no_visual", "generic_text_only", "generic", "accidental", "pedagogical"]); // (See README for descriptions of each condition)
+var n_examples =        ([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
+var item_presentation_condition = (["gen+ped", "generic_text_only", "generic_no_visual", "generic", "accidental", "pedagogical"]); // (See README for descriptions of each condition)
 console.log(item_presentation_condition[0]);
 
-// Used during comprehension checks to label checkbox grid options with correct answers + distractors
+// Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
 var correct_properties = [];
 let counter;
@@ -31,9 +31,26 @@ for (counter=0; counter<total_trials_num; counter++) {
     correct_names.push(item_name[counter][0]);
     correct_properties.push(objects[counter][2]);
 };
+correct_names = correct_names.sort();
 
-var grid_name_labels = _.shuffle($.merge(correct_names, ["glocket", "yex", "fud", "wug", "zoop", "thim"]));
-var grid_property_labels = _.shuffle($.merge(correct_properties, ["blue claws", "orange wings", "yellow leaves", "red thorns", "buzzing", "whistling"]));
+var grid_name_labels = _.shuffle($.merge(correct_names.slice(), ["glocket", "yex", "fud", "wug", "zoop", "thim"]));
+var grid_property_labels = _.shuffle($.merge(correct_properties.slice(), ["blue claws", "orange wings", "yellow leaves", "red thorns", "buzzing", "whistling"]));
+
+// Returns whether the contents of two list Objects are equal; pulled from gomakethings.com
+function list_content_equals(arr1, arr2) {
+    
+    // Check if the arrays are the same length
+    if (arr1.length !== arr2.length) return false;
+
+    // Check if all items exist and are in the same order
+    for (var i = 0; i < arr1.length; i++) {
+        if (arr1[i] !== arr2[i]) return false;
+    }
+
+    // Otherwise, return true
+    return true;
+
+};
 
 // Changes all elements of an HTML class to have the same source image; used for stimuli objects
 function change_image(class_name, source) {
@@ -111,16 +128,21 @@ function agent_say(display_text, trial_num, duration=2000) {
 }
 
 // Displays correct number of objects, blankets, and tags on table
-function set_table(stim) {
+function set_table(stim, show_blankets_up) {
     
-    // Displays objects, non-fallen blankets, and tags
+    // Displays objects, blankets, and tags
     let counter;
     for (counter = 1; counter <= stim.n_examples; counter++) {
         change_image("closed", "images/" + stim.object[1] + "_closed.svg");
         change_image("open", "images/" + stim.object[1] + "_open.svg");
 
         $(".object" + counter + ".closed").show();
-        $(".blanket" + counter + ".blanket_up").show();
+        if (show_blankets_up) {
+            $(".blanket" + counter + ".blanket_up").show();
+        } else {
+            $(".blanket" + counter + ".blanket_down").show();
+        }
+        
         $(".label" + counter).show();
         $(".label" + counter).text(stim.item_name[0].toUpperCase());
     };
@@ -301,7 +323,7 @@ function effect_remark_close(stim) {
 function run_trial(stim, exp_this) {
 
     // Sets up initial display (sans objects, etc.)
-    $("button, .grid, .object, .error, .speech, .slider, .mc, .blanket, .label, #trials_title, #trials_text").hide();
+    $("button, .grid, .object, .error, .speech, .slider, .mc, .blanket, .label, #followup_title, #trials_text").hide();
     $(".container, .table, .background").show();
 
     // Agent greets user
@@ -338,7 +360,7 @@ function run_trial(stim, exp_this) {
     } else if (stim.type == "lookit") {
         
         // Display objects on table
-        set_table(stim);
+        set_table(stim, true);
 
         let lookit = "";
         let wait_time = 3000;
@@ -396,7 +418,7 @@ function run_trial(stim, exp_this) {
     } else if (stim.type == "tell_you") {
 
         // Display objects on table
-        set_table(stim);
+        set_table(stim, true);
 
         if (stim.item_presentation_condition == "generic_no_visual") {
             $(".object, .label, .blanket").hide();
@@ -455,7 +477,7 @@ function run_trial(stim, exp_this) {
     } else if (stim.type == "trial") {
         
         // Display objects on table
-        set_table(stim);
+        set_table(stim, true);
 
         if (stim.object[0] == "bird") {
         $(".object1.open").css("right", "219px");
@@ -584,7 +606,7 @@ function make_slides(f) {
         name : "i0",
     });
 
-    // Botcaptcha (simple language comprehension check to include at beginning of experiment)
+    // Botcaptcha (simple language followup check to include at beginning of experiment)
     slides.botcaptcha = slide({
         name : "botcaptcha",
         bot_trials : 0,
@@ -672,7 +694,7 @@ function make_slides(f) {
         }
     });
 
-    // Quasi-attention check and test for suitable user audio system/comprehension
+    // Quasi-attention check and test for suitable user audio system/followup
     slides.sound_check = slide({
         name: "sound_check",
         sound_trials: 0,
@@ -796,16 +818,19 @@ function make_slides(f) {
             if (this.stim.type == "response") {
 
                 $(".container, .error").hide();
-                $("#followup_title, #trials_text").show();
+                $("#trials_text").show();
                 $("#trials_text").text(this.stim.prompt);
+                if (this.stim.section_type == "followup") {
+                    $("#followup_title").show();
+                }
 
                 if (this.stim.show_scene) {
                     agent_straight(this.stim.agent);
                     $("." + stim.agent + "_straight").css("right", 360);
                     change_image("background", "images/back" + this.stim.background + ".jpg");
-                    set_table(this.stim);
-                    $(".blanket, .label").hide();
-                    $(".container, .blanket_down").show();
+                    set_table(this.stim, false);
+                    $(".label").hide();
+                    $(".container").show();
                 };
 
                 // Display slider
@@ -823,7 +848,8 @@ function make_slides(f) {
                 // Display MC options
                 } else if (this.stim.response_type == "mc") {
 
-                    $(".mc").show();
+                    // Clear previous multiple choice responses
+                    $("input[name=mc_choice]").prop("checked", false);
 
                     // Display correct mc options and labels
                     let temp_counter = 0;
@@ -834,6 +860,8 @@ function make_slides(f) {
                         $("#mc_label" + (temp_counter + 1)).text(this.stim.options[temp_counter][0]);
                     }
 
+                    $(".mc").show();
+
                 // Display checkbox grid
                 } else if (this.stim.response_type == "grid") {
 
@@ -842,7 +870,7 @@ function make_slides(f) {
                     let counter;
                     for (counter=1; counter <= 9; counter++) {
                         $("#grid_label" + counter).text(this.stim.grid_labels[counter-1]);
-                        $("#grid_choice" + counter).text(this.stim.grid_labels[counter-1]);
+                        $("#grid_choice" + counter).attr("value", this.stim.grid_labels[counter-1]);
                     }
 
                 };
@@ -850,6 +878,7 @@ function make_slides(f) {
                 // Continue to next subtrial
                 $("#continue_button2").show();
 
+                this.trials_responseT = Date.now();
             };
 
         },
@@ -861,36 +890,105 @@ function make_slides(f) {
 
         // Create slider
         init_sliders: function() {
-            this.trials_slidersT = Date.now();
             utils.make_slider("#trials_slider", function(event, ui) {
                 exp.sliderPost = ui.value;
             });
         },
 
-        // Continue to next subtrial
+        // Continue to next subtrial after response
         continue_button2 : function() {
+
+            // No response on slider -> error
             if ((this.stim.response_type == "slider") && (exp.sliderPost == null)) {
                 $(".slider_error").show();
+
+            // Incorrect number of responses on grid -> error
+            } else if ((this.stim.response_type == "grid") && ($("input[class=grid_choice]:checked").length != total_trials_num)) {
+                $(".grid_error").show();
+
+            // No response on MC (radio) buttons -> error
+            } else if ((this.stim.response_type == "mc") && (!($("input[name='mc_choice']").is(":checked")))) {
+                $(".mc_error").show();
+
+            // Log response data
             } else {
                 this.trials_endT = Date.now();
 
-                // // Log trial duration and slider response to full MTurk data
-                // _.extend(exp.trials_stimuli_full[this.stim.trial_num], 
-                //     {
-                //         trial_time_in_seconds: (this.trials_slidersT - this.trials_startT) / 1000,
-                //         slider_response: exp.sliderPost,
-                //         slider_time_in_seconds: (this.trials_endT - this.trials_slidersT) / 1000
-                //     }
-                // );
+                // If we are within the main trials, then we submit our data to trials_stimuli_full and trials_stimuli_streamlined
+                if (this.stim.section_type == "main_trial") {
 
-                // // Log trial duration and slider response to streamlined MTurk data
-                // _.extend(exp.trials_stimuli_streamlined[this.stim.trial_num], 
-                //     {
-                //         trial_time_in_seconds: (this.trials_slidersT - this.trials_startT) / 1000,
-                //         slider_response: exp.sliderPost,
-                //         slider_time_in_seconds: (this.trials_endT - this.trials_slidersT) / 1000
-                //     }
-                // );
+                    // Log trial duration and slider response to MTurk
+                    exp.trials_response_data = exp.trials_response_data.concat([
+                        _.extend(
+                            {
+                                trial_num: this.stim.trial_num,
+                                prompt: this.stim.prompt,
+                                trial_time_in_seconds: (this.trials_responseT - this.trials_startT) / 1000,
+                                response: exp.sliderPost,
+                                response_type: this.stim.response_type,
+                                correct_answer: "NA",
+                                is_correct: true, // For simplicity, slider response is always considered "right"
+                                response_time_in_seconds: (this.trials_endT - this.trials_responseT) / 1000
+                            }
+                        )
+                    ]);
+                    
+                // If we are within the followup checks ("follow-up questions"), then we submit our data to followup_
+                } else if (this.stim.section_type == "followup") {
+
+                    // Slider
+                    if (this.stim.response_type == "slider") {
+
+                        this.response = exp.sliderPost;
+
+                    // Checkbox grid
+                    } else if (this.stim.response_type == "grid") {
+
+                        let temp_responses = [];
+
+                        $("input[class=grid_choice]:checked").each(function(){
+                            temp_responses.push($(this).val());
+                        });
+
+                        this.response = temp_responses.sort();
+
+                    // Multiple-choice (MC)
+                    } else if (this.stim.response_type == "mc") {
+
+                        this.response = $("input[name=mc_choice]:checked").val();
+
+                    }
+
+                    console.log(this.stim.correct_answer);
+
+                    // Checks if the user response is correct
+                    if (this.stim.correct_answer == "NA") {
+                        this.is_correct = true; // For simplicity, slider response is always considered "right"
+                    } else {
+                        if (typeof(this.stim.correct_answer) == "object") {
+                            this.is_correct = list_content_equals(this.response, this.stim.correct_answer);
+                        } else {
+                            this.is_correct = (this.response == this.stim.correct_answer);
+                        }
+                        
+                    }
+
+                    // Log followup duration and slider response to MTurk
+                    exp.followup_response_data = exp.followup_response_data.concat([
+                        _.extend(
+                            {
+                                trial_num: this.stim.trial_num,
+                                prompt: this.stim.prompt,
+                                response: this.response,
+                                response_type: this.stim.response_type,
+                                correct_answer: this.stim.correct_answer,
+                                is_correct: this.is_correct,
+                                response_time_in_seconds: (this.trials_endT - this.trials_responseT) / 1000
+                            }
+                        )
+                    ]);
+
+                };
 
                 _stream.apply(this);
 
@@ -932,11 +1030,11 @@ function make_slides(f) {
             // Logs data to MTurk
             exp.data = {
                 condition: exp.condition,
-                trials_stimuli_full: exp.trials_stimuli_full,
-                trials_stimuli_streamlined: exp.trials_stimuli_streamlined,
+                trials_stimuli_full: exp.trials_stimuli_full, // What is displayed to the user (unflattened)
+                trials_stimuli_streamlined: exp.trials_stimuli_streamlined, // What is displayed to the user (flattened)
+                trials_response_data: exp.trials_response_data, // What the user responds (times and sliders) for the main trials
                 system: exp.system,
-                catch_trials: exp.catch_trials,
-                comprehension_checks: exp.comprehension_data,
+                followup_response_data: exp.followup_response_data, // What the user responds for the followup questions
                 subject_information: exp.subj_data,
                 total_time_in_seconds: (Date.now() - exp.startT) / 1000
             };
@@ -992,6 +1090,12 @@ function init() {
 
     // Used to submit to MTurk — streamlined and flattened
     exp.trials_stimuli_streamlined = [{}]; // Initialized with empty {} so trial_num 0 (introduction) can be filled in later
+
+    // Used to submit to MTurk — contains user slider responses and times for main trials
+    exp.trials_response_data = [];
+
+    // Used to submit to MTurk — contains followup "trial" response data
+    exp.followup_response_data = [];
 
     // Adds data to run present_handle, based on the number of trials we want (specified at top of doc)
     let trial_num;
@@ -1160,8 +1264,10 @@ function init() {
             _.extend(
                 {
                     trial_num: trial_num + 1,
+                    section_type: "main_trial",
                     type: "response",
                     prompt: prompt,
+                    correct_answer: "NA",
                     show_scene: false,
                     response_type: "slider",
                     slider_label_l: "0% (not likely at all)",
@@ -1172,16 +1278,18 @@ function init() {
         ]);
     };
 
-    // Now, we add comprehension (attention and manipulation) checks to "trials_stimuli" to be run via present_handle...
+    // Now, we add followup (attention and manipulation) checks to "trials_stimuli" to be run via present_handle...
     
-    // This is the number of comprehension check trial we're on
+    // This is the number of followup "trial" we're on
     let check_num = 1;
     exp.trials_stimuli = exp.trials_stimuli.concat([ 
         _.extend(
             {
-                check_num: check_num++,
+                trial_num: check_num++,
                 type: "response",
-                prompt: "You learned about 3 items. Please select their names from the options below.",
+                section_type: "followup",
+                prompt: "You learned about " + total_trials_num + " items. Please select their names from the options below.",
+                correct_answer: correct_names, // FYI this is defined near the top of experiment.js
                 show_scene: false,
                 response_type: "grid",
                 grid_labels: grid_name_labels,
@@ -1201,13 +1309,20 @@ function init() {
             how_many_exemplars = n_examples[0];
         };
 
+        let correct_answer = "been_while";
+        if (item_presentation_condition[0] == "accidental") {
+            correct_answer = "just_arrived";
+        };
+
         // Perceived agent arrival check: Just arrived vs. been here for a while
         exp.trials_stimuli = exp.trials_stimuli.concat([ 
             _.extend(
                 {
-                    check_num: check_num++,
+                    trial_num: check_num++,
                     type: "response",
+                    section_type: "followup",
                     prompt: "Please refer to the image below. Did this character just arrive here, or have they been here for a while?",
+                    correct_answer: correct_answer,
                     show_scene: true,
                     agent: agents[1],
                     background: back[1],
@@ -1215,7 +1330,8 @@ function init() {
                     item_name: item_name[1],
                     n_examples: how_many_exemplars,
                     response_type: "mc",
-                    options: [ ["This character just arrived here", "just_arrived"], ["This character has been here for a while", "been_while"] ]
+                    options: [ ["This character just arrived here", "just_arrived"], ["This character has been here for a while", "been_while"] ],
+                    item_presentation_condition: item_presentation_condition[0]
                 }
             )
         ]);
@@ -1234,14 +1350,21 @@ function init() {
             show_property = " show its " + objects[1][2];
         }
 
+        correct_answer = "on_purpose";
+        if (item_presentation_condition[0] == "accidental") {
+            correct_answer = "by_accident";
+        };
+
         // Perceived agent intentionality check: on purpose vs. by accident
         if (!(item_presentation_condition[0].includes("generic"))) {
             exp.trials_stimuli = exp.trials_stimuli.concat([ 
                 _.extend(
                     {
-                        check_num: check_num++,
+                        trial_num: check_num++,
                         type: "response",
+                        section_type: "followup",
                         prompt: "Please refer to the image below. Did this character make " + object_statement + show_property + " on purpose or by accident?",
+                        correct_answer: correct_answer,
                         show_scene: true,
                         agent: agents[1],
                         background: back[1],
@@ -1249,7 +1372,8 @@ function init() {
                         item_name: item_name[1],
                         n_examples: how_many_exemplars,
                         response_type: "mc",
-                        options: [ ["On purpose", "on_purpose"], ["By accident", "by_accident"] ]
+                        options: [ ["On purpose", "on_purpose"], ["By accident", "by_accident"] ],
+                        item_presentation_condition: item_presentation_condition[0]
                     }
                 )
             ]);
@@ -1259,9 +1383,11 @@ function init() {
         exp.trials_stimuli = exp.trials_stimuli.concat([ 
             _.extend(
                 {
-                    check_num: check_num++,
+                    trial_num: check_num++,
                     type: "response",
+                    section_type: "followup",
                     prompt: "Please refer to the image below. How much does this character know about " + object_statement + "?",
+                    correct_answer: "NA",
                     show_scene: true,
                     agent: agents[1],
                     background: back[1],
@@ -1279,7 +1405,7 @@ function init() {
 
     // Initialize data frames to be submitted to MTurk — data will be added as slides are run
     exp.catch_trials = [];
-    exp.comprehension_data = [];
+    exp.followup_data = [];
     exp.condition = {
         item_presentation_condition: item_presentation_condition[0],
         n_examples: n_examples[0]
@@ -1291,7 +1417,7 @@ function init() {
     exp.nQs = utils.get_exp_length(); //this does not work if there are stacks of stims (but does work for an experiment with this structure)
                                         //relies on structure and slides being defined
 
-    $('.slide').hide(); //hide everything
+    $(".slide").hide(); //hide everything
 
     //make sure turkers have accepted HIT (or you're not in mturk)
     $("#start_button").click(function() {
@@ -1307,18 +1433,18 @@ function init() {
     // Extra check for US IP addresses
     // TO DO: add support for Canadian IP addresses
     function USOnly() {
-        var accessKey = 'b487843addca6e9ec32e6ae28aeaa022';
+        var accessKey = "b487843addca6e9ec32e6ae28aeaa022";
          $.ajax({
-             url: 'https://geo.ipify.org/api/v1?apiKey=at_nuIzsEIQJAft6sr1WH67UTfFDeMIO',
-             dataType: 'jsonp',
+             url: "https://geo.ipify.org/api/v1?apiKey=at_nuIzsEIQJAft6sr1WH67UTfFDeMIO",
+             dataType: "jsonp",
              success: function(json) {
-             if (json.location.country != 'US') {
-                 var slides = document.getElementsByClassName('slide');
+             if (json.location.country != "US") {
+                 var slides = document.getElementsByClassName("slide");
                  for (i=0; i<slides.length; i++) {
-                    slides[i].style.display = 'none';
+                    slides[i].style.display = "none";
                  }
-                    document.getElementsByClassName('progress')[0].style.display = 'none';
-                    document.getElementById('unique').innerText = "This HIT is only available to workers in the United States. Please click 'Return' to avoid any impact on your approval rating.";
+                    document.getElementsByClassName("progress")[0].style.display = "none";
+                    document.getElementById("unique").innerText = "This HIT is only available to workers in the United States. Please click 'Return' to avoid any impact on your approval rating.";
                 }
             }
          });

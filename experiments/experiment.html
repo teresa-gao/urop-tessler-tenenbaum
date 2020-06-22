@@ -92,7 +92,7 @@
         <div class="slide" id="trials">
             
             <!-- Title; displayed only for comprehension checks -->
-            <h3 id="trials_title">Follow-up Question</h3>
+            <h3 id="followup_title">Follow-up Question</h3>
 
             <!-- Written instructions, if applicable -->
             <p id="trials_text">{{}}</p>
@@ -194,36 +194,36 @@
                     <tr>
                         <td>
 
-                            <input type="checkbox" id="grid_choice1" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice1" value=""/>
                             <span id="grid_label1">{{}}</span><br>
 
-                            <input type="checkbox" id="grid_choice4" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice4" value=""/>
                             <span id="grid_label4">{{}}</span><br>
 
-                            <input type="checkbox" id="grid_choice7" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice7" value=""/>
                             <span id="grid_label7">{{}}</span><br>
 
                         <td>
                             
-                            <input type="checkbox" id="grid_choice2" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice2" value=""/>
                             <span id="grid_label2">{{}}</span><br>
 
-                            <input type="checkbox" id="grid_choice5" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice5" value=""/>
                             <span id="grid_label5">{{}}</span><br>
 
-                            <input type="checkbox" id="grid_choice8" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice8" value=""/>
                             <span id="grid_label8">{{}}</span><br>
 
                         </td>
                         <td>
                             
-                            <input type="checkbox" id="grid_choice3" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice3" value=""/>
                             <span id="grid_label3">{{}}</span><br>
 
-                            <input type="checkbox" id="grid_choice6" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice6" value=""/>
                             <span id="grid_label6">{{}}</span><br>
 
-                            <input type="checkbox" id="grid_choice9" value=""/>
+                            <input type="checkbox" class="grid_choice" id="grid_choice9" value=""/>
                             <span id="grid_label9">{{}}</span><br>
 
                         </td>
@@ -242,6 +242,9 @@
                     <span id="mc_label2">{{}}</span>
                 </label>
             </div>
+
+            <!-- Error shown is the user does not provide a response with MC options -->
+            <div class="error grid_error">Please select exactly 3 options before continuing.</div>
 
             <!-- Error shown is the user does not provide a response with MC options -->
             <div class="error mc_error">Please select an option before continuing.</div>

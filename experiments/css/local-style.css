@@ -5,7 +5,7 @@
 
 .slide {
 	width:			600px;
-	margin-top:		50px;
+	margin-top:		30px;
 	margin-left:	auto;
 	margin-right:	auto;
 	margin-bottom:	none;
@@ -19,6 +19,7 @@ h3 {
 .error {
 	color:			red;
 	text-align:		center;
+	margin-top:		15px;
 }
 
 .error_final {
@@ -27,6 +28,7 @@ h3 {
 
 .container {
 	position:		relative;
+	margin-top:		15px;
 	margin-bottom:	15px;
 }
 
@@ -234,6 +236,7 @@ h3 {
 .grid_table {
 	width:			100%;
 	border:			hidden;
+	margin-bottom:	15px;
 }
 
 .continue_button {
