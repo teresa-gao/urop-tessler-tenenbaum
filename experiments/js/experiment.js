@@ -1,8 +1,8 @@
 // TL;DR OVERVIEW OF experiment.js FILE:
 // * Variable declarations — Much of the experiment can be modified solely by changing these variable values
 // * Functions — These are used primarily in slides.trials (trials slide)
-// * Slides — These include intro slide, catch trials, (experimental) trial slides, attention checks, followup checks, info, and thank-you (data submission to MTurk)
-// * Setup — Here, we create the data frames which are passed as stim into slides.trials, and slides.followup_checks and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker
+// * Slides — These include intro slide, catch trials, trial slides (including experimental and follow-up comprehension checks), optional demographic info, and thank-you (data submission to MTurk)
+// * Setup — Here, we create the data frames which are passed as stim into slides.trials and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker
 
 // Experiment variables and randomization
 var total_trials_num =  3; // Number of trials, each with a unique background, agent, speaker, and exemplar
@@ -18,10 +18,9 @@ var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]); 
 var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]); // Included on its own line in case there are multiple bird variants
 var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Selects first object from artifacts, flowers, and birds group
 
-var item_name =         _.shuffle([ ["fep", "feps"], ["dax", "daxes"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
-var n_examples =        ([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = (["gen+ped", "generic_text_only", "generic_no_visual", "generic", "accidental", "pedagogical"]); // (See README for descriptions of each condition)
-console.log(item_presentation_condition[0]);
+var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
+var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
+var item_presentation_condition = _.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); // (See README for descriptions of each condition)
 
 // Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
@@ -809,7 +808,6 @@ function make_slides(f) {
         present_handle : function(stim) {
 
             this.stim = stim;
-            console.log(this.stim);
 
             // This is animation sequence is defined as a separate function to avoid cluttering :P
             run_trial(this.stim, this);
@@ -959,8 +957,6 @@ function make_slides(f) {
 
                     }
 
-                    console.log(this.stim.correct_answer);
-
                     // Checks if the user response is correct
                     if (this.stim.correct_answer == "NA") {
                         this.is_correct = true; // For simplicity, slider response is always considered "right"
@@ -1073,10 +1069,10 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
-        // "introduction",
+        "i0",
+        "botcaptcha",
+        "sound_check",
+        "introduction",
         "trials",
         "subj_info",
         "thanks"
@@ -1278,7 +1274,7 @@ function init() {
         ]);
     };
 
-    // Now, we add followup (attention and manipulation) checks to "trials_stimuli" to be run via present_handle...
+    // Now, we add followup (attention and manipulation) comprehension checks to "trials_stimuli" to be run via present_handle...
     
     // This is the number of followup "trial" we're on
     let check_num = 1;
@@ -1337,11 +1333,20 @@ function init() {
         ]);
 
         let object_statement;
-        if (n_examples[0] == 1) {
-            object_statement = "this object";
+
+        if (item_presentation_condition[0].includes("generic")) {
+            object_statement = item_name[1][1];
         } else {
-            object_statement = "these objects";
-        };
+            object_statement = "object";
+
+            if (n_examples[0] == 1) {
+                demonstrative = "this ";
+            } else {
+                demonstrative = "these ";
+                object_statement += "s";
+            };
+            object_statement = demonstrative + object_statement;
+        }
 
         let show_property;
         if (objects[1][2] == " squeaking") {
