@@ -16,7 +16,10 @@
         <!-- Title page with general instructions and contact info -->
         <div class="slide" id="i0">
 
-            <img src="images/cpl.png" alt="MIT Computational Psycholinguistics Lab" id="cpl_logo"></img>
+            <div id="logo_container">
+                <img src="images/BCS_logo.jpg" alt="MIT Brain and Cognitive Sciences" id="BCS_logo" class="logo"/>
+                <img src="images/cocosci.jpg" alt="MIT Computational Cognitive Science Group" id="cocosci_logo" class="logo"/>
+            </div>
 
             <p id="instruct-text">
                 You will learn about new objects on an alien planet and be asked a few questions about them. The HIT should take ~5 minutes. Please pay attention, thanks!
@@ -26,7 +29,7 @@
             </p>
             <button id="start_button" type="button">Start Experiment</button>
             <p id="legal">
-                Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the MIT Computational Psycholinguistics Lab. If you have questions about this research, please email <a href="mailto:mitcpllab@gmail.com">mitcpllab@gmail.com</a>. You must be  at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.
+                Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the MIT Computational Cognitive Science Group. If you have questions about this research, please email <a href="mailto:tessler@mit.edu">tessler@mit.edu</a>. You must be  at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions. You may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.
             </p>
         </div>
 
@@ -47,7 +50,7 @@
                 Error: You failed the comprehension questions too many times.
                 You are not permitted to complete the HIT. Please click 'Return HIT' to avoid any impact on your approval rating.
                 <br/><br/>
-                If you believe you are receiving this message in error, please email <a href="mailto:mitcpllab@gmail.com">mitcpllab@gmail.com</a>.
+                If you believe you are receiving this message in error, please email <a href="mailto:tessler@mit.edu">tessler@mit.edu</a>.
             </p>
         </div>
 
@@ -59,7 +62,7 @@
             <button onclick="_s.test_sound()" id="sound_test_button">Test</button><br>
             <input type="text" id="sound_response"></input><br><br><br>
             <button onclick="_s.button()" id="sound_button">Continue</button>
-            
+
             <!-- Errors -->
             <p class="error write_something">Please write something in the text box before clicking <b>Continue</b>.</p>
             <p class="error error_incorrect">This is incorrect.</p>
@@ -69,7 +72,7 @@
                 Error: You failed the comprehension questions too many times.
                 You are not permitted to complete the HIT. Please click 'Return HIT' to avoid any impact on your approval rating.
                 <br/><br/>
-                If you believe you are receiving this message in error, please email <a href="mailto:mitcpllab@gmail.com">mitcpllab@gmail.com</a>.
+                If you believe you are receiving this message in error, please email <a href="mailto:tessler@mit.edu">tessler@mit.edu</a>.
             </p>
         </div>
 
@@ -90,7 +93,7 @@
 
         <!-- Trials slides, containing background, agent, table, and object images -->
         <div class="slide" id="trials">
-            
+
             <!-- Title; displayed only for comprehension checks -->
             <h3 id="followup_title">Follow-up Question</h3>
 
@@ -99,7 +102,7 @@
 
             <!-- This is the environment where animations appear! -->
             <div class="container">
-                
+
                 <!-- Background, whose source image is determined within experiment.js -->
                 <img class="background" src="">
 
@@ -112,7 +115,7 @@
                 <img class="object object3 open" src="">
                 <img class="object object4 closed" src="">
                 <img class="object object4 open" src="">
-                
+
                 <!-- Object labels, which display the object names when the blanket is shown -->
                 <img class="table" src="images/table.svg">
                 <div class="label label1">{{}}</div>
@@ -133,37 +136,37 @@
                 <!-- Animal agents (note that more are included here than are used in experiment.js) -->
                 <img class="agent straight_agent Mouse_straight"  src="images/Mouse_straight.png">
                 <img class="agent point_agent_r Mouse_point_r"  src="images/Mouse_point_r.png">
-                    
+
                 <img class="agent straight_agent Monkey_straight"  src="images/Monkey_straight.png">
                 <img class="agent point_agent_r Monkey_point_r"  src="images/Monkey_point_r.png">
-                        
+
                 <img class="agent straight_agent Bunny_straight"  src="images/Bunny_straight.png">
-                <img class="agent point_agent_r Bunny_point_r"  src="images/Bunny_point_r.png">    
-         
+                <img class="agent point_agent_r Bunny_point_r"  src="images/Bunny_point_r.png">
+
                 <img class="agent straight_agent Dog_straight"  src="images/Dog_straight.png">
-                <img class="agent point_agent_r Dog_point_r"  src="images/Dog_point_r.png">     
-                    
+                <img class="agent point_agent_r Dog_point_r"  src="images/Dog_point_r.png">
+
                 <img class="agent straight_agent Elephant_straight"  src="images/Elephant_straight.png">
-                <img class="agent point_agent_r Elephant_point_r"  src="images/Elephant_point_r.png"> 
-                    
+                <img class="agent point_agent_r Elephant_point_r"  src="images/Elephant_point_r.png">
+
                 <img class="agent straight_agent Pig_straight"  src="images/Pig_straight.png">
-                <img class="agent point_agent_r Pig_point_r"  src="images/Pig_point_r.png">  
-                    
+                <img class="agent point_agent_r Pig_point_r"  src="images/Pig_point_r.png">
+
                 <img class="agent straight_agent Bear_straight"  src="images/Bear_straight.png">
                 <img class="agent point_agent_r Bear_point_r"  src="images/Bear_point_r.png">
-                    
+
                 <img class="agent straight_agent Beaver_straight"  src="images/Beaver_straight.png">
-                <img class="agent point_agent_r Beaver_point_r"  src="images/Beaver_point_r.png">   
-                    
+                <img class="agent point_agent_r Beaver_point_r"  src="images/Beaver_point_r.png">
+
                 <img class="agent straight_agent Cat_straight"  src="images/Cat_straight.png">
                 <img class="agent point_agent_r Cat_point_r"  src="images/Cat_point_r.png">
-                    
+
                 <img class="agent straight_agent Sheep_straight"  src="images/Sheep_straight.png">
                 <img class="agent point_agent_r Sheep_point_r"  src="images/Sheep_point_r.png">
-                    
+
                 <img class="agent straight_agent Tiger_straight"  src="images/Tiger_straight.png">
-                <img class="agent point_agent_r Tiger_point_r"  src="images/Tiger_point_r.png"> 
-                    
+                <img class="agent point_agent_r Tiger_point_r"  src="images/Tiger_point_r.png">
+
                 <img class="agent straight_agent Frog_straight"  src="images/Frog_straight.png">
                 <img class="agent point_agent_r Frog_point_r"  src="images/Frog_point_r.png">
 
@@ -204,7 +207,7 @@
                             <span id="grid_label7">{{}}</span><br>
 
                         <td>
-                            
+
                             <input type="checkbox" class="grid_choice" id="grid_choice2" value=""/>
                             <span id="grid_label2">{{}}</span><br>
 
@@ -216,7 +219,7 @@
 
                         </td>
                         <td>
-                            
+
                             <input type="checkbox" class="grid_choice" id="grid_choice3" value=""/>
                             <span id="grid_label3">{{}}</span><br>
 

@@ -16,6 +16,17 @@ h3 {
 	text-align:		center;
 }
 
+#logo_container {
+	display:		flex;
+	justify-content: space-around;
+	padding:		10px;
+}
+
+.logo {
+	height:			75px;
+	display:		inline-block;
+}
+
 .error {
 	color:			red;
 	text-align:		center;

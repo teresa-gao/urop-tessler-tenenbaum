@@ -408,7 +408,11 @@ function run_trial(stim, exp_this) {
             generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + stim.property;
         }
 
-        $("#trials_text").text("A scientist tells you: \"" + generic_statement + ".\"");
+        if (stim.trial_num == 1) {
+            $("#trials_text").text("You come across a scientist. The scientist tells you: \"" + generic_statement + ".\"");
+        } else {
+            $("#trials_text").text("You come across another scientist. The scientist tells you: \"" + generic_statement + ".\"");
+        }
 
         // Continue to next subtrial
         $("#trials_text, #continue_button1").show();
@@ -1266,8 +1270,8 @@ function init() {
                     correct_answer: "NA",
                     show_scene: false,
                     response_type: "slider",
-                    slider_label_l: "0% (not likely at all)",
-                    slider_label_r: "100% (extremely likely)",
+                    slider_label_l: "0% (impossible)",
+                    slider_label_r: "100% (certain)",
                     item_presentation_condition: item_presentation_condition[0]
                 }
             )
@@ -1289,8 +1293,8 @@ function init() {
                 show_scene: false,
                 response_type: "grid",
                 grid_labels: grid_name_labels,
-                slider_label_l: "0% (not likely at all)",
-                slider_label_r: "100% (extremely likely)",
+                slider_label_l: "0% (impossible)",
+                slider_label_r: "100% (certain",
                 item_presentation_condition: item_presentation_condition[0]
             }
         )
