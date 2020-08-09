@@ -37,7 +37,7 @@ var grid_property_labels = _.shuffle($.merge(correct_properties.slice(), ["blue 
 
 // Returns whether the contents of two list Objects are equal; pulled from gomakethings.com
 function list_content_equals(arr1, arr2) {
-    
+
     // Check if the arrays are the same length
     if (arr1.length !== arr2.length) return false;
 
@@ -73,15 +73,15 @@ function agent_point_r(agent_class) {
 
 // Agent faces right and slides forward and back; used to interact with exemplars
 function agent_poke_r(agent_class) {
-    
+
     // deferred helps .then() functions work
     let deferred = new $.Deferred();
 
     $(".speech").hide();
-    
+
     // Agent faces right
     agent_point_r(agent_class);
-    
+
     // Agent slides right
     $("."+agent_class+"_point_r").animate(
         { right: "-=30px"},
@@ -103,7 +103,7 @@ function agent_poke_r(agent_class) {
 
 // Agent says text (i.e., text is displayed in speech bubble) and text is logged to data to be sent to MTurk
 function agent_say(display_text, trial_num, duration=2000) {
-    
+
     // deferred helps .then() functions work
     let deferred = new $.Deferred();
 
@@ -128,7 +128,7 @@ function agent_say(display_text, trial_num, duration=2000) {
 
 // Displays correct number of objects, blankets, and tags on table
 function set_table(stim, show_blankets_up) {
-    
+
     // Displays objects, blankets, and tags
     let counter;
     for (counter = 1; counter <= stim.n_examples; counter++) {
@@ -141,7 +141,7 @@ function set_table(stim, show_blankets_up) {
         } else {
             $(".blanket" + counter + ".blanket_down").show();
         }
-        
+
         $(".label" + counter).show();
         $(".label" + counter).text(stim.item_name[0].toUpperCase());
     };
@@ -163,7 +163,7 @@ function poke_blanket_fall(stim) {
 
     // Agent prods line of object(s)
     agent_poke_r(stim.agent).then(
-            
+
         // Blanket drops
         function() {
 
@@ -172,7 +172,7 @@ function poke_blanket_fall(stim) {
             $(".label" + counter).fadeOut(600);
             $(".blanket" + counter + ".blanket_up").fadeOut(600);
             $(".blanket" + counter + ".blanket_down").fadeIn(600);
-        
+
         }
     )
 
@@ -185,16 +185,16 @@ function poke_blanket_fall(stim) {
 
 // Exemplar object "opens" and displays its property
 function effect(stim) {
-    
+
     // deferred helps .then() functions work
     let deferred = new $.Deferred();
-    
+
     if (stim.object[0] == "artifact") {
-        
+
         // Squeaking sound plays
         squeak = new Audio("audio/squeak.mp3");
         squeak.play();
-        
+
         // Object squishes!
         $(".object" + stim.exemplar_num).animate(
             { height: "-=10px", width: "+=0px"},
@@ -206,7 +206,7 @@ function effect(stim) {
         );
 
     } else {
-        
+
         // "Open" object property revealed
         if (stim.object[0] == "bird") {
             // Bird chirp sound
@@ -216,7 +216,7 @@ function effect(stim) {
             // Upward glissando
             property_sound = new Audio("audio/gliss_up.mp3");
         }
-        
+
         // Sound plays
         property_sound.play();
 
@@ -235,19 +235,19 @@ function effect(stim) {
 
 // Exemplar displays property, agent remarks on property, and exemplar returns to "closed" position
 function effect_remark_close(stim) {
-    
+
     // Exemplar object "opens" and displays its property
     effect(stim).then(
 
         // Agent remarks on "open" object property
         function() {
-            
+
             // deferred helps .then() functions work
             let deferred = new $.Deferred();
 
             // Agent faces front
             agent_straight(stim.agent);
-            
+
             let delay_time = 2500;
             let audio_file_name = "";
 
@@ -289,13 +289,13 @@ function effect_remark_close(stim) {
         }
 
     ).then(
-        
+
         // Object resets to "closed"
         function() {
-            
+
             // deferred helps .then() functions work
             let deferred = new $.Deferred();
-            
+
             $(".speech").hide();
 
             let counter = stim.exemplar_num;
@@ -327,13 +327,13 @@ function run_trial(stim, exp_this) {
 
     // Agent greets user
     if (stim.type == "greeting") {
-        
+
         // Display greeting setup (background, agent, visible speech bubble)
         agent_straight(stim.agent);
-        change_image("background", "images/back" + stim.background + ".jpg");    
+        change_image("background", "images/back" + stim.background + ".jpg");
         $(".speech-bubble").css("left", "10px");
         $(".speech-bubble-tail, .speech-bubble-outline").css("right", "475px");
-        
+
         // Greeting text and audio
         let greeting = "";
         if (stim.item_presentation_condition == "accidental") {
@@ -347,7 +347,7 @@ function run_trial(stim, exp_this) {
         }
 
         agent_say(greeting, stim.trial_num, 2250).then(
-            
+
             // Continue to next subtrial slide
             function() {
                 $("#continue_button1").show();
@@ -357,7 +357,7 @@ function run_trial(stim, exp_this) {
 
     // Agent remarks on objects (number and name) on table
     } else if (stim.type == "lookit") {
-        
+
         // Display objects on table
         set_table(stim, true);
 
@@ -380,7 +380,7 @@ function run_trial(stim, exp_this) {
 
             // Add additional time to account for "Oh! Look at that!" statement
             wait_time += 1750;
-            
+
             setTimeout (function() {
                 there_on_table.play();
             }, 1750)
@@ -442,11 +442,11 @@ function run_trial(stim, exp_this) {
                 say_property = new Audio("audio/" + stim.speaker + "_recordings/" + stim.item_name[1] + "_have_green_feathers.mp3");
             }
         }
-        
+
         let something_to_tell = new Audio("audio/" + stim.speaker + "_recordings/i_have_something_to_tell_you.mp3");
         something_to_tell.play();
         agent_say("I have something to tell you.", stim.trial_num, 1750).then(
-            
+
             function() {
 
                 // deferred helps .then() functions work
@@ -474,7 +474,7 @@ function run_trial(stim, exp_this) {
 
     // Trial
     } else if (stim.type == "trial") {
-        
+
         // Display objects on table
         set_table(stim, true);
 
@@ -505,15 +505,15 @@ function run_trial(stim, exp_this) {
         $(".speech-bubble").css("left", speech_bubble_val);
         $(".speech-bubble-tail").css("right", speech_tail_val);
         $(".speech-bubble-outline").css("right", speech_tail_val);
-        
+
         // Accidental item presentation
         if (stim.item_presentation_condition == "accidental") {
 
             poke_blanket_fall(stim).then(
-                
+
                 // Agent says "Oops!"
                 function() {
-                    
+
                     // deferred helps .then() functions work
                     let deferred = new $.Deferred();
 
@@ -546,10 +546,10 @@ function run_trial(stim, exp_this) {
             show_you.play();
 
             agent_say("Let me show you something.", stim.trial_num, 2000).then(
-                
+
                 // Agent pokes blanket and blanket falls
                 function() {
-                    
+
                     // deferred helps .then() functions work
                     let deferred = new $.Deferred();
 
@@ -566,13 +566,13 @@ function run_trial(stim, exp_this) {
 
                 // Agent says, "Watch this!"
                 function() {
-                    
+
                     // deferred helps .then() functions work
                     let deferred = new $.Deferred();
 
                     watch = new Audio("audio/" + stim.speaker + "_recordings/watch_this.mp3");
                     watch.play();
-                    
+
                     agent_say("Watch this!", stim.trial_num);
 
                     setTimeout (function() {
@@ -646,16 +646,16 @@ function make_slides(f) {
             if (bot_response.toLowerCase() == "") {
                 $(".error_incorrect").hide();
                 $(".write_something").show();
-            
+
             // Evaluate participant response
             } else {
-                
+
                 // Record response to MTurk
                 this.all_responses.push(bot_response);
-                
+
                 // If response is correct, log botcaptcha data to MTurk and continue to next slide
                 if (bot_response.toLowerCase() == listener.toLowerCase()) {
-                
+
                     // Log data to MTurk
                     exp.catch_trials.push({
                         trial_type: "botcaptcha",
@@ -670,11 +670,11 @@ function make_slides(f) {
 
                 // gives participant two more trials if the response was incorrect
                 } else {
-                    
+
                     this.bot_trials++;
                     $(".error").hide();
                     $(".error_incorrect").show();
-                    
+
                     if (this.bot_trials == 1) {
                         $(".error_2more").show();
                     } else if (this.bot_trials == 2) {
@@ -710,7 +710,7 @@ function make_slides(f) {
         button: function() {
             // get the participants' input
             sound_response = $("#sound_response").val();
-            
+
             // Show error if no participant input
             if (sound_response.toLowerCase() == "") {
                 $(".error_incorrect").hide();
@@ -718,7 +718,7 @@ function make_slides(f) {
 
             // Evaluate participant input
             } else {
-                
+
                 // Record participant response
                 this.all_responses.push(sound_response);
 
@@ -763,7 +763,7 @@ function make_slides(f) {
     slides.introduction = slide({
         name : "introduction",
         start: function() {
-            
+
             // Track introduction slide starting time
             this.intro_startT = Date.now();
 
@@ -930,7 +930,7 @@ function make_slides(f) {
                             }
                         )
                     ]);
-                    
+
                 // If we are within the followup checks ("follow-up questions"), then we submit our data to followup_
                 } else if (this.stim.section_type == "followup") {
 
@@ -966,7 +966,7 @@ function make_slides(f) {
                         } else {
                             this.is_correct = (this.response == this.stim.correct_answer);
                         }
-                        
+
                     }
 
                     // Log followup duration and slider response to MTurk
@@ -1019,7 +1019,7 @@ function make_slides(f) {
     slides.thanks = slide({
         name : "thanks",
         start : function() {
-            
+
             // Hide progress bar
             $("progress").hide();
 
@@ -1115,8 +1115,8 @@ function init() {
 
         } else {
 
-            exp.trials_stimuli = exp.trials_stimuli.concat([ 
-                
+            exp.trials_stimuli = exp.trials_stimuli.concat([
+
                 // Adds agent greeting slide to trial
                 _.extend(
                     {
@@ -1176,7 +1176,7 @@ function init() {
         while ((exemplar_num < n_examples[0] + 1) && (!(item_presentation_condition[0].includes("generic")))) {
 
             // Create subtrial with given exemplar_num (number of object agent interacts with on this slide of the subtrial)
-            exp.trials_stimuli = exp.trials_stimuli.concat([ 
+            exp.trials_stimuli = exp.trials_stimuli.concat([
                 _.extend(
                     {
                         trial_num: trial_num + 1,
@@ -1275,10 +1275,10 @@ function init() {
     };
 
     // Now, we add followup (attention and manipulation) comprehension checks to "trials_stimuli" to be run via present_handle...
-    
+
     // This is the number of followup "trial" we're on
     let check_num = 1;
-    exp.trials_stimuli = exp.trials_stimuli.concat([ 
+    exp.trials_stimuli = exp.trials_stimuli.concat([
         _.extend(
             {
                 trial_num: check_num++,
@@ -1297,7 +1297,7 @@ function init() {
     ]);
 
     if (item_presentation_condition[0] != "generic_text_only") { // These checks are not applicable for the text-only generic condition
-        
+
         let how_many_exemplars;
         if (item_presentation_condition[0].includes("generic")) {
             how_many_exemplars = 0;
@@ -1311,7 +1311,7 @@ function init() {
         };
 
         // Perceived agent arrival check: Just arrived vs. been here for a while
-        exp.trials_stimuli = exp.trials_stimuli.concat([ 
+        exp.trials_stimuli = exp.trials_stimuli.concat([
             _.extend(
                 {
                     trial_num: check_num++,
@@ -1362,7 +1362,7 @@ function init() {
 
         // Perceived agent intentionality check: on purpose vs. by accident
         if (!(item_presentation_condition[0].includes("generic"))) {
-            exp.trials_stimuli = exp.trials_stimuli.concat([ 
+            exp.trials_stimuli = exp.trials_stimuli.concat([
                 _.extend(
                     {
                         trial_num: check_num++,
@@ -1385,7 +1385,7 @@ function init() {
         };
 
         // Perceived agent knowledge check: how much do they know about this (these) object(s)?
-        exp.trials_stimuli = exp.trials_stimuli.concat([ 
+        exp.trials_stimuli = exp.trials_stimuli.concat([
             _.extend(
                 {
                     trial_num: check_num++,
