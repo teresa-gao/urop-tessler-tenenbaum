@@ -132,8 +132,8 @@ h3 {
 .label {
 	bottom:			150px;
 	padding:		5px;
-	font-size:		5px;
 	z-index:		7;
+	font-size:		0.75rem;
 }
 
 .label1 {
@@ -196,6 +196,10 @@ h3 {
 	position:		absolute;
 	right:			475px;
 	z-index:		3;
+}
+
+#generic_text {
+	text-align:		center;
 }
 
 .image_container {

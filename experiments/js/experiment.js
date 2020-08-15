@@ -322,7 +322,7 @@ function effect_remark_close(stim) {
 function run_trial(stim, exp_this) {
 
     // Sets up initial display (sans objects, etc.)
-    $("button, .grid, .object, .error, .speech, .slider, .mc, .blanket, .label, #followup_title, #trials_text").hide();
+    $("button, .grid, .object, .error, .speech, .slider, .mc, .blanket, .label, #followup_title, #trials_text, #generic_text").hide();
     $(".container, .table, .background").show();
 
     // Agent greets user
@@ -408,14 +408,16 @@ function run_trial(stim, exp_this) {
             generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + stim.property;
         }
 
+        $("#generic_text").text("\"" + generic_statement + ".\"");
+
         if (stim.trial_num == 1) {
-            $("#trials_text").text("You come across a scientist. The scientist tells you: \"" + generic_statement + ".\"");
+            $("#trials_text").text("You come across a scientist. The scientist tells you:");
         } else {
-            $("#trials_text").text("You come across another scientist. The scientist tells you: \"" + generic_statement + ".\"");
+            $("#trials_text").text("You come across another scientist. The scientist tells you:");
         }
 
         // Continue to next subtrial
-        $("#trials_text, #continue_button1").show();
+        $("#trials_text, #generic_text, #continue_button1").show();
 
     // Agent gives generic statement — this is only for gen+ped, generic, and generic_no_visual conditions
     } else if (stim.type == "tell_you") {
@@ -1137,25 +1139,22 @@ function init() {
 
         }
 
-        if (!(item_presentation_condition[0].includes("generic"))) {
 
-            // Adds agent "look at that" slide to trial
-            exp.trials_stimuli = exp.trials_stimuli.concat([
-                _.extend(
-                    {
-                        trial_num: trial_num + 1,
-                        type: "lookit",
-                        item_presentation_condition: item_presentation_condition[0],
-                        agent: agents[trial_num],
-                        object: objects[trial_num],
-                        item_name: item_name[trial_num],
-                        n_examples: n_examples[0],
-                        speaker: speakers[trial_num]
-                    }
-                )
-            ]);
-
-        };
+        // Adds agent "look at that" slide to trial
+        exp.trials_stimuli = exp.trials_stimuli.concat([
+            _.extend(
+                {
+                    trial_num: trial_num + 1,
+                    type: "lookit",
+                    item_presentation_condition: item_presentation_condition[0],
+                    agent: agents[trial_num],
+                    object: objects[trial_num],
+                    item_name: item_name[trial_num],
+                    n_examples: n_examples[0],
+                    speaker: speakers[trial_num]
+                }
+            )
+        ]);
 
         // For generic, generic_no_visual, and gen+ped conditions: create slide for agent teaching property via generic statement
         if ((item_presentation_condition[0] != "generic_text_only") && (item_presentation_condition[0].includes("generic") || (item_presentation_condition[0] == "gen+ped"))) {
@@ -1336,19 +1335,20 @@ function init() {
             )
         ]);
 
-        let object_statement;
+        let object_statement = "object";
+        let demonstrative = "this ";
+        let pronoun = "its ";
 
-        if (item_presentation_condition[0].includes("generic")) {
+        if (n_examples[0] != 1) {
+            demonstrative = "these ";
+            object_statement += "s";
+            pronoun = "their ";
+        };
+
+        if (item_presentation_condition[0].includes("generic"))
+        {
             object_statement = item_name[1][1];
         } else {
-            object_statement = "object";
-
-            if (n_examples[0] == 1) {
-                demonstrative = "this ";
-            } else {
-                demonstrative = "these ";
-                object_statement += "s";
-            };
             object_statement = demonstrative + object_statement;
         }
 
@@ -1356,7 +1356,7 @@ function init() {
         if (objects[1][2] == " squeaking") {
             show_property = " squeak";
         } else {
-            show_property = " show its " + objects[1][2];
+            show_property = " show " + pronoun + objects[1][2];
         }
 
         correct_answer = "on_purpose";
