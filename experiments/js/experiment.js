@@ -362,7 +362,7 @@ function run_trial(stim, exp_this) {
         set_table(stim, true);
 
         let lookit = "";
-        let wait_time = 3000;
+        let wait_time = 3250;
 
         // Create grammatically correct remark and fetch correct audio file
         if (stim.n_examples > 1) {
@@ -451,7 +451,7 @@ function run_trial(stim, exp_this) {
 
         let something_to_tell = new Audio("audio/" + stim.speaker + "_recordings/i_have_something_to_tell_you.mp3");
         something_to_tell.play();
-        agent_say("I have something to tell you.", stim.trial_num, 1750).then(
+        agent_say("I have something to tell you.", stim.trial_num, 2000).then(
 
             function() {
 
