@@ -5,7 +5,7 @@
 // * Setup — Here, we create the data frames which are passed as stim into slides.trials and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker
 
 // Experiment variables and randomization
-var total_trials_num =  3; // Number of trials, each with a unique background, agent, speaker, and exemplar
+var total_trials_num =  1; // Number of trials, each with a unique background, agent, speaker, and exemplar
 
 // Aesthetic setup
 var back =              _.shuffle( [1,2,3,4,5,6,7,8,9,10] ); // Background images of the form backx.jpg, where x is is the image number
@@ -13,14 +13,14 @@ var agents =            _.shuffle( ["Elephant","Pig","Monkey","Dog","Bear","Tige
 var speakers =          _.shuffle( ["mh", "tg", "sb"] ); // Recorded speaker voices used; files are stored in xx_recordings directory, where xx are the initials of the speaker
 
 // Stimuli: [<object name>, <file name sans extension>, <demonstrated property>]
-var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]); // Included on its own line in case there are multiple artifact variants
-var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]); // Included on its own line in case there are multiple flower variants
-var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]); // Included on its own line in case there are multiple bird variants
+var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
+var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]);
+var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Selects first object from artifacts, flowers, and birds group
 
-var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]); // Names of stimuli: [<singular>, <plural>]
-var n_examples =        _.shuffle([1, 2, 3, 4]); // May be limited to single-item array for pilot trials
-var item_presentation_condition = _.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); // (See README for descriptions of each condition)
+var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
+var n_examples =        _.shuffle([1, 2]);
+var item_presentation_condition = ["pedagogical"] //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
 
 // Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
@@ -341,9 +341,10 @@ function run_trial(stim, exp_this) {
             hello = new Audio("audio/" + stim.speaker + "_recordings/hello_i_just_arrived.mp3");
             hello.play();
         } else {
-            greeting += "Hello! I've been here for a while.";
-            hello = new Audio("audio/" + stim.speaker + "_recordings/hello_ive_been_here.mp3");
-            hello.play();
+            greeting += "Hello! I've been doing research on this planet for a while.";
+            // TODO
+            // hello = new Audio("audio/" + stim.speaker + "_recordings/hello_ive_been_here.mp3");
+            // hello.play();
         }
 
         agent_say(greeting, stim.trial_num, 2250).then(
@@ -356,25 +357,29 @@ function run_trial(stim, exp_this) {
         );
 
     // Agent remarks on objects (number and name) on table
-    } else if (stim.type == "lookit") {
+    } else if (stim.type == "on_the_table") {
 
         // Display objects on table
         set_table(stim, true);
 
-        let lookit = "";
+        let on_the_table = "";
         let wait_time = 3250;
 
         // Create grammatically correct remark and fetch correct audio file
-        if (stim.n_examples > 1) {
-            lookit = "There are " + stim.n_examples + " " + stim.item_name[1] + " on the table.";
-            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.n_examples + "_" + stim.item_name[1] + ".mp3");
-        } else {
-            lookit = "There is " + stim.n_examples + " " + stim.item_name[0] + " on the table.";
-            there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.n_examples + "_" + stim.item_name[0] + ".mp3");
+        if (stim.item_presentation_condition == "pedagogical") {
+            if (stim.n_examples > 1) {
+                on_the_table = "Here we have some " + stim.item_name[1] + " on the table.";
+                // TODO
+                // there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.n_examples + "_" + stim.item_name[1] + ".mp3");
+            } else {
+                on_the_table = "Here we have a " + stim.item_name[0] + " on the table.";
+                // TODO
+                // there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.n_examples + "_" + stim.item_name[0] + ".mp3");
+            }
         }
 
         if (stim.item_presentation_condition == "accidental") {
-            lookit = "Oh! Look at that! " + lookit;
+            on_the_table = "Oh! Look at that! " + on_the_table;
             let oh_look = new Audio("audio/" + stim.speaker + "_recordings/oh_look_at_that.mp3");
             oh_look.play();
 
@@ -382,19 +387,38 @@ function run_trial(stim, exp_this) {
             wait_time += 1750;
 
             setTimeout (function() {
-                there_on_table.play();
+                // TODO
+                // there_on_table.play();
             }, 1750)
 
         } else {
-            there_on_table.play();
+            // TODO
+            // there_on_table.play();
         }
 
         // Agent remarks on objects on the table
-        agent_say(lookit, stim.trial_num, wait_time);
+        agent_say(on_the_table, stim.trial_num, wait_time);
 
         setTimeout (function() {
             _stream.apply(exp_this);
         }, wait_time);
+
+    } else if (stim.type == "agent_knowledge") {
+
+        // TODO
+        set_table(stim, true)
+        let agent_knowledge;
+        if (stim.item_presentation_condition == "pedagogical") {
+            agent_knowledge = "I know all about " + stim.item_name[1] + ".";
+        }
+        let wait_time = 2000;
+        agent_say(agent_knowledge, stim.trial_num, wait_time).then(
+            function() {
+                // Continues to next subtrial slide
+                $("#continue_button1").show();
+            }
+        );
+
 
     // No visuals: only text (generic statement) is displayed
     } else if (stim.type == "text") {
@@ -548,10 +572,17 @@ function run_trial(stim, exp_this) {
         } else if ((stim.item_presentation_condition == "pedagogical") || (stim.item_presentation_condition == "gen+ped")) {
 
             // Audio plays
-            show_you = new Audio("audio/" + stim.speaker + "_recordings/let_me_show_you_something.mp3");
-            show_you.play();
+            let say_text;
+            if (stim.exemplar_num == 1) {
+                say_text = "Let me show you something."
+                show_you = new Audio("audio/" + stim.speaker + "_recordings/let_me_show_you_something.mp3");
+                show_you.play();
+            } else {
+                say_text = "Let me show you another one."
+                // TODO add audio
+            }
 
-            agent_say("Let me show you something.", stim.trial_num, 2000).then(
+            agent_say(say_text, stim.trial_num, 2000).then(
 
                 // Agent pokes blanket and blanket falls
                 function() {
@@ -1075,9 +1106,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        "i0",
-        "botcaptcha",
-        "sound_check",
+        // "i0",
+        // "botcaptcha",
+        // "sound_check",
         "introduction",
         "trials",
         "subj_info",
@@ -1139,13 +1170,28 @@ function init() {
 
         }
 
-
-        // Adds agent "look at that" slide to trial
+        // Adds agent remarking at item(s) on table slide to trial
         exp.trials_stimuli = exp.trials_stimuli.concat([
             _.extend(
                 {
                     trial_num: trial_num + 1,
-                    type: "lookit",
+                    type: "on_the_table",
+                    item_presentation_condition: item_presentation_condition[0],
+                    agent: agents[trial_num],
+                    object: objects[trial_num],
+                    item_name: item_name[trial_num],
+                    n_examples: n_examples[0],
+                    speaker: speakers[trial_num]
+                }
+            )
+        ]);
+
+        // Adds agent statement of knowledge slide to trial
+        exp.trials_stimuli = exp.trials_stimuli.concat([
+            _.extend(
+                {
+                    trial_num: trial_num + 1,
+                    type: "agent_knowledge",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: agents[trial_num],
                     object: objects[trial_num],
