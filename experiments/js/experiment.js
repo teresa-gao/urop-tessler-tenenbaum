@@ -20,7 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
 var n_examples =        _.shuffle([1, 2]);
-var item_presentation_condition = ["pedagogical", "accidental"] //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
+var item_presentation_condition = ["naive", "pedagogical", "accidental"] //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
 
 // Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
@@ -252,7 +252,7 @@ function effect_remark_close(stim) {
             let audio_file_name = "";
 
             let say_text = "";
-            if (stim.item_presentation_condition == "accidental") {
+            if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
                 say_text += "Oh wow! ";
                 audio_file_name += "oh_wow_";
             } else {
@@ -336,7 +336,7 @@ function run_trial(stim, exp_this) {
 
         // Greeting text and audio
         let greeting = "";
-        if (stim.item_presentation_condition == "accidental") {
+        if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
             greeting += "Hello! I just arrived here.";
             hello = new Audio("audio/" + stim.speaker + "_recordings/hello_i_just_arrived.mp3");
             hello.play();
@@ -376,7 +376,7 @@ function run_trial(stim, exp_this) {
                 // TODO
                 // there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.n_examples + "_" + stim.item_name[0] + ".mp3");
             }
-        } else if (stim.item_presentation_condition == "accidental") {
+        } else if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
             on_the_table = "Hmm, I wonder what we have here on the table.";
             // TODO
             // let oh_look = new Audio("audio/" + stim.speaker + "_recordings/oh_look_at_that.mp3");
@@ -420,7 +420,7 @@ function run_trial(stim, exp_this) {
         let agent_knowledge;
         if (stim.item_presentation_condition == "pedagogical") {
             agent_knowledge = "I know all about " + stim.item_name[1] + ".";
-        } else if (stim.item_presentation_condition == "accidental") {
+        } else if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
             agent_knowledge = "I don't know anything about " + stim.item_name[1] + ".";
         }
         let wait_time = 2000;
@@ -579,6 +579,44 @@ function run_trial(stim, exp_this) {
                 }
 
             );
+
+        // Naive item presentation
+        } else if (stim.item_presentation_condition == "naive") {
+
+            let say_text = "Let's take a look.";
+            if (stim.exemplar_num > 1) {
+                say_text = "Let's look at another one.";
+            }
+            // TODO add speaker audio
+
+            agent_say(say_text, stim.trial_num, 2000).then(
+
+                // Agent pokes blanket and blanket falls
+                function() {
+
+                    // deferred helps .then() functions work
+                    let deferred = new $.Deferred();
+
+                    poke_blanket_fall(stim);
+
+                    setTimeout (function() {
+                        deferred.resolve();
+                    }, 1200);
+
+                    return deferred.promise();
+                }
+
+            ).then(
+
+                // Speech bubble disappears, object "closes" and disappears
+                function() {
+                    $(".speech").hide();
+                    effect_remark_close(stim);
+                }
+
+            );
+
+            // TODO
 
         // Pedagogical item presentation
         } else if ((stim.item_presentation_condition == "pedagogical") || (stim.item_presentation_condition == "gen+ped")) {
@@ -1210,7 +1248,7 @@ function init() {
             )
         ]);
 
-        if (item_presentation_condition[0] == "accidental") {
+        if ((item_presentation_condition[0] == "accidental") || (item_presentation_condition[0] == "naive")) {
             // Adds agent "oh I see" statement slide to trial
             exp.trials_stimuli = exp.trials_stimuli.concat([
                 _.extend(
@@ -1369,13 +1407,20 @@ function init() {
 
     // This is the number of followup "trial" we're on
     let check_num = 1;
+
+    // Create grammatically correct prompt statement
+    let prompt = "You just learned about " + total_trials_num + " items. Please select their names from the options below.";
+    if (total_trials_num == 1) {
+        prompt = "You just learned about " + total_trials_num + " item. Please select its name from the options below."
+    }
+
     exp.trials_stimuli = exp.trials_stimuli.concat([
         _.extend(
             {
                 trial_num: check_num++,
                 type: "response",
                 section_type: "followup",
-                prompt: "You learned about " + total_trials_num + " item(s). Please select their name(s) from the options below.",
+                prompt: prompt,
                 correct_answer: correct_names, // FYI this is defined near the top of experiment.js
                 show_scene: false,
                 response_type: "grid",
