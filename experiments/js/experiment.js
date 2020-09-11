@@ -22,6 +22,9 @@ var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket
 var n_examples =        _.shuffle([1, 2]);
 var item_presentation_condition = ["naive", "pedagogical", "accidental"] //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
 
+console.log(item_presentation_condition[0]);
+console.log(n_examples[0]);
+
 // Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
 var correct_properties = [];
@@ -990,6 +993,7 @@ function make_slides(f) {
 
             // Incorrect number of responses on grid -> error
             } else if ((this.stim.response_type == "grid") && ($("input[class=grid_choice]:checked").length != total_trials_num)) {
+                $(".grid_error").text("Please select exactly " + total_trials_num + " option(s) before continuing.");
                 $(".grid_error").show();
 
             // No response on MC (radio) buttons -> error
@@ -1453,16 +1457,16 @@ function init() {
                     trial_num: check_num++,
                     type: "response",
                     section_type: "followup",
-                    prompt: "Please refer to the image below. Did this character just arrive here, or have they been here for a while?",
+                    prompt: "Please refer to the image below. How long has this character been doing research?",
                     correct_answer: correct_answer,
                     show_scene: true,
-                    agent: agents[1],
-                    background: back[1],
-                    object: objects[1],
-                    item_name: item_name[1],
+                    agent: agents[0],
+                    background: back[0],
+                    object: objects[0],
+                    item_name: item_name[0],
                     n_examples: how_many_exemplars,
                     response_type: "mc",
-                    options: [ ["This character just arrived here", "just_arrived"], ["This character has been here for a while", "been_while"] ],
+                    options: [ ["This character has been doing research on this planet for a while", "been_while"], ["This character just arrived here and is a new researcher", "just_arrived"] ],
                     item_presentation_condition: item_presentation_condition[0]
                 }
             )
@@ -1480,16 +1484,16 @@ function init() {
 
         if (item_presentation_condition[0].includes("generic"))
         {
-            object_statement = item_name[1][1];
+            object_statement = item_name[0][1];
         } else {
             object_statement = demonstrative + object_statement;
         }
 
         let show_property;
-        if (objects[1][2] == " squeaking") {
+        if (objects[0][2] == " squeaking") {
             show_property = " squeak";
         } else {
-            show_property = " show " + pronoun + objects[1][2];
+            show_property = " show " + pronoun + objects[0][2];
         }
 
         correct_answer = "on_purpose";
@@ -1497,29 +1501,29 @@ function init() {
             correct_answer = "by_accident";
         };
 
-        // Perceived agent intentionality check: on purpose vs. by accident
-        if (!(item_presentation_condition[0].includes("generic"))) {
-            exp.trials_stimuli = exp.trials_stimuli.concat([
-                _.extend(
-                    {
-                        trial_num: check_num++,
-                        type: "response",
-                        section_type: "followup",
-                        prompt: "Please refer to the image below. Did this character make " + object_statement + show_property + " on purpose or by accident?",
-                        correct_answer: correct_answer,
-                        show_scene: true,
-                        agent: agents[1],
-                        background: back[1],
-                        object: objects[1],
-                        item_name: item_name[1],
-                        n_examples: how_many_exemplars,
-                        response_type: "mc",
-                        options: [ ["On purpose", "on_purpose"], ["By accident", "by_accident"] ],
-                        item_presentation_condition: item_presentation_condition[0]
-                    }
-                )
-            ]);
-        };
+        // // Perceived agent intentionality check: on purpose vs. by accident
+        // if (!(item_presentation_condition[0].includes("generic"))) {
+        //     exp.trials_stimuli = exp.trials_stimuli.concat([
+        //         _.extend(
+        //             {
+        //                 trial_num: check_num++,
+        //                 type: "response",
+        //                 section_type: "followup",
+        //                 prompt: "Please refer to the image below. Did this character make " + object_statement + show_property + " on purpose or by accident?",
+        //                 correct_answer: correct_answer,
+        //                 show_scene: true,
+        //                 agent: agents[0],
+        //                 background: back[0],
+        //                 object: objects[0],
+        //                 item_name: item_name[0],
+        //                 n_examples: how_many_exemplars,
+        //                 response_type: "mc",
+        //                 options: [ ["On purpose", "on_purpose"], ["By accident", "by_accident"] ],
+        //                 item_presentation_condition: item_presentation_condition[0]
+        //             }
+        //         )
+        //     ]);
+        // };
 
         // Perceived agent knowledge check: how much do they know about this (these) object(s)?
         exp.trials_stimuli = exp.trials_stimuli.concat([
@@ -1528,13 +1532,13 @@ function init() {
                     trial_num: check_num++,
                     type: "response",
                     section_type: "followup",
-                    prompt: "Please refer to the image below. How much does this character know about " + object_statement + "?",
+                    prompt: "Please refer to the image below. How much does this character know about " + object_statement + " now?",
                     correct_answer: "NA",
                     show_scene: true,
-                    agent: agents[1],
-                    background: back[1],
-                    object: objects[1],
-                    item_name: item_name[1],
+                    agent: agents[0],
+                    background: back[0],
+                    object: objects[0],
+                    item_name: item_name[0],
                     n_examples: how_many_exemplars,
                     response_type: "slider",
                     slider_label_l: "This character knows very little",
