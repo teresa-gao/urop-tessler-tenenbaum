@@ -20,7 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
 var n_examples =        _.shuffle([1, 2]);
-var item_presentation_condition = ["naive", "pedagogical", "accidental"] //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
+var item_presentation_condition = _.shuffle(["accidental", "pedagogical", "naive"]); //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
 
 console.log(item_presentation_condition[0]);
 console.log(n_examples[0]);
@@ -1200,6 +1200,12 @@ function init() {
     let trial_num;
     for (trial_num = 0; trial_num < total_trials_num * accidental_factor; trial_num++) {
 
+        // Account for the same background/stimulus in all accidental trials
+        let effective_trial_num = trial_num;
+        if (item_presentation_condition[0] == "accidental") {
+            effective_trial_num = 0;
+        }
+
         if (item_presentation_condition[0] == "generic_text_only") {
 
             exp.trials_stimuli = exp.trials_stimuli.concat([
@@ -1209,8 +1215,8 @@ function init() {
                         trial_num: trial_num + 1,
                         type: "text",
                         item_presentation_condition: item_presentation_condition[0],
-                        property: objects[trial_num][2],
-                        item_name: item_name[trial_num]
+                        property: objects[effective_trial_num][2],
+                        item_name: item_name[effective_trial_num]
                     }
                 )
 
@@ -1226,7 +1232,7 @@ function init() {
                         trial_num: trial_num + 1,
                         type: "greeting",
                         item_presentation_condition: item_presentation_condition[0],
-                        background: back[trial_num],
+                        background: back[effective_trial_num],
                         agent: agents[trial_num],
                         speaker: speakers[trial_num]
                     }
@@ -1244,8 +1250,8 @@ function init() {
                     type: "on_the_table",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: agents[trial_num],
-                    object: objects[trial_num],
-                    item_name: item_name[trial_num],
+                    object: objects[effective_trial_num],
+                    item_name: item_name[effective_trial_num],
                     n_examples: n_examples_per_subtrial,
                     speaker: speakers[trial_num]
                 }
@@ -1261,8 +1267,8 @@ function init() {
                         type: "oh_i_see",
                         item_presentation_condition: item_presentation_condition[0],
                         agent: agents[trial_num],
-                        object: objects[trial_num],
-                        item_name: item_name[trial_num],
+                        object: objects[effective_trial_num],
+                        item_name: item_name[effective_trial_num],
                         n_examples: n_examples_per_subtrial,
                         speaker: speakers[trial_num]
                     }
@@ -1278,8 +1284,8 @@ function init() {
                     type: "agent_knowledge",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: agents[trial_num],
-                    object: objects[trial_num],
-                    item_name: item_name[trial_num],
+                    object: objects[effective_trial_num],
+                    item_name: item_name[effective_trial_num],
                     n_examples: n_examples_per_subtrial,
                     speaker: speakers[trial_num]
                 }
@@ -1295,8 +1301,8 @@ function init() {
                         type: "tell_you",
                         item_presentation_condition: item_presentation_condition[0],
                         agent: agents[trial_num],
-                        object: objects[trial_num],
-                        item_name: item_name[trial_num],
+                        object: objects[effective_trial_num],
+                        item_name: item_name[effective_trial_num],
                         n_examples: n_examples_per_subtrial,
                         speaker: speakers[trial_num]
                     }
@@ -1316,8 +1322,8 @@ function init() {
                         type: "trial",
                         item_presentation_condition: item_presentation_condition[0],
                         agent: agents[trial_num],
-                        object: objects[trial_num],
-                        item_name: item_name[trial_num],
+                        object: objects[effective_trial_num],
+                        item_name: item_name[effective_trial_num],
                         n_examples: n_examples_per_subtrial,
                         speaker: speakers[trial_num],
                         exemplar_num: exemplar_num++
@@ -1339,18 +1345,18 @@ function init() {
                         point_r_image: agents[trial_num] + "_point_r.png"
                     },
                     object: {
-                        name: objects[trial_num][0],
-                        property: objects[trial_num][2],
-                        closed_image: objects[trial_num][1] + "_closed.svg",
-                        open_image: objects[trial_num][1] + "_open.svg"
+                        name: objects[effective_trial_num][0],
+                        property: objects[effective_trial_num][2],
+                        closed_image: objects[effective_trial_num][1] + "_closed.svg",
+                        open_image: objects[effective_trial_num][1] + "_open.svg"
                     },
                     item_name: {
-                        singular: item_name[trial_num][0],
-                        plural: item_name[trial_num][1]
+                        singular: item_name[effective_trial_num][0],
+                        plural: item_name[effective_trial_num][1]
                     },
                     n_examples: n_examples_per_subtrial,
                     speaker: speakers[trial_num],
-                    background: back[trial_num],
+                    background: back[effective_trial_num],
                     spoken_text: [] // Will be fleshed out via agent_say()
                 }
             )
@@ -1364,12 +1370,12 @@ function init() {
                     trial_type: "trial",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: agents[trial_num],
-                    object: objects[trial_num][0],
-                    property: objects[trial_num][2],
-                    item_name: item_name[trial_num][0],
+                    object: objects[effective_trial_num][0],
+                    property: objects[effective_trial_num][2],
+                    item_name: item_name[effective_trial_num][0],
                     n_examples: n_examples_per_subtrial,
                     speaker: speakers[trial_num],
-                    background: back[trial_num]
+                    background: back[effective_trial_num]
                 }
             )
         ]);
@@ -1382,10 +1388,10 @@ function init() {
         } else {
             article = " another ";
         };
-        if (objects[trial_num][2] == "squeaking") {
-            prompt = "Imagine that you come across" + article + item_name[trial_num][0] + ". What do you think would be the likelihood that it squeaks?";
+        if (objects[effective_trial_num][2] == "squeaking") {
+            prompt = "Imagine that you come across" + article + item_name[effective_trial_num][0] + ". What do you think would be the likelihood that it squeaks?";
         } else {
-            prompt = "Imagine that you come across" + article + item_name[trial_num][0] + ". What do you think would be the likelihood that it has " + objects[trial_num][2] + "?";
+            prompt = "Imagine that you come across" + article + item_name[effective_trial_num][0] + ". What do you think would be the likelihood that it has " + objects[effective_trial_num][2] + "?";
         };
 
         // Adds slider response slide
