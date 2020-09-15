@@ -1176,9 +1176,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        "i0",
-        "botcaptcha",
-        "sound_check",
+        // "i0",
+        // "botcaptcha",
+        // "sound_check",
         "introduction",
         "trials",
         "subj_info",
@@ -1434,7 +1434,31 @@ function init() {
     // This is the number of followup "trial" we're on
     let check_num = 1;
 
-    let prompt = "Would you say the following is true?";
+    // Create grammatically correct prompt statement
+    let prompt = "What are the names of the " + total_trials_num + " items you learned about? ";
+    if (total_trials_num == 1) {
+        prompt = "What is the name of the item you learned about? ";
+    }
+    prompt += "Please select its name from the options below.";
+
+    exp.trials_stimuli = exp.trials_stimuli.concat([
+        _.extend(
+            {
+                trial_num: check_num++,
+                type: "response",
+                section_type: "followup",
+                prompt: prompt,
+                correct_answer: correct_names, // FYI this is defined near the top of experiment.js
+                show_scene: false,
+                show_generic: false,
+                response_type: "grid",
+                grid_labels: grid_name_labels,
+                item_presentation_condition: item_presentation_condition[0]
+            }
+        )
+    ]);
+
+    prompt = "Would you say the following is true?";
 
     exp.trials_stimuli = exp.trials_stimuli.concat([
         _.extend(
@@ -1457,29 +1481,6 @@ function init() {
         )
     ]);
 
-    // Create grammatically correct prompt statement
-    prompt = "What are the names of the " + total_trials_num + " items you learned about? ";
-    if (total_trials_num == 1) {
-        prompt = "What is the name of the item you learned about? ";
-    }
-    prompt += "Please select its name from the options below.";
-
-    exp.trials_stimuli = exp.trials_stimuli.concat([
-        _.extend(
-            {
-                trial_num: check_num++,
-                type: "response",
-                section_type: "followup",
-                prompt: prompt,
-                correct_answer: correct_names, // FYI this is defined near the top of experiment.js
-                show_scene: false,
-                show_generic: false,
-                response_type: "grid",
-                grid_labels: grid_name_labels,
-                item_presentation_condition: item_presentation_condition[0]
-            }
-        )
-    ]);
 
     if (item_presentation_condition[0] != "generic_text_only") { // These checks are not applicable for the text-only generic condition
 
