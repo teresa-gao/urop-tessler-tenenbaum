@@ -338,19 +338,19 @@ function run_trial(stim, exp_this) {
         $(".speech-bubble-tail, .speech-bubble-outline").css("right", "475px");
 
         // Greeting text and audio
-        let greeting = "";
+        let greeting;
         if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
-            greeting += "Hello! I just arrived here.";
+            greeting = "Hello! I am a new researcher. I just arrived on this planet.";
             hello = new Audio("audio/" + stim.speaker + "_recordings/hello_i_just_arrived.mp3");
             hello.play();
         } else {
-            greeting += "Hello! I've been doing research on this planet for a while.";
+            greeting = "Hello! I've been doing research on this planet for a while.";
             // TODO
             // hello = new Audio("audio/" + stim.speaker + "_recordings/hello_ive_been_here.mp3");
             // hello.play();
         }
 
-        agent_say(greeting, stim.trial_num, 2250).then(
+        agent_say(greeting, stim.trial_num, 3250).then(
 
             // Continue to next subtrial slide
             function() {
@@ -440,7 +440,7 @@ function run_trial(stim, exp_this) {
 
         $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
 
-        let generic_statement = "";
+        let generic_statement;
         if (stim.property == "squeaking") {
             generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak";
         } else {
@@ -869,7 +869,7 @@ function make_slides(f) {
                     trial_num: 0, // Introduction
                     trial_type: "introduction",
                     trial_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000,
-                    display_text: "You are a scientist being deployed to a remote field site. Your job is to catalogue and describe new kinds of plants, animals, and objects that have been discovered on the planet. When you arrive at the field site, you meet other scientists there."
+                    display_text: "You are a scientist being deployed to a remote field site on a faraway planet. Your job is to catalogue and describe new kinds of plants, animals, and objects that have been discovered on the planet. When you arrive at the field site, you meet other scientists there."
                 }
             );
 
@@ -915,12 +915,27 @@ function make_slides(f) {
 
                 if (this.stim.show_scene) {
                     agent_straight(this.stim.agent);
-                    $("." + stim.agent + "_straight").css("right", 360);
+                    $("." + this.stim.agent + "_straight").css("right", 360);
                     change_image("background", "images/back" + this.stim.background + ".jpg");
                     set_table(this.stim, false);
                     $(".label").hide();
                     $(".container").show();
-                };
+                }
+
+                if (this.stim.show_generic) {
+                    $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
+
+                    let generic_statement;
+                    if (this.stim.property == "squeaking") {
+                        generic_statement = this.stim.item_name[1][0].toUpperCase() + this.stim.item_name[1].slice(1) + " squeak";
+                    } else {
+                        generic_statement = this.stim.item_name[1][0].toUpperCase() + this.stim.item_name[1].slice(1) + " have " + stim.property;
+                    }
+
+                    $("#generic_text").text("\"" + generic_statement + ".\"");
+
+                    $("#generic_text").show();
+                }
 
                 // Display slider
                 if (this.stim.response_type == "slider") {
@@ -1161,9 +1176,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
+        "i0",
+        "botcaptcha",
+        "sound_check",
         "introduction",
         "trials",
         "subj_info",
@@ -1389,9 +1404,9 @@ function init() {
             article = " another ";
         };
         if (objects[effective_trial_num][2] == "squeaking") {
-            prompt = "Imagine that you come across" + article + item_name[effective_trial_num][0] + ". What do you think would be the likelihood that it squeaks?";
+            prompt = "Imagine that you come across" + article + item_name[effective_trial_num][0] + ". What are the chances that it squeaks?";
         } else {
-            prompt = "Imagine that you come across" + article + item_name[effective_trial_num][0] + ". What do you think would be the likelihood that it has " + objects[effective_trial_num][2] + "?";
+            prompt = "Imagine that you come across" + article + item_name[effective_trial_num][0] + ". What are the chances that it has " + objects[effective_trial_num][2] + "?";
         };
 
         // Adds slider response slide
@@ -1404,6 +1419,7 @@ function init() {
                     prompt: prompt,
                     correct_answer: "NA",
                     show_scene: false,
+                    show_generic: false,
                     response_type: "slider",
                     slider_label_l: "0% (impossible)",
                     slider_label_r: "100% (certain)",
@@ -1418,11 +1434,35 @@ function init() {
     // This is the number of followup "trial" we're on
     let check_num = 1;
 
+    let prompt = "Would you say the following is true?";
+
+    exp.trials_stimuli = exp.trials_stimuli.concat([
+        _.extend(
+            {
+                trial_num: check_num++,
+                type: "response",
+                section_type: "followup",
+                prompt: prompt,
+                correct_answer: "NA",
+                show_scene: false,
+                show_generic: true,
+                property: objects[0][2],
+                item_name: item_name[0],
+                response_type: "slider",
+                grid_labels: grid_name_labels,
+                slider_label_l: "0% (definitely false)",
+                slider_label_r: "100% (definitely true",
+                item_presentation_condition: item_presentation_condition[0]
+            }
+        )
+    ]);
+
     // Create grammatically correct prompt statement
-    let prompt = "You just learned about " + total_trials_num + " items. Please select their names from the options below.";
+    prompt = "What are the names of the " + total_trials_num + " items you learned about? ";
     if (total_trials_num == 1) {
-        prompt = "You just learned about " + total_trials_num + " item. Please select its name from the options below."
+        prompt = "What is the name of the item you learned about? ";
     }
+    prompt += "Please select its name from the options below.";
 
     exp.trials_stimuli = exp.trials_stimuli.concat([
         _.extend(
@@ -1433,10 +1473,9 @@ function init() {
                 prompt: prompt,
                 correct_answer: correct_names, // FYI this is defined near the top of experiment.js
                 show_scene: false,
+                show_generic: false,
                 response_type: "grid",
                 grid_labels: grid_name_labels,
-                slider_label_l: "0% (impossible)",
-                slider_label_r: "100% (certain",
                 item_presentation_condition: item_presentation_condition[0]
             }
         )
@@ -1444,17 +1483,15 @@ function init() {
 
     if (item_presentation_condition[0] != "generic_text_only") { // These checks are not applicable for the text-only generic condition
 
-        let how_many_exemplars;
+        let how_many_exemplars = n_examples_per_subtrial;
         if (item_presentation_condition[0].includes("generic")) {
             how_many_exemplars = 0;
-        } else {
-            how_many_exemplars = n_examples_per_subtrial;
-        };
+        }
 
         let correct_answer = "been_while";
         if (item_presentation_condition[0] == "accidental") {
             correct_answer = "just_arrived";
-        };
+        }
 
         // Perceived agent arrival check: Just arrived vs. been here for a while
         exp.trials_stimuli = exp.trials_stimuli.concat([
@@ -1466,13 +1503,14 @@ function init() {
                     prompt: "Please refer to the image below. How long has this character been doing research?",
                     correct_answer: correct_answer,
                     show_scene: true,
+                    show_generic: false,
                     agent: agents[0],
                     background: back[0],
                     object: objects[0],
                     item_name: item_name[0],
                     n_examples: how_many_exemplars,
                     response_type: "mc",
-                    options: [ ["This character has been doing research on this planet for a while", "been_while"], ["This character just arrived here and is a new researcher", "just_arrived"] ],
+                    options: [ ["This character has been doing research on this planet for a while", "been_while"], ["This character is a new researcher and just arrived here", "just_arrived"] ],
                     item_presentation_condition: item_presentation_condition[0]
                 }
             )
@@ -1481,11 +1519,13 @@ function init() {
         let object_statement = "object";
         let demonstrative = "this ";
         let pronoun = "its ";
+        let article_statement = "a " + item_name[0][0];
 
         if (n_examples_per_subtrial != 1) {
             demonstrative = "these ";
             object_statement += "s";
             pronoun = "their ";
+            article_statement = item_name[0][1];
         };
 
         if (item_presentation_condition[0].includes("generic"))
@@ -1495,17 +1535,17 @@ function init() {
             object_statement = demonstrative + object_statement;
         }
 
-        let show_property;
-        if (objects[0][2] == " squeaking") {
+        let show_property = " show " + pronoun + objects[0][2];
+        let have_property = "could have " + objects[0][2];
+        if (objects[0][2] == "squeaking") {
             show_property = " squeak";
-        } else {
-            show_property = " show " + pronoun + objects[0][2];
+            have_property = "could squeak";
         }
 
         correct_answer = "on_purpose";
         if (item_presentation_condition[0] == "accidental") {
             correct_answer = "by_accident";
-        };
+        }
 
         // // Perceived agent intentionality check: on purpose vs. by accident
         // if (!(item_presentation_condition[0].includes("generic"))) {
@@ -1531,6 +1571,32 @@ function init() {
         //     ]);
         // };
 
+        correct_answer = "yes_preknowledge";
+        if (item_presentation_condition[0] == "accidental") {
+            correct_answer = "no_preknowledge";
+        }
+
+        exp.trials_stimuli = exp.trials_stimuli.concat([
+            _.extend(
+                {
+                    trial_num: check_num++,
+                    type: "response",
+                    section_type: "followup",
+                    prompt: "Please refer to the image below. Did this character know that " + article_statement + " " + have_property + " before you observed it together?",
+                    correct_answer: correct_answer,
+                    show_scene: true,
+                    agent: agents[0],
+                    background: back[0],
+                    object: objects[0],
+                    item_name: item_name[0],
+                    n_examples: how_many_exemplars,
+                    response_type: "mc",
+                    options: [ ["Yes", "yes_preknowledge"], ["No", "no_preknowledge"] ],
+                    item_presentation_condition: item_presentation_condition[0]
+                }
+            )
+        ]);
+
         // Perceived agent knowledge check: how much do they know about this (these) object(s)?
         exp.trials_stimuli = exp.trials_stimuli.concat([
             _.extend(
@@ -1541,6 +1607,7 @@ function init() {
                     prompt: "Please refer to the image below. How much does this character know about " + object_statement + " now?",
                     correct_answer: "NA",
                     show_scene: true,
+                    show_generic: false,
                     agent: agents[0],
                     background: back[0],
                     object: objects[0],
