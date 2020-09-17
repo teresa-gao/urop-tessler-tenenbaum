@@ -20,7 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
 var n_examples =        _.shuffle([1, 2]);
-var item_presentation_condition = ["naive", "pedagogical", "accidental"] //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
+var item_presentation_condition = _.shuffle(["accidental", "naive", "pedagogical"]); //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
 
 // Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
@@ -248,23 +248,20 @@ function effect_remark_close(stim) {
             // Agent faces front
             agent_straight(stim.agent);
 
-            let delay_time = 2500;
-            let audio_file_name = "";
+            let delay_time = 3000;
+            let audio_file_name = "see_";
 
-            let say_text = "";
+            let say_text = "See? ";
             if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
-                say_text += "Oh wow! ";
-                audio_file_name += "oh_wow_";
-            } else {
-                say_text += "See? ";
-                audio_file_name += "see_";
-                delay_time = 2250;
+                say_text = "Oh wow! ";
+                audio_file_name = "wow_";
+                delay_time = 3500;
             }
 
             if (stim.object[0] == "artifact") {
                 say_text += "Squeaking!";
                 audio_file_name += "squeaking";
-                delay_time = 2250;
+                delay_time = 3000;
             } else {
                 say_text += stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
                 if (stim.object[2] == "purple petals") {
@@ -272,6 +269,7 @@ function effect_remark_close(stim) {
                 } else if (stim.object[2] == "green feathers") {
                     audio_file_name += "green_feathers";
                 }
+                delay_time = 2500;
             }
 
             // Agent remarks on object
@@ -335,19 +333,15 @@ function run_trial(stim, exp_this) {
         $(".speech-bubble-tail, .speech-bubble-outline").css("right", "475px");
 
         // Greeting text and audio
-        let greeting = "";
+        let greeting = "Hello! I've been doing research on this planet for a while.";
+        let hello = new Audio("audio/" + stim.speaker + "_recordings/hello_been_researching.mp3");;
         if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
-            greeting += "Hello! I just arrived here.";
-            hello = new Audio("audio/" + stim.speaker + "_recordings/hello_i_just_arrived.mp3");
-            hello.play();
-        } else {
-            greeting += "Hello! I've been doing research on this planet for a while.";
-            // TODO
-            // hello = new Audio("audio/" + stim.speaker + "_recordings/hello_ive_been_here.mp3");
-            // hello.play();
+            greeting = "Hello! I am a new researcher. I just arrived on this planet.";
+            hello = new Audio("audio/" + stim.speaker + "_recordings/hello_new_researcher.mp3");
         }
+        hello.play();
 
-        agent_say(greeting, stim.trial_num, 2250).then(
+        agent_say(greeting, stim.trial_num, 4000).then(
 
             // Continue to next subtrial slide
             function() {
@@ -363,31 +357,23 @@ function run_trial(stim, exp_this) {
         set_table(stim, true);
 
         let on_the_table;
-        let wait_time = 3000;
+        let on_the_table_audio;
+        let wait_time = 3500;
 
         // Create grammatically correct remark and fetch correct audio file
         if (stim.item_presentation_condition == "pedagogical") {
             if (stim.n_examples > 1) {
                 on_the_table = "Here we have some " + stim.item_name[1] + " on the table.";
-                // TODO
-                // there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.n_examples + "_" + stim.item_name[1] + ".mp3");
+                on_the_table_audio = new Audio("audio/" + stim.speaker + "_recordings/here_" + stim.item_name[1] + ".mp3");
             } else {
                 on_the_table = "Here we have a " + stim.item_name[0] + " on the table.";
-                // TODO
-                // there_on_table = new Audio("audio/" + stim.speaker + "_recordings/" + stim.n_examples + "_" + stim.item_name[0] + ".mp3");
+                on_the_table_audio = new Audio("audio/" + stim.speaker + "_recordings/here_" + stim.item_name[0] + ".mp3");
             }
         } else if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
             on_the_table = "Hmm, I wonder what we have here on the table.";
-            // TODO
-            // let oh_look = new Audio("audio/" + stim.speaker + "_recordings/oh_look_at_that.mp3");
-            // oh_look.play();
+            on_the_table_audio = new Audio("audio/" + stim.speaker + "_recordings/hmm_i_wonder.mp3");
         }
-
-        // TODO
-        // setTimeout (function() {
-                // TODO
-                // there_on_table.play();
-            // }, 500)
+        on_the_table_audio.play()
 
         // Agent remarks on objects on the table
         agent_say(on_the_table, stim.trial_num, wait_time);
@@ -401,29 +387,34 @@ function run_trial(stim, exp_this) {
         // Display objects on table
         set_table(stim, true);
 
-        let wait_time = 2500;
-        let oh_i_see;
+        let wait_time = 4000;
+        let oh_i_see = "Oh, I see! These are " + stim.item_name[1] + ".";
+        let oh_i_see_audio = new Audio("audio/" + stim.speaker + "_recordings/oh_" + stim.item_name[1] + ".mp3");;
         if (stim.n_examples == 1) {
             oh_i_see = "Oh, I see! This is a " + stim.item_name[0] + ".";
-        } else {
-            oh_i_see = "Oh, I see! These are " + stim.item_name[1] + ".";
+            oh_i_see_audio = new Audio("audio/" + stim.speaker + "_recordings/oh_" + stim.item_name[0] + ".mp3");
         }
+
         agent_say(oh_i_see, stim.trial_num, wait_time);
+        oh_i_see_audio.play();
         setTimeout (function() {
             _stream.apply(exp_this);
         }, wait_time);
 
     } else if (stim.type == "agent_knowledge") {
 
-        // TODO add speaker/narrator voice audio
         set_table(stim, true)
-        let agent_knowledge;
+        let agent_knowledge = "I don't know anything about " + stim.item_name[1] + ".";;
+        let knowledge_audio = new Audio("audio/" + stim.speaker + "_recordings/idk_" + stim.item_name[1] + ".mp3");
+
         if (stim.item_presentation_condition == "pedagogical") {
             agent_knowledge = "I know all about " + stim.item_name[1] + ".";
-        } else if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
-            agent_knowledge = "I don't know anything about " + stim.item_name[1] + ".";
+            knowledge_audio = new Audio("audio/" + stim.speaker + "_recordings/i_know_" + stim.item_name[1] + ".mp3");
         }
-        let wait_time = 2000;
+
+        knowledge_audio.play();
+
+        let wait_time = 3000;
         agent_say(agent_knowledge, stim.trial_num, wait_time).then(
             function() {
                 // Continues to next subtrial slide
@@ -584,10 +575,13 @@ function run_trial(stim, exp_this) {
         } else if (stim.item_presentation_condition == "naive") {
 
             let say_text = "Let's take a look.";
+            let lets_look = new Audio("audio/" + stim.speaker + "_recordings/lets_take_a_look.mp3");
             if (stim.exemplar_num > 1) {
                 say_text = "Let's look at another one.";
+                lets_look = new Audio("audio/" + stim.speaker + "_recordings/lets_look_another_one.mp3");
             }
-            // TODO add speaker audio
+            lets_look.play();
+
 
             agent_say(say_text, stim.trial_num, 2000).then(
 
@@ -616,21 +610,16 @@ function run_trial(stim, exp_this) {
 
             );
 
-            // TODO
-
         // Pedagogical item presentation
         } else if ((stim.item_presentation_condition == "pedagogical") || (stim.item_presentation_condition == "gen+ped")) {
 
-            // Audio plays
-            let say_text;
+            let say_text = "Let me show you another one.";
+            let show_you = new Audio("audio/" + stim.speaker + "_recordings/let_me_show_another.mp3");
             if (stim.exemplar_num == 1) {
                 say_text = "Let me show you something."
-                show_you = new Audio("audio/" + stim.speaker + "_recordings/let_me_show_you_something.mp3");
-                show_you.play();
-            } else {
-                say_text = "Let me show you another one."
-                // TODO add audio
+                show_you = new Audio("audio/" + stim.speaker + "_recordings/let_me_show_you.mp3");
             }
+            show_you.play();
 
             agent_say(say_text, stim.trial_num, 2000).then(
 
@@ -1520,29 +1509,6 @@ function init() {
                 )
             ]);
         };
-
-        // Perceived agent knowledge check: how much do they know about this (these) object(s)?
-        exp.trials_stimuli = exp.trials_stimuli.concat([
-            _.extend(
-                {
-                    trial_num: check_num++,
-                    type: "response",
-                    section_type: "followup",
-                    prompt: "Please refer to the image below. How much does this character know about " + object_statement + "?",
-                    correct_answer: "NA",
-                    show_scene: true,
-                    agent: agents[1],
-                    background: back[1],
-                    object: objects[1],
-                    item_name: item_name[1],
-                    n_examples: how_many_exemplars,
-                    response_type: "slider",
-                    slider_label_l: "This character knows very little",
-                    slider_label_r: "This character knows a lot",
-                    item_presentation_condition: item_presentation_condition[0]
-                }
-            )
-        ]);
     }
 
     // Initialize data frames to be submitted to MTurk — data will be added as slides are run
