@@ -20,10 +20,7 @@ var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Sel
 
 var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
 var n_examples =        _.shuffle([1, 2]);
-var item_presentation_condition = _.shuffle(["accidental", "pedagogical", "naive"]); //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
-
-console.log(item_presentation_condition[0]);
-console.log(n_examples[0]);
+var item_presentation_condition = ["naive", "pedagogical", "accidental"] //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
 
 // Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
@@ -338,19 +335,19 @@ function run_trial(stim, exp_this) {
         $(".speech-bubble-tail, .speech-bubble-outline").css("right", "475px");
 
         // Greeting text and audio
-        let greeting;
+        let greeting = "";
         if ((stim.item_presentation_condition == "accidental") || (stim.item_presentation_condition == "naive")) {
-            greeting = "Hello! I am a new researcher. I just arrived on this planet.";
+            greeting += "Hello! I just arrived here.";
             hello = new Audio("audio/" + stim.speaker + "_recordings/hello_i_just_arrived.mp3");
             hello.play();
         } else {
-            greeting = "Hello! I've been doing research on this planet for a while.";
+            greeting += "Hello! I've been doing research on this planet for a while.";
             // TODO
             // hello = new Audio("audio/" + stim.speaker + "_recordings/hello_ive_been_here.mp3");
             // hello.play();
         }
 
-        agent_say(greeting, stim.trial_num, 3250).then(
+        agent_say(greeting, stim.trial_num, 2250).then(
 
             // Continue to next subtrial slide
             function() {
@@ -440,7 +437,7 @@ function run_trial(stim, exp_this) {
 
         $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
 
-        let generic_statement;
+        let generic_statement = "";
         if (stim.property == "squeaking") {
             generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak";
         } else {
@@ -869,7 +866,7 @@ function make_slides(f) {
                     trial_num: 0, // Introduction
                     trial_type: "introduction",
                     trial_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000,
-                    display_text: "You are a scientist being deployed to a remote field site on a faraway planet. Your job is to catalogue and describe new kinds of plants, animals, and objects that have been discovered on the planet. When you arrive at the field site, you meet other scientists there."
+                    display_text: "You are a scientist being deployed to a remote field site. Your job is to catalogue and describe new kinds of plants, animals, and objects that have been discovered on the planet. When you arrive at the field site, you meet other scientists there."
                 }
             );
 
@@ -915,27 +912,12 @@ function make_slides(f) {
 
                 if (this.stim.show_scene) {
                     agent_straight(this.stim.agent);
-                    $("." + this.stim.agent + "_straight").css("right", 360);
+                    $("." + stim.agent + "_straight").css("right", 360);
                     change_image("background", "images/back" + this.stim.background + ".jpg");
                     set_table(this.stim, false);
                     $(".label").hide();
                     $(".container").show();
-                }
-
-                if (this.stim.show_generic) {
-                    $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
-
-                    let generic_statement;
-                    if (this.stim.property == "squeaking") {
-                        generic_statement = this.stim.item_name[1][0].toUpperCase() + this.stim.item_name[1].slice(1) + " squeak";
-                    } else {
-                        generic_statement = this.stim.item_name[1][0].toUpperCase() + this.stim.item_name[1].slice(1) + " have " + stim.property;
-                    }
-
-                    $("#generic_text").text("\"" + generic_statement + ".\"");
-
-                    $("#generic_text").show();
-                }
+                };
 
                 // Display slider
                 if (this.stim.response_type == "slider") {
@@ -1008,7 +990,6 @@ function make_slides(f) {
 
             // Incorrect number of responses on grid -> error
             } else if ((this.stim.response_type == "grid") && ($("input[class=grid_choice]:checked").length != total_trials_num)) {
-                $(".grid_error").text("Please select exactly " + total_trials_num + " option(s) before continuing.");
                 $(".grid_error").show();
 
             // No response on MC (radio) buttons -> error
@@ -1215,12 +1196,6 @@ function init() {
     let trial_num;
     for (trial_num = 0; trial_num < total_trials_num * accidental_factor; trial_num++) {
 
-        // Account for the same background/stimulus in all accidental trials
-        let effective_trial_num = trial_num;
-        if (item_presentation_condition[0] == "accidental") {
-            effective_trial_num = 0;
-        }
-
         if (item_presentation_condition[0] == "generic_text_only") {
 
             exp.trials_stimuli = exp.trials_stimuli.concat([
@@ -1230,8 +1205,8 @@ function init() {
                         trial_num: trial_num + 1,
                         type: "text",
                         item_presentation_condition: item_presentation_condition[0],
-                        property: objects[effective_trial_num][2],
-                        item_name: item_name[effective_trial_num]
+                        property: objects[trial_num][2],
+                        item_name: item_name[trial_num]
                     }
                 )
 
@@ -1247,7 +1222,7 @@ function init() {
                         trial_num: trial_num + 1,
                         type: "greeting",
                         item_presentation_condition: item_presentation_condition[0],
-                        background: back[effective_trial_num],
+                        background: back[trial_num],
                         agent: agents[trial_num],
                         speaker: speakers[trial_num]
                     }
@@ -1265,8 +1240,8 @@ function init() {
                     type: "on_the_table",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: agents[trial_num],
-                    object: objects[effective_trial_num],
-                    item_name: item_name[effective_trial_num],
+                    object: objects[trial_num],
+                    item_name: item_name[trial_num],
                     n_examples: n_examples_per_subtrial,
                     speaker: speakers[trial_num]
                 }
@@ -1282,8 +1257,8 @@ function init() {
                         type: "oh_i_see",
                         item_presentation_condition: item_presentation_condition[0],
                         agent: agents[trial_num],
-                        object: objects[effective_trial_num],
-                        item_name: item_name[effective_trial_num],
+                        object: objects[trial_num],
+                        item_name: item_name[trial_num],
                         n_examples: n_examples_per_subtrial,
                         speaker: speakers[trial_num]
                     }
@@ -1299,8 +1274,8 @@ function init() {
                     type: "agent_knowledge",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: agents[trial_num],
-                    object: objects[effective_trial_num],
-                    item_name: item_name[effective_trial_num],
+                    object: objects[trial_num],
+                    item_name: item_name[trial_num],
                     n_examples: n_examples_per_subtrial,
                     speaker: speakers[trial_num]
                 }
@@ -1316,8 +1291,8 @@ function init() {
                         type: "tell_you",
                         item_presentation_condition: item_presentation_condition[0],
                         agent: agents[trial_num],
-                        object: objects[effective_trial_num],
-                        item_name: item_name[effective_trial_num],
+                        object: objects[trial_num],
+                        item_name: item_name[trial_num],
                         n_examples: n_examples_per_subtrial,
                         speaker: speakers[trial_num]
                     }
@@ -1337,8 +1312,8 @@ function init() {
                         type: "trial",
                         item_presentation_condition: item_presentation_condition[0],
                         agent: agents[trial_num],
-                        object: objects[effective_trial_num],
-                        item_name: item_name[effective_trial_num],
+                        object: objects[trial_num],
+                        item_name: item_name[trial_num],
                         n_examples: n_examples_per_subtrial,
                         speaker: speakers[trial_num],
                         exemplar_num: exemplar_num++
@@ -1360,18 +1335,18 @@ function init() {
                         point_r_image: agents[trial_num] + "_point_r.png"
                     },
                     object: {
-                        name: objects[effective_trial_num][0],
-                        property: objects[effective_trial_num][2],
-                        closed_image: objects[effective_trial_num][1] + "_closed.svg",
-                        open_image: objects[effective_trial_num][1] + "_open.svg"
+                        name: objects[trial_num][0],
+                        property: objects[trial_num][2],
+                        closed_image: objects[trial_num][1] + "_closed.svg",
+                        open_image: objects[trial_num][1] + "_open.svg"
                     },
                     item_name: {
-                        singular: item_name[effective_trial_num][0],
-                        plural: item_name[effective_trial_num][1]
+                        singular: item_name[trial_num][0],
+                        plural: item_name[trial_num][1]
                     },
                     n_examples: n_examples_per_subtrial,
                     speaker: speakers[trial_num],
-                    background: back[effective_trial_num],
+                    background: back[trial_num],
                     spoken_text: [] // Will be fleshed out via agent_say()
                 }
             )
@@ -1385,12 +1360,12 @@ function init() {
                     trial_type: "trial",
                     item_presentation_condition: item_presentation_condition[0],
                     agent: agents[trial_num],
-                    object: objects[effective_trial_num][0],
-                    property: objects[effective_trial_num][2],
-                    item_name: item_name[effective_trial_num][0],
+                    object: objects[trial_num][0],
+                    property: objects[trial_num][2],
+                    item_name: item_name[trial_num][0],
                     n_examples: n_examples_per_subtrial,
                     speaker: speakers[trial_num],
-                    background: back[effective_trial_num]
+                    background: back[trial_num]
                 }
             )
         ]);
@@ -1403,10 +1378,10 @@ function init() {
         } else {
             article = " another ";
         };
-        if (objects[effective_trial_num][2] == "squeaking") {
-            prompt = "Imagine that you come across" + article + item_name[effective_trial_num][0] + ". What are the chances that it squeaks?";
+        if (objects[trial_num][2] == "squeaking") {
+            prompt = "Imagine that you come across" + article + item_name[trial_num][0] + ". What do you think would be the likelihood that it squeaks?";
         } else {
-            prompt = "Imagine that you come across" + article + item_name[effective_trial_num][0] + ". What are the chances that it has " + objects[effective_trial_num][2] + "?";
+            prompt = "Imagine that you come across" + article + item_name[trial_num][0] + ". What do you think would be the likelihood that it has " + objects[trial_num][2] + "?";
         };
 
         // Adds slider response slide
@@ -1419,7 +1394,6 @@ function init() {
                     prompt: prompt,
                     correct_answer: "NA",
                     show_scene: false,
-                    show_generic: false,
                     response_type: "slider",
                     slider_label_l: "0% (impossible)",
                     slider_label_r: "100% (certain)",
@@ -1435,11 +1409,10 @@ function init() {
     let check_num = 1;
 
     // Create grammatically correct prompt statement
-    let prompt = "What are the names of the " + total_trials_num + " items you learned about? ";
+    let prompt = "You just learned about " + total_trials_num + " items. Please select their names from the options below.";
     if (total_trials_num == 1) {
-        prompt = "What is the name of the item you learned about? ";
+        prompt = "You just learned about " + total_trials_num + " item. Please select its name from the options below."
     }
-    prompt += "Please select its name from the options below.";
 
     exp.trials_stimuli = exp.trials_stimuli.concat([
         _.extend(
@@ -1450,49 +1423,28 @@ function init() {
                 prompt: prompt,
                 correct_answer: correct_names, // FYI this is defined near the top of experiment.js
                 show_scene: false,
-                show_generic: false,
                 response_type: "grid",
                 grid_labels: grid_name_labels,
+                slider_label_l: "0% (impossible)",
+                slider_label_r: "100% (certain",
                 item_presentation_condition: item_presentation_condition[0]
             }
         )
     ]);
-
-    prompt = "Would you say the following is true?";
-
-    exp.trials_stimuli = exp.trials_stimuli.concat([
-        _.extend(
-            {
-                trial_num: check_num++,
-                type: "response",
-                section_type: "followup",
-                prompt: prompt,
-                correct_answer: "NA",
-                show_scene: false,
-                show_generic: true,
-                property: objects[0][2],
-                item_name: item_name[0],
-                response_type: "slider",
-                grid_labels: grid_name_labels,
-                slider_label_l: "0% (definitely false)",
-                slider_label_r: "100% (definitely true",
-                item_presentation_condition: item_presentation_condition[0]
-            }
-        )
-    ]);
-
 
     if (item_presentation_condition[0] != "generic_text_only") { // These checks are not applicable for the text-only generic condition
 
-        let how_many_exemplars = n_examples_per_subtrial;
+        let how_many_exemplars;
         if (item_presentation_condition[0].includes("generic")) {
             how_many_exemplars = 0;
-        }
+        } else {
+            how_many_exemplars = n_examples_per_subtrial;
+        };
 
         let correct_answer = "been_while";
         if (item_presentation_condition[0] == "accidental") {
             correct_answer = "just_arrived";
-        }
+        };
 
         // Perceived agent arrival check: Just arrived vs. been here for a while
         exp.trials_stimuli = exp.trials_stimuli.concat([
@@ -1501,17 +1453,16 @@ function init() {
                     trial_num: check_num++,
                     type: "response",
                     section_type: "followup",
-                    prompt: "Please refer to the image below. How long has this character been doing research?",
+                    prompt: "Please refer to the image below. Did this character just arrive here, or have they been here for a while?",
                     correct_answer: correct_answer,
                     show_scene: true,
-                    show_generic: false,
-                    agent: agents[0],
-                    background: back[0],
-                    object: objects[0],
-                    item_name: item_name[0],
+                    agent: agents[1],
+                    background: back[1],
+                    object: objects[1],
+                    item_name: item_name[1],
                     n_examples: how_many_exemplars,
                     response_type: "mc",
-                    options: [ ["This character has been doing research on this planet for a while", "been_while"], ["This character is a new researcher and just arrived here", "just_arrived"] ],
+                    options: [ ["This character just arrived here", "just_arrived"], ["This character has been here for a while", "been_while"] ],
                     item_presentation_condition: item_presentation_condition[0]
                 }
             )
@@ -1520,83 +1471,55 @@ function init() {
         let object_statement = "object";
         let demonstrative = "this ";
         let pronoun = "its ";
-        let article_statement = "a " + item_name[0][0];
 
         if (n_examples_per_subtrial != 1) {
             demonstrative = "these ";
             object_statement += "s";
             pronoun = "their ";
-            article_statement = item_name[0][1];
         };
 
         if (item_presentation_condition[0].includes("generic"))
         {
-            object_statement = item_name[0][1];
+            object_statement = item_name[1][1];
         } else {
             object_statement = demonstrative + object_statement;
         }
 
-        let show_property = " show " + pronoun + objects[0][2];
-        let have_property = "could have " + objects[0][2];
-        if (objects[0][2] == "squeaking") {
+        let show_property;
+        if (objects[1][2] == " squeaking") {
             show_property = " squeak";
-            have_property = "could squeak";
+        } else {
+            show_property = " show " + pronoun + objects[1][2];
         }
 
         correct_answer = "on_purpose";
         if (item_presentation_condition[0] == "accidental") {
             correct_answer = "by_accident";
-        }
+        };
 
-        // // Perceived agent intentionality check: on purpose vs. by accident
-        // if (!(item_presentation_condition[0].includes("generic"))) {
-        //     exp.trials_stimuli = exp.trials_stimuli.concat([
-        //         _.extend(
-        //             {
-        //                 trial_num: check_num++,
-        //                 type: "response",
-        //                 section_type: "followup",
-        //                 prompt: "Please refer to the image below. Did this character make " + object_statement + show_property + " on purpose or by accident?",
-        //                 correct_answer: correct_answer,
-        //                 show_scene: true,
-        //                 agent: agents[0],
-        //                 background: back[0],
-        //                 object: objects[0],
-        //                 item_name: item_name[0],
-        //                 n_examples: how_many_exemplars,
-        //                 response_type: "mc",
-        //                 options: [ ["On purpose", "on_purpose"], ["By accident", "by_accident"] ],
-        //                 item_presentation_condition: item_presentation_condition[0]
-        //             }
-        //         )
-        //     ]);
-        // };
-
-        correct_answer = "yes_preknowledge";
-        if (item_presentation_condition[0] == "accidental") {
-            correct_answer = "no_preknowledge";
-        }
-
-        exp.trials_stimuli = exp.trials_stimuli.concat([
-            _.extend(
-                {
-                    trial_num: check_num++,
-                    type: "response",
-                    section_type: "followup",
-                    prompt: "Please refer to the image below. Did this character know that " + article_statement + " " + have_property + " before you observed it together?",
-                    correct_answer: correct_answer,
-                    show_scene: true,
-                    agent: agents[0],
-                    background: back[0],
-                    object: objects[0],
-                    item_name: item_name[0],
-                    n_examples: how_many_exemplars,
-                    response_type: "mc",
-                    options: [ ["Yes", "yes_preknowledge"], ["No", "no_preknowledge"] ],
-                    item_presentation_condition: item_presentation_condition[0]
-                }
-            )
-        ]);
+        // Perceived agent intentionality check: on purpose vs. by accident
+        if (!(item_presentation_condition[0].includes("generic"))) {
+            exp.trials_stimuli = exp.trials_stimuli.concat([
+                _.extend(
+                    {
+                        trial_num: check_num++,
+                        type: "response",
+                        section_type: "followup",
+                        prompt: "Please refer to the image below. Did this character make " + object_statement + show_property + " on purpose or by accident?",
+                        correct_answer: correct_answer,
+                        show_scene: true,
+                        agent: agents[1],
+                        background: back[1],
+                        object: objects[1],
+                        item_name: item_name[1],
+                        n_examples: how_many_exemplars,
+                        response_type: "mc",
+                        options: [ ["On purpose", "on_purpose"], ["By accident", "by_accident"] ],
+                        item_presentation_condition: item_presentation_condition[0]
+                    }
+                )
+            ]);
+        };
 
         // Perceived agent knowledge check: how much do they know about this (these) object(s)?
         exp.trials_stimuli = exp.trials_stimuli.concat([
@@ -1605,14 +1528,13 @@ function init() {
                     trial_num: check_num++,
                     type: "response",
                     section_type: "followup",
-                    prompt: "Please refer to the image below. How much does this character know about " + object_statement + " now?",
+                    prompt: "Please refer to the image below. How much does this character know about " + object_statement + "?",
                     correct_answer: "NA",
                     show_scene: true,
-                    show_generic: false,
-                    agent: agents[0],
-                    background: back[0],
-                    object: objects[0],
-                    item_name: item_name[0],
+                    agent: agents[1],
+                    background: back[1],
+                    object: objects[1],
+                    item_name: item_name[1],
                     n_examples: how_many_exemplars,
                     response_type: "slider",
                     slider_label_l: "This character knows very little",
