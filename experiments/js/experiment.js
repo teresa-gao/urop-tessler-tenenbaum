@@ -32,7 +32,7 @@ for (counter=0; counter<total_trials_num; counter++) {
 };
 correct_names = correct_names.sort();
 
-var grid_name_labels = _.shuffle($.merge(correct_names.slice(), ["krim", "yacket", "thoop", "vibbet", "glud", "zobbet", "vug", "thim", "glocket", "fud", "yex"]));
+var grid_name_labels = _.shuffle($.merge(correct_names.slice(), ["krim", "shen", "thoop", "vibber", "glud", "zobby", "vug", "thim", "glabbin", "fid", "yeph"]));
 var grid_property_labels = _.shuffle($.merge(correct_properties.slice(), ["blue claws", "orange wings", "yellow leaves", "red thorns", "buzzing", "whistling"]));
 
 // Returns whether the contents of two list Objects are equal; pulled from gomakethings.com
