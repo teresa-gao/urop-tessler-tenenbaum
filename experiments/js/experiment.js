@@ -1400,23 +1400,25 @@ function init() {
         };
 
         // Adds slider response slide
-        exp.trials_stimuli = exp.trials_stimuli.concat([
-            _.extend(
-                {
-                    trial_num: trial_num + 1,
-                    section_type: "main_trial",
-                    type: "response",
-                    prompt: prompt,
-                    correct_answer: "NA",
-                    show_scene: false,
-                    show_generic: false,
-                    response_type: "slider",
-                    slider_label_l: "0% (impossible)",
-                    slider_label_r: "100% (certain)",
-                    item_presentation_condition: item_presentation_condition[0]
-                }
-            )
-        ]);
+        if (!((item_presentation_condition[0] == "accidental") && (trial_num == 0))) {
+            exp.trials_stimuli = exp.trials_stimuli.concat([
+                _.extend(
+                    {
+                        trial_num: trial_num + 1,
+                        section_type: "main_trial",
+                        type: "response",
+                        prompt: prompt,
+                        correct_answer: "NA",
+                        show_scene: false,
+                        show_generic: false,
+                        response_type: "slider",
+                        slider_label_l: "0% (impossible)",
+                        slider_label_r: "100% (certain)",
+                        item_presentation_condition: item_presentation_condition[0]
+                    }
+                )
+            ]);
+        }
     };
 
     // Now, we add followup (attention and manipulation) comprehension checks to "trials_stimuli" to be run via present_handle...
@@ -1441,7 +1443,7 @@ function init() {
                 response_type: "slider",
                 grid_labels: grid_name_labels,
                 slider_label_l: "0% (definitely false)",
-                slider_label_r: "100% (definitely true",
+                slider_label_r: "100% (definitely true)",
                 item_presentation_condition: item_presentation_condition[0]
             }
         )
@@ -1479,7 +1481,7 @@ function init() {
         }
 
         let correct_answer = "been_while";
-        if (item_presentation_condition[0] == "accidental") {
+        if ((item_presentation_condition[0] == "accidental") || (item_presentation_condition[0] == "naive")) {
             correct_answer = "just_arrived";
         }
 
@@ -1527,9 +1529,9 @@ function init() {
 
         let show_property = " show " + pronoun + objects[0][2];
         let have_property = "could have " + objects[0][2];
-        if (objects[0][2] == " squeaking") {
+        if (objects[0][2] == "squeaking") {
             show_property = " squeak";
-            have_property = "could squeak"
+            have_property = "could squeak";
         }
 
         correct_answer = "yes_preknowledge";
