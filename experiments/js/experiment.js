@@ -1492,7 +1492,7 @@ function init() {
                     trial_num: check_num++,
                     type: "response",
                     section_type: "followup",
-                    prompt: "Please refer to the image below. How long has this character researched on this planet?",
+                    prompt: "Please refer to the image below. How long has this character been doing research on this planet?",
                     correct_answer: correct_answer,
                     show_scene: true,
                     show_generic: false,
