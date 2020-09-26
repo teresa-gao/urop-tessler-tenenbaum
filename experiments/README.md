@@ -1,25 +1,51 @@
-*last updated 22 August 2020*
+*last updated 25 September 2020*
 
 # Overview
 
 ## To run the experiment...
 
-...open **experiment.html**
+...open **experiment.html**; this should pop open in your browser window.
 
 ## To edit the experiment...
 
-...open **experiment.js**
+...open **experiment.js** in your favorite text editor.
 
-### TL;DR overview of experiment.js file
+# Files
 
-* Variable declarations *(up to line 36)* — Much of the experiment can be modified solely by changing these variable values
-* Functions *(lines 38 through 597)* — These are used primarily in `slides.trials` (trials slide)
-* Slides *(lines 599 through 1044)* — These include intro slide, catch trials, (experimental) trial slides, attention checks, manipulation checks, info, and thank-you (data submission to MTurk)
-* Setup *(from line 1046 on)* — Here, we create the data frames which are passed as stim into slides.trials, slides.attention_check, and slides.manipulation_check and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker
+## experiment.html
+
+Used to run experiment. Most relevant related files are contained in css (for local style) and js (experiment setup) directories.
+
+# Directories
+
+## \_shared
+
+Contains js and css files from original experiment template.
+
+## audio
+
+Contains sound check audio, object sound effects, and agent (narrator) voice tracks; current agent (narrator) voice tracks are mh, tg, and sb.
+
+## css
+
+Contains local style css; formats experiment.html in addition to css files in \_shared.
+
+## images
+
+Contains agent, object, and background images as well as Adobe Illustrator files for SVGs.
+
+## js
+
+Contains experiment.js.
+
+### Structure
+
+* **Variable declarations.** Much of the experiment can be modified solely by changing these variable values
+* **Functions.** These are used primarily in `slides.trials` (trials slide).
+* **Slides.** These include intro slide, catch trials, (experimental) trial slides, followup trials, optional info, and thank-you (data submission to MTurk).
+* **Setup.**  Here, we create the data frames which are passed as stim into slides.trials, slides.attention_check, and slides.manipulation_check and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker.
 
 ### How does everything work within the slides?
-
-*From line 600 onward*
 
 #### slides.io
 Introduction slide. Basic experiment instructions, contact info, etc.
@@ -36,138 +62,49 @@ Provides context for following experimental task.
 #### slides.trials
 Contains both experimental trials (display and slider response) as well as followup comprehension checks.
 
-##### Experimental trials
-Displays stimuli depending on condition (see **Details, to make modifications > Stimuli > Condition** within this README); each is followed by a slider, effectively gauging the user's perceived strength of inference related to the presented stimuli.
+##### Scripts
+Currently, only pedagogical, accidental, and naive conditions are in use.
+
+| text (script) \| agent action                                                                               | duration in ms\* | accidental\*\*? | naive? | pedagogical? |
+| ----------------------------------------------------------------------------------------------------------- | ---------------- | --------------- | ------ | ------------ |
+| "Hello! I've been doing research on this planet for a while."                                               | 4750             | N               | N      | Y            |
+| "Hello! I am a new researcher. I just arrived on this planet."                                              | 4000             | Y               | Y      | N            |
+| "Here we have a <sing. object name\> on the table." \| "Here we have some <pl. object name\> on the table." | 3500             | N               | N      | Y            |
+| "Hmm, I wonder what we have here on the table."                                                             | 3500             | Y               | Y      | N            |
+| "Oh, I see! This is a <sing. object name\>." \| "Oh, I see! These are <pl. object name\>."                  | 4000             | Y               | Y      | N            |
+| "I know all about <pl. object name\>."                                                                      | 3000             | N               | N      | Y            |
+| "I don't know anything about <pl. object name\>."                                                           | 3000             | Y               | Y      | N            |
+| "Let me show you something."                                                                                | 2000             | N               | N      | Y            |
+| "Let's take a look."                                                                                        | 1750             | N               | Y      | N            |
+| *Agent interacts with blanket.*                                                                             |                  | Y               | Y      | Y            |
+| "Watch this!"                                                                                               | 1750             | N               | N      | Y            |
+| *Blanket falls off, revealing object.*                                                                      |                  | Y               | Y      | Y            |
+| "Oops!"                                                                                                     | 1000             | Y               | N      | N            |
+| *Object reveals its property.*                                                                              |                  | Y               | Y      | Y            |
+| "See? <non-squeaking property\>!"                                                                           | 3000             | N               | N      | Y            |
+| "Oh wow! <non-squeaking property\>!"                                                                        | 3500             | Y               | Y      | N            |
+| "See? Squeaking!"                                                                                           | 2500             | N               | N      | Y            |
+| "Oh wow! Squeaking!"                                                                                        | 3000             | Y               | Y      | N            |
+| "Let me show you another one."                                                                              | 2500             | N               | N      | Y            |
+| "Let's look at another one."                                                                                | 2250             | N               | Y      | N            |
+
+\* After recording and clipping, these MP3s should be 250-750 ms less than this value so the audio tracks don't seem clipped.
+\*\* The accidental trial displays only a single object and agent at once, repeated with the same object and a different agent for however many times is specified by `total_trials_num` in **experiment.js**.
 
 ##### Followup (comprehension) checks
 
-| Condition         | Grid? | Arrival? | Intentionality? | Knowledge? |
-| ----------------- | ----- | -------- | --------------- | ---------- |
-| pedagogical       | Y     | Y        | Y               | Y          |
-| accidental        | Y     | Y        | Y               | Y          |
-| generic           | Y     | Y        | N               | Y          |
-| generic_text_only | Y     | N        | N               | N          |
-| generic_no_visual | Y     | Y        | N               | Y          |
-| gen+ped           | Y     | Y        | Y               | Y          |
+table with prompt ("Would you say the following is true?"), condition
+"What are the names of the " + total_trials_num + " items you learned about? Please select its/their name/names from the options below.
+Please refer to the image below. How long has this character been doing research on this planet?
+"Please refer to the image below. Did this character know that " + article_statement + " " + have_property + " before you observed it together?"
+In the text box below, please describe briefly what happened in this experiment.
 
-###### Grid
-User must select names of objects learned during experimental trials.
+| prompt                                                                                                                                     | answer type                    | accidental? | naive? | pedagogical? |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ | ----------- | ------ | ------------ |
+| "Would you say the following is true? <generic statement\>."                                                                               | slider (0% to 100%, labeled)   | Y           | Y      | Y            |
+| "What is/are the names of the <total trials num.\>" items you learned about?"                                                              | grid (checkboxes)              | Y           | Y      | Y            |
+| "Please refer to the image below. How long has this character been doing research on this planet?"                                         | multiple choice (radio button) | Y           | Y      | Y            |
+| "Please refer to the image below. Did this character know that <pl. object name\> could have <property\> before you observed it together?" | multiple choice (radio button) | Y           | Y      | Y            |
+| "In the text box below, please describe briefly what happened in this experiment."\*                                                       | freeform (text box)            | Y           | Y      | Y            |
 
-###### Arrival
-"Did this character just arrive here, or have they been here for a while?"
-
-###### Intentionality
-"Did this character make ... on purpose or by accident?" (Refers to displayed image, with the same number of unblanketed objects as were shown during the trial.)
-
-###### Knowledge
-"How much does this character know about ...?" (Note that conditions in which no objects are displayed use the given term for the word rather than "object" in this statement.)
-
-### Details, to make modifications
-
-Most of the experiment components (number of subtrials, conditions, agents, speakers, etc.) can be modified straightforwardly via variables at the top of the file.
-
-#### Number of subtrials
-
-* Edit total_trials_num *(line 8)*
-* If more than 3 subtrials are desired...
-	* (An) additional object(s) option must be included in the objects array *(line 19)*, as there are currently only 3
-	* Another item name should also be included in the item_name array *(line 21)* and the speakers array *(line 13)*, as there are currently only 3 as well
-	* Currently, the attention and manipulation checks are based on the first and second trials, respectively, and use stimuli from the first three trials as distractors. This should not be a huge issue left unadjusted if more than 3 subtrials are added; if modifications are desired, consider modifying the input arrays *(lines 1081 through 1417)*, slides functions *(lines 800 through 995)*, and display *(lines 91 through 261 of **experiment.html**)*
-
-#### Experiment aesthetics
-
-More options for backgrounds, agents, and speaker voices may be added arbitrarily, as only the first n are considered, n being the number of subtrials (`total_trials_num` on line 8)
-
-##### Background
-
-* Add file to **images\\**, in the format "back<X>.jpg", where <X> is an integer without leading zeros
-	* Note that many properties of the background, such as opacity and dimension (600px x 400px) are defined in **css\\local-style.css** *(lines 35-42)*
-* The number of backgrounds should always be at least equal to `total_trials_num`
-
-##### Agents
-
-* As noted on line 12, there are several other agent options which were not used. These may be added back simply by modifying the `agents` array.
-	* Caution: Reintroduce at your own risk: **css\\local-style.css** only controls for agent height *(lines 44 through 50)*, so any wider or narrower agents might result in strange animations.
-* The number of agents should always be at least equal to `total_trials_num`
-
-##### Speakers
-
-* Add speaker initials to array *(line 13)*
-* Additional speaker voice files should be included in the **\\audio** folder, named "xx\_recordings", where "xx" are representative initials of the speaker
-	* See preexisting files for script and file-naming
-
-###### Recording lengths
-
-| text (script)                                  | duration in ms       |
-| ---------------------------------------------- | -------------------- |
-| hellos                                         | 200ish (under 2250)  |
-| I have something to tell you                   | under 2000           |
-| let me show you something                      | under 2000           |
-| oh look at that                                | 1500ish (under 1750) |
-| oh wow (not squeaking)                         | under 2500           |
-| oh wow (squeaking)                             | 2000ish (under 2250) |
-| oops                                           | under 1000           |
-| \[generic property statement\] (not squeaking) | 1500ish (under 1750) |
-| \[generic property statement\] (squeaking)     | under 1500           |
-| see? ...                                       | 2000ish (under 2250) |
-| there are ... on the table                     | 2500ish (under 3250) |
-| watch this                                     | 1000ish (under 1250) |
-
-
-#### Stimuli
-
-##### Objects
-
-* Add additional options for artifacts *(line 16)*, flowers *(line 17)*, or birds *(line 18)* &mdash; or add additional objects directly *(line 19)*
-	* The current run_trial() and associated methods take into account the nature of the object, as each has a unique display width and property. If new objects are added, it is recommended that only color-changed variations of existing objects (e.g., a blue bird) are used to minimize CSS-related hair-pulling
-* Note that unless `total_trials_num` *(line 8)* is modified, only the first three items in `objects` will be used in the trials
-
-##### Item name
-
-* Add elements to `item_name` *(line 21)*
-	* Names of stimuli should appear in the form `[<singular>, <plural>]`
-* Note that unless `total_trials_num` *(line 8)* is modified, only the first three items in `item_name` will be used in the trials
-
-##### Number of examples
-
-* Modify `n_examples` *(line 22)*
-	* Currently, any number of examples less than or equal to 4 is supported; otherwise, layout redesign (see set_table() function starting on line 130, **css\\experiment.css**, ...) would be required
-
-#### Condition
-
-* Modify `item_presentation_condition` *(line 23)*; for easy testing, the `_.shuffle()` may be omitted
-* Preexisting conditions
-	* `"generic_text_only"`: generic statement only with no animations or visuals
-	* `"generic_no_visual"`: agent, though not blanked objects, are displayed and generic statement is given
-	* `"generic"`: agent and blanketed objects are displayed and generic statement is given, though agent does not interact with objects
-	* `"gen+ped"`: agent and blanketed objects are displayed, generic statement is given, and agent demonstrates stated property
-	* `"accidental"`: "just-arrived-here" agent accidentally demonstrates property
-	* `"pedagogical"`: agent demonstrates stated property, without giving generic statement
-
-# Directories
-
-## \_shared
-
-Contains js and css files from original experiment template
-
-## audio
-
-Contains sound check audio, object sound effects, and agent (narrator) voice tracks; current agent (narrator) voice tracks are mh, tg, and sb
-
-## css
-
-Contains local style css; formats experiment.html in addition to css files in \_shared
-
-## images
-
-Contains agent, object, and background images as well as Adobe Illustrator files for SVGs. Some
-
-## js
-
-Contains experiment.js
-
-# Files
-
-## experiment.html
-
-Used to run experiment. Most relevant related files are contained in css (for local style) and js (experiment setup) directories.
+\* This is included for data quality assessment purposes.`
