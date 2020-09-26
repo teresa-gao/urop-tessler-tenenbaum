@@ -4,23 +4,20 @@
 // * Slides — These include intro slide, catch trials, trial slides (including experimental and follow-up comprehension checks), optional demographic info, and thank-you (data submission to MTurk)
 // * Setup — Here, we create the data frames which are passed as stim into slides.trials and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker
 
-// Experiment variables and randomization
-var total_trials_num =  1; // Number of trials, each with a unique background, agent, speaker, and exemplar
+var total_trials_num =  1; // Number of trials, each with a unique background, agent, speaker, and exemplar, per participant
 
-// Aesthetic setup
-var back =              _.shuffle( [1,2,3,4,5,6,7,8,9,10] ); // Background images of the form backx.jpg, where x is is the image number
-var agents =            _.shuffle( ["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"] ); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width, though they may be easily readded within this list
+var back =              _.shuffle( [1,2,3,4,5,6,7,8,9,10] ); // Background images
+var agents =            _.shuffle( ["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"] ); // Bunny, Beaver, Frog, and Mouse excluded due to difference from mean width, though they may be easily readded
 var speakers =          _.shuffle( ["mh", "tg", "sb"] ); // Recorded speaker voices used; files are stored in xx_recordings directory, where xx are the initials of the speaker
 
-// Stimuli: [<object name>, <file name sans extension>, <demonstrated property>]
 var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]);
 var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
-var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]); // Selects first object from artifacts, flowers, and birds group
+var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]);
 
 var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
 var n_examples =        _.shuffle([1, 2]);
-var item_presentation_condition = _.shuffle(["accidental", "naive", "pedagogical"]); //_.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); (See README for descriptions of each condition)
+var item_presentation_condition = _.shuffle(["accidental", "naive", "pedagogical"]); // Formerly _.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); see README for descriptions of each condition
 
 // Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
@@ -48,7 +45,6 @@ function list_content_equals(arr1, arr2) {
 
     // Otherwise, return true
     return true;
-
 };
 
 // Changes all elements of an HTML class to have the same source image; used for stimuli objects
@@ -74,7 +70,6 @@ function agent_point_r(agent_class) {
 // Agent faces right and slides forward and back; used to interact with exemplars
 function agent_poke_r(agent_class) {
 
-    // deferred helps .then() functions work
     let deferred = new $.Deferred();
 
     $(".speech").hide();
@@ -104,7 +99,6 @@ function agent_poke_r(agent_class) {
 // Agent says text (i.e., text is displayed in speech bubble) and text is logged to data to be sent to MTurk
 function agent_say(display_text, trial_num, duration=2000) {
 
-    // deferred helps .then() functions work
     let deferred = new $.Deferred();
 
     // Display text in speech bubble
@@ -158,7 +152,6 @@ function set_table(stim, show_blankets_up) {
 // Agent pokes current exemplar, and the blanket covering falls off, revealing the object underneath
 function poke_blanket_fall(stim) {
 
-    // deferred helps .then() functions work
     let deferred = new $.Deferred();
 
     // Agent prods line of object(s)
@@ -186,7 +179,6 @@ function poke_blanket_fall(stim) {
 // Exemplar object "opens" and displays its property
 function effect(stim) {
 
-    // deferred helps .then() functions work
     let deferred = new $.Deferred();
 
     if (stim.object[0] == "artifact") {
@@ -242,7 +234,7 @@ function effect_remark_close(stim) {
         // Agent remarks on "open" object property
         function() {
 
-            // deferred helps .then() functions work
+
             let deferred = new $.Deferred();
 
             // Agent faces front
@@ -290,7 +282,7 @@ function effect_remark_close(stim) {
         // Object resets to "closed"
         function() {
 
-            // deferred helps .then() functions work
+
             let deferred = new $.Deferred();
 
             $(".speech").hide();
@@ -315,7 +307,7 @@ function effect_remark_close(stim) {
     );
 }
 
-// Full subtrial is run
+// Full subtrial is run; combines above functions
 function run_trial(stim, exp_this) {
 
     // Sets up initial display (sans objects, etc.)
@@ -479,7 +471,7 @@ function run_trial(stim, exp_this) {
 
             function() {
 
-                // deferred helps .then() functions work
+
                 let deferred = new $.Deferred();
 
                 // Agent says generic statement
@@ -544,7 +536,7 @@ function run_trial(stim, exp_this) {
                 // Agent says "Oops!"
                 function() {
 
-                    // deferred helps .then() functions work
+
                     let deferred = new $.Deferred();
 
                     agent_say("Oops!", stim.trial_num);
@@ -585,7 +577,7 @@ function run_trial(stim, exp_this) {
                 // Agent pokes blanket and blanket falls
                 function() {
 
-                    // deferred helps .then() functions work
+
                     let deferred = new $.Deferred();
 
                     poke_blanket_fall(stim);
@@ -623,7 +615,7 @@ function run_trial(stim, exp_this) {
                 // Agent pokes blanket and blanket falls
                 function() {
 
-                    // deferred helps .then() functions work
+
                     let deferred = new $.Deferred();
 
                     poke_blanket_fall(stim);
@@ -640,7 +632,7 @@ function run_trial(stim, exp_this) {
                 // Agent says, "Watch this!"
                 function() {
 
-                    // deferred helps .then() functions work
+
                     let deferred = new $.Deferred();
 
                     watch = new Audio("audio/" + stim.speaker + "_recordings/watch_this.mp3");
@@ -669,7 +661,7 @@ function run_trial(stim, exp_this) {
     }
 }
 
-// MAIN PROGRAM BEGINS HERE! :)
+///  MAIN PROGRAM ///
 function make_slides(f) {
     var slides = {};
 
@@ -688,16 +680,13 @@ function make_slides(f) {
             // Record start time
             this.botcaptcha_startT = Date.now();
 
+            // Create prompt and question
             $(".error").hide();
-            // list of speaker names to be sampled from
             speaker = _.sample(["James", "John", "Robert", "Michael", "William", "David", "Richard", "Joseph", "Thomas", "Charles"]);
-            // list of listener names to be sampled from
             listener = _.sample(["Mary", "Patricia", "Jennifer", "Linda", "Elizabeth", "Barbara", "Susan", "Jessica", "Sarah", "Margaret"]);
-            // create the utterance
             this.bot_utterance = speaker + " says to " + listener + ": \"It's a beautiful day, isn't it?\""
-            // create the question
             this.bot_question = "Who is " + speaker + " talking to?"
-            // append the utterance and the question to the view
+
             var bot_sentence = document.createElement("p");
             var bot_question = document.createElement("p");
             var content = document.createTextNode(this.bot_utterance);
@@ -1149,12 +1138,13 @@ function init() {
     // Unique Turker, to ensure that MTurk Workers are unique; may be commented out during Sandbox testing, but make sure to keep when uploaded to MTurk production website!
     repeatWorker = false;
     (function(){
-            var ut_id = "tg-2020-05-05-genex";
-            if (UTWorkerLimitReached(ut_id)) {
-                $('.slide').empty();
-                repeatWorker = true;
-                alert("You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.");
-            }
+            // TODO: uncomment after testing
+            // var ut_id = "tg-2020-05-05-genex";
+            // if (UTWorkerLimitReached(ut_id)) {
+            //     $('.slide').empty();
+            //     repeatWorker = true;
+            //     alert("You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.");
+            // }
     })();
 
     // Log user system information
@@ -1168,7 +1158,7 @@ function init() {
     };
 
     // Blocks of the experiment:
-    exp.structure=[
+    exp.structure=[ // TODO: restore all blocks
         // "i0",
         // "botcaptcha",
         // "sound_check",
@@ -1182,7 +1172,7 @@ function init() {
     exp.trials_stimuli = [];
 
     // Used to submit to MTurk — very complete data, not flattened
-    exp.trials_stimuli_full = [{}]; // Initialized with empty {} so trial_num 0 (introduction) can be filled in later
+    exp.trials_stimuli_full = [{}]; // Initialized empty so trial_num 0 (introduction) data can be filled in later
 
     // Used to submit to MTurk — streamlined and flattened
     exp.trials_stimuli_streamlined = [{}]; // Initialized with empty {} so trial_num 0 (introduction) can be filled in later
@@ -1193,7 +1183,7 @@ function init() {
     // Used to submit to MTurk — contains followup "trial" response data
     exp.followup_response_data = [];
 
-    // For the accidental condition, we will present a certain number of total stimuli spread across multiple trials, with each of those trials only presenting a single stimulus; this factor adjusts for that fact
+    // For the accidental condition, we present a certain number of total stimuli spread across multiple trials, with each of those trials only presenting a single stimulus; this factor adjusts for that fact
     let accidental_factor = 1;
     let n_examples_per_subtrial = n_examples[0];
     if (item_presentation_condition[0] == "accidental") {
@@ -1563,7 +1553,7 @@ function init() {
         ]);
 
 
-        // Freeform response, to gauge data quality
+        // Freeform response, to gauge data quality on MTurk
         exp.trials_stimuli = exp.trials_stimuli.concat([
             _.extend(
                 {
@@ -1609,7 +1599,7 @@ function init() {
     });
 
     // Extra check for US IP addresses
-    // TO DO: add support for Canadian IP addresses
+    // TODO: add support for Canadian IP addresses
     function USOnly() {
         var accessKey = "b487843addca6e9ec32e6ae28aeaa022";
          $.ajax({
