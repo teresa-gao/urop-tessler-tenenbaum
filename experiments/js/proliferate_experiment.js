@@ -665,9 +665,37 @@ function run_trial(stim, exp_this) {
 function make_slides(f) {
     var slides = {};
 
+    // Collect users' Prolific IDs (for Prolific/proliferate only)
+    slides.prolific_id = slide({
+        name: "prolific_id",
+
+        start: function() {
+            $(".progress").hide();
+            $("#prolific-id-error").hide();
+        },
+
+        button: function() {
+            prolific_id = $("#prolific-id-textarea").val();
+
+            if (prolific_id == "") {
+                $("#prolific-id-error").show();
+
+            // Save Prolific ID to proliferate data (to be submitted later)
+            } else {
+                exp.prolific_participant_id = prolific_id;
+                exp.go();
+            }
+
+        }
+    });
+
     // Create introduction slide
     slides.i0 = slide({
         name : "i0",
+        button: function() {
+            $(".progress").show();
+            exp.go();
+        }
     });
 
     // Botcaptcha (simple language followup check to include at beginning of experiment)
@@ -809,10 +837,7 @@ function make_slides(f) {
                             $(".error_1more").show();
                     } else {
                         // if participant fails, they cannot proceed
-                            $(".error").hide();
-                            $("#sound_button").hide();
-                            $("#sound_test_button").hide();
-                            $(".progress").hide();
+                            $(".error, #sound_button, #sound_test_button, .progress").hide();
                             $('#sound_response').prop("disabled", true);
                             $(".error_final").show();
                     };
@@ -1114,6 +1139,7 @@ function make_slides(f) {
 
             // Logs data to MTurk
             exp.data = {
+                prolific_participant_id: exp.prolific_participant_id, // for Prolific/proliferate
                 condition: exp.condition,
                 trials_stimuli_full: exp.trials_stimuli_full, // What is displayed to the user (unflattened)
                 trials_stimuli_streamlined: exp.trials_stimuli_streamlined, // What is displayed to the user (flattened)
@@ -1135,18 +1161,6 @@ function make_slides(f) {
 /// init ///
 function init() {
 
-    // Unique Turker, to ensure that MTurk Workers are unique; may be commented out during Sandbox testing, but make sure to keep when uploaded to MTurk production website!
-    repeatWorker = false;
-    (function(){
-            // TODO: uncomment after testing
-            // var ut_id = "tg-2020-05-05-genex";
-            // if (UTWorkerLimitReached(ut_id)) {
-            //     $('.slide').empty();
-            //     repeatWorker = true;
-            //     alert("You have already completed the maximum number of HITs allowed by this requester. Please click 'Return HIT' to avoid any impact on your approval rating.");
-            // }
-    })();
-
     // Log user system information
     exp.system = {
         Browser : BrowserDetect.browser,
@@ -1158,10 +1172,11 @@ function init() {
     };
 
     // Blocks of the experiment:
-    exp.structure=[ // TODO: restore all blocks
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
+    exp.structure=[
+        "prolific_id",
+        "i0",
+        "botcaptcha",
+        "sound_check",
         "introduction",
         "trials",
         "subj_info",
@@ -1597,6 +1612,8 @@ function init() {
     //         exp.go();
     //     }
     // });
+    exp.startT = Date.now();
+    exp.go();
 
     // Extra check for US IP addresses
     // TODO: add support for Canadian IP addresses
@@ -1618,6 +1635,6 @@ function init() {
     //      });
     // }
 
-    exp.go(); //show first slide
+    // exp.go(); //show first slide
     // USOnly(); // check US IP address
 }
