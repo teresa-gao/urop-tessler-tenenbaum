@@ -16,8 +16,8 @@ var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ artifacts[0], flowers[0], birds[0]]);
 
 var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
-var n_examples =        _.shuffle([1, 2]);
-var item_presentation_condition = _.shuffle(["accidental", "naive", "pedagogical"]); // Formerly _.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); see README for descriptions of each condition
+var n_examples =        _.shuffle([1]);
+var item_presentation_condition = _.shuffle(["pedagogical"]); // Formerly _.shuffle(["pedagogical", "accidental", "generic", "generic_text_only", "generic_no_visual", "gen+ped"]); see README for descriptions of each condition
 
 // Used during followup checks to label checkbox grid options with correct answers + distractors
 var correct_names = [];
@@ -895,7 +895,7 @@ function make_slides(f) {
         present_handle : function(stim) {
 
             this.stim = stim;
-            console.log(this.stim);
+            // console.log(this.stim);
 
             // This is animation sequence is defined as a separate function to avoid cluttering :P
             run_trial(this.stim, this);
@@ -1137,6 +1137,7 @@ function make_slides(f) {
             // Hide progress bar
             $("progress").hide();
 
+            debugger;
             // Logs data to MTurk
             exp.data = {
                 prolific_participant_id: exp.prolific_participant_id, // for Prolific/proliferate
@@ -1405,7 +1406,7 @@ function init() {
         };
 
         // Adds slider response slide
-        if (!((item_presentation_condition[0] == "accidental") && (trial_num == 0))) {
+        if (! ( (total_trials_num * accidental_factor > 1) && (item_presentation_condition[0] == "accidental") && (trial_num == 0) ) ) {
             exp.trials_stimuli = exp.trials_stimuli.concat([
                 _.extend(
                     {
