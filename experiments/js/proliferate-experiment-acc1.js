@@ -1141,6 +1141,7 @@ function make_slides(f) {
             // Logs data to MTurk
             exp.data = {
                 prolific_participant_id: exp.prolific_participant_id, // for Prolific/proliferate
+                catch_trials: exp.catch_trials,
                 condition: exp.condition,
                 trials_stimuli_full: exp.trials_stimuli_full, // What is displayed to the user (unflattened)
                 trials_stimuli_streamlined: exp.trials_stimuli_streamlined, // What is displayed to the user (flattened)

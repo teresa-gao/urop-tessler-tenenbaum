@@ -1115,6 +1115,7 @@ function make_slides(f) {
             // Logs data to MTurk
             exp.data = {
                 condition: exp.condition,
+                catch_trials: exp.catch_trials,
                 trials_stimuli_full: exp.trials_stimuli_full, // What is displayed to the user (unflattened)
                 trials_stimuli_streamlined: exp.trials_stimuli_streamlined, // What is displayed to the user (flattened)
                 trials_response_data: exp.trials_response_data, // What the user responds (times and sliders) for the main trials

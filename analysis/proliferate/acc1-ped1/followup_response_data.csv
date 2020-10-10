@@ -1,0 +1,102 @@
+"","workerid","proliferate.condition","correct_answer","is_correct","prompt","response","response_time_in_seconds","response_type","trial_num","error"
+"1",15,"accidental-1",NA,"True","Would you say the following is true?","0.48",4.104,"slider",1,NA
+"2",15,"accidental-1","['blicket']","True","What is the name of the item you learned about? Please select its name from the options below.","['blicket']",4.114,"grid",2,NA
+"3",15,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",5.176,"mc",3,NA
+"4",15,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a blicket could have purple petals before you observed it together?","no_preknowledge",6.688,"mc",4,NA
+"5",15,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","The (dog) researcher had newly arrived on the planet and discovered the bliket.  When he touched it, the covering dropped and a planet was underneath.  It grew purple petals and the researcher was surprised.",67.911,"freeform",5,NA
+"6",34,"accidental-1",NA,"True","Would you say the following is true?","1",4.993,"slider",1,NA
+"7",34,"accidental-1","['fep']","True","What is the name of the item you learned about? Please select its name from the options below.","['fep']",7.546,"grid",2,NA
+"8",34,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",7.708,"mc",3,NA
+"9",34,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a fep could have purple petals before you observed it together?","no_preknowledge",5.326,"mc",4,NA
+"10",34,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","The scientist uncovered the plant and it blossomed purple petals and then they disappeared.",32.087,"freeform",5,NA
+"11",17,"accidental-1",NA,"True","Would you say the following is true?","0.49",9.021,"slider",1,NA
+"12",17,"accidental-1","['dax']","True","What is the name of the item you learned about? Please select its name from the options below.","['dax']",14.276,"grid",2,NA
+"13",17,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",10.955,"mc",3,NA
+"14",17,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a dax could have purple petals before you observed it together?","no_preknowledge",9.133,"mc",4,NA
+"15",17,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","
+A new plant with purple flowers has been discovered on a new planet",44.339,"freeform",5,NA
+"16",20,"accidental-1",NA,"True","Would you say the following is true?","1",4.33,"slider",1,NA
+"17",20,"accidental-1","['blicket']","True","What is the name of the item you learned about? Please select its name from the options below.","['blicket']",4.272,"grid",2,NA
+"18",20,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",9.173,"mc",3,NA
+"19",20,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a blicket could squeak before you observed it together?","no_preknowledge",5.498,"mc",4,NA
+"20",20,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","A researcher found a new item named a blicket and found that it squeaks.",22.703,"freeform",5,NA
+"21",30,"accidental-1",NA,"True","Would you say the following is true?","0.44",8.749,"slider",1,NA
+"22",30,"accidental-1","['dax']","True","What is the name of the item you learned about? Please select its name from the options below.","['dax']",6.199,"grid",2,NA
+"23",30,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",9.735,"mc",3,NA
+"24",30,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a dax could squeak before you observed it together?","no_preknowledge",7.21,"mc",4,NA
+"25",30,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","a researcher arrived on a distant planet. He saw a new object, called a dax. When it was unveiled, it squeaked.",34.62,"freeform",5,NA
+"26",27,"accidental-1",NA,"True","Would you say the following is true?","0.34",7.898,"slider",1,NA
+"27",27,"accidental-1","['fep']","True","What is the name of the item you learned about? Please select its name from the options below.","['fep']",3.562,"grid",2,NA
+"28",27,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",5.582,"mc",3,NA
+"29",27,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a fep could have purple petals before you observed it together?","no_preknowledge",4.128,"mc",4,NA
+"30",27,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","A researcher arrived on a planet they had never been to before and encountered a ""fep."" The researcher did not know what a fep was, but then the fep encountered had purple petals.",47.784,"freeform",5,NA
+"31",26,"accidental-1",NA,"True","Would you say the following is true?","0.47",5.454,"slider",1,NA
+"32",26,"accidental-1","['blicket']","True","What is the name of the item you learned about? Please select its name from the options below.","['blicket']",4.88,"grid",2,NA
+"33",26,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",4.605,"mc",3,NA
+"34",26,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a blicket could squeak before you observed it together?","no_preknowledge",5.352,"mc",4,NA
+"35",26,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","The new researcher arrived to the planet and saw a new plant called a Blicket. Upon touching it, the blue part fell off and the Blicket squeaked. The researcher was surprised. ",43.846,"freeform",5,NA
+"36",32,"accidental-1",NA,"True","Would you say the following is true?","0.64",7.389,"slider",1,NA
+"37",32,"accidental-1","['fep']","True","What is the name of the item you learned about? Please select its name from the options below.","['fep']",5.441,"grid",2,NA
+"38",32,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",8.463,"mc",3,NA
+"39",32,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a fep could squeak before you observed it together?","no_preknowledge",4.199,"mc",4,NA
+"40",32,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","the researcher touched a fep and it squeaked",36.989,"freeform",5,NA
+"41",24,"accidental-1",NA,"True","Would you say the following is true?","0.61",4.637,"slider",1,NA
+"42",24,"accidental-1","['blicket']","True","What is the name of the item you learned about? Please select its name from the options below.","['blicket']",5.666,"grid",2,NA
+"43",24,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",4.133,"mc",3,NA
+"44",24,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a blicket could have green feathers before you observed it together?","no_preknowledge",3.873,"mc",4,NA
+"45",24,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","A new researcher arrived and doesn't know anything about the creature. He discovers it has green feathers.",29.123,"freeform",5,NA
+"46",22,"accidental-1",NA,"True","Would you say the following is true?","0.62",11.974,"slider",1,NA
+"47",22,"accidental-1","['blicket']","True","What is the name of the item you learned about? Please select its name from the options below.","['blicket']",4.988,"grid",2,NA
+"48",22,"accidental-1","just_arrived","True","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",12.825,"mc",3,NA
+"49",22,"accidental-1","no_preknowledge","True","Please refer to the image below. Did this character know that a blicket could have purple petals before you observed it together?","no_preknowledge",11.696,"mc",4,NA
+"50",22,"accidental-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","A new researcher stated saw something he identified as a blicket. He said he doesn't know anything about a blicket. He revealed the blicket and pointed out that it had purple petals. I was then asked how likely it is that all blickets have purple petals. ",79.62,"freeform",5,NA
+"51",19,"pedagogical-1",NA,"True","Would you say the following is true?","0.99",5.139,"slider",1,NA
+"52",19,"pedagogical-1","['fep']","True","What is the name of the item you learned about? Please select its name from the options below.","['fep']",5.406,"grid",2,NA
+"53",19,"pedagogical-1","been_while","True","Please refer to the image below. How long has this character been doing research on this planet?","been_while",6.288,"mc",3,NA
+"54",19,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a fep could squeak before you observed it together?","yes_preknowledge",6.415,"mc",4,NA
+"55",19,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","This ""alien"" met me on its planet and told me it had been doing research for a while now. On the table nearby, it said it had a ""fep"". It instructed me to watch the ""fep"" as it squeaked.",62.62,"freeform",5,NA
+"56",31,"pedagogical-1",NA,"True","Would you say the following is true?","0.99",11.823,"slider",1,NA
+"57",31,"pedagogical-1","['fep']","True","What is the name of the item you learned about? Please select its name from the options below.","['fep']",7.305,"grid",2,NA
+"58",31,"pedagogical-1","been_while","True","Please refer to the image below. How long has this character been doing research on this planet?","been_while",9.018,"mc",3,NA
+"59",31,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a fep could squeak before you observed it together?","yes_preknowledge",9.752,"mc",4,NA
+"60",31,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","I went to another planet to do research and found that an elephant scientist was already there doing research on feps for quite some time. ",53.069,"freeform",5,NA
+"61",33,"pedagogical-1",NA,"True","Would you say the following is true?","0.94",4.305,"slider",1,NA
+"62",33,"pedagogical-1","['fep']","True","What is the name of the item you learned about? Please select its name from the options below.","['fep']",9.984,"grid",2,NA
+"63",33,"pedagogical-1","been_while","False","Please refer to the image below. How long has this character been doing research on this planet?","just_arrived",20.132,"mc",3,NA
+"64",33,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a fep could have purple petals before you observed it together?","yes_preknowledge",13.615,"mc",4,NA
+"65",33,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","I was presented with a scenario of a tiger showing me a purple-petaled fep. Then I had to show my understanding of the situation and answer follow up questions. ",68.927,"freeform",5,NA
+"66",21,"pedagogical-1",NA,"True","Would you say the following is true?","0.94",4.091,"slider",1,NA
+"67",21,"pedagogical-1","['dax']","True","What is the name of the item you learned about? Please select its name from the options below.","['dax']",8.075,"grid",2,NA
+"68",21,"pedagogical-1","been_while","True","Please refer to the image below. How long has this character been doing research on this planet?","been_while",6.096,"mc",3,NA
+"69",21,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a dax could have purple petals before you observed it together?","yes_preknowledge",15.621,"mc",4,NA
+"70",21,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","We were supposed to guess if the tiger knew the petal color before revealing it",32.376,"freeform",5,NA
+"71",23,"pedagogical-1",NA,"True","Would you say the following is true?","0.71",4.955,"slider",1,NA
+"72",23,"pedagogical-1","['blicket']","True","What is the name of the item you learned about? Please select its name from the options below.","['blicket']",3.182,"grid",2,NA
+"73",23,"pedagogical-1","been_while","True","Please refer to the image below. How long has this character been doing research on this planet?","been_while",3.98,"mc",3,NA
+"74",23,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a blicket could squeak before you observed it together?","yes_preknowledge",4.22,"mc",4,NA
+"75",23,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","The sheep told me that it found something called a ""blicket"", a little item that squeaks. He has been doing research for a while on this planet and has awaited showing me this thing.",35.903,"freeform",5,NA
+"76",25,"pedagogical-1",NA,"True","Would you say the following is true?","1",6.715,"slider",1,NA
+"77",25,"pedagogical-1","['fep']","True","What is the name of the item you learned about? Please select its name from the options below.","['fep']",8.017,"grid",2,NA
+"78",25,"pedagogical-1","been_while","True","Please refer to the image below. How long has this character been doing research on this planet?","been_while",13.568,"mc",3,NA
+"79",25,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a fep could squeak before you observed it together?","yes_preknowledge",9.269,"mc",4,NA
+"80",25,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","tiger pressed fap and it squealed",51.025,"freeform",5,NA
+"81",35,"pedagogical-1",NA,"True","Would you say the following is true?","0.37",5.8,"slider",1,NA
+"82",35,"pedagogical-1","['fep']","True","What is the name of the item you learned about? Please select its name from the options below.","['fep']",5.572,"grid",2,NA
+"83",35,"pedagogical-1","been_while","True","Please refer to the image below. How long has this character been doing research on this planet?","been_while",4.848,"mc",3,NA
+"84",35,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a fep could squeak before you observed it together?","yes_preknowledge",5.772,"mc",4,NA
+"85",35,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","The alien told me that it knows a lot about feps. They revealed the fep and showed me that it could squeak. I answered questions on the likelihood that feps squeak.",38.298,"freeform",5,NA
+"86",29,"pedagogical-1",NA,"True","Would you say the following is true?","0.49",8.599,"slider",1,NA
+"87",29,"pedagogical-1","['dax']","True","What is the name of the item you learned about? Please select its name from the options below.","['dax']",10.132,"grid",2,NA
+"88",29,"pedagogical-1","just_arrived","False","Please refer to the image below. How long has this character been doing research on this planet?","been_while",44.175,"mc",3,NA
+"89",29,"pedagogical-1","no_preknowledge","True","Please refer to the image below. Did this character know that a dax could have green feathers before you observed it together?","no_preknowledge",15.35,"mc",4,NA
+"90",29,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","It was a surprise seeing dad on a different picture from was was expected.",55.05,"freeform",5,NA
+"96",18,"pedagogical-1",NA,"True","Would you say the following is true?","0.9",10.046,"slider",1,NA
+"97",18,"pedagogical-1","['dax']","True","What is the name of the item you learned about? Please select its name from the options below.","['dax']",3.821,"grid",2,NA
+"98",18,"pedagogical-1","been_while","True","Please refer to the image below. How long has this character been doing research on this planet?","been_while",5.258,"mc",3,NA
+"99",18,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a dax could have purple petals before you observed it together?","yes_preknowledge",12.232,"mc",4,NA
+"100",18,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","I arrived at a research site on an alien planet, and a tiger showed me a native species called ""dax"" which had purple petals.",68.319,"freeform",5,NA
+"101",28,"pedagogical-1",NA,"True","Would you say the following is true?","0.51",6.278,"slider",1,NA
+"102",28,"pedagogical-1","['blicket']","True","What is the name of the item you learned about? Please select its name from the options below.","['blicket']",6.122,"grid",2,NA
+"103",28,"pedagogical-1","been_while","True","Please refer to the image below. How long has this character been doing research on this planet?","been_while",8.373,"mc",3,NA
+"104",28,"pedagogical-1","yes_preknowledge","True","Please refer to the image below. Did this character know that a blicket could have purple petals before you observed it together?","yes_preknowledge",6.382,"mc",4,NA
+"105",28,"pedagogical-1",NA,"True","In the text box below, please describe briefly what happened in this experiment.","I was shown a series of images displaying a talking tiger (who is investigating a new planet) showing me a “blicket” and its purple petals. Iw as then asked about the scenario and whether i think all blickets have purple petals",125.207,"freeform",5,NA
