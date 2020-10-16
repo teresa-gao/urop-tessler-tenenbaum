@@ -1,14 +1,14 @@
-Genex Analysis: Fall 2020 pilot 1
+Genex Analysis: Fall 2020 Prolific pilots
 ================
 Teresa Gao
-9 October 2020
+16 October 2020
 
 # About
 
 This R Notebook reports data from pilot experiments run during Fall 2020
-on Proliferate; pilot data was collected for a previous version of this
-study during Spring 2020 on MTurk. The findings of the latter are
-occasionally referenced here.
+on Prolific (via proliferate); pilot data was collected for a previous
+version of this study during Spring 2020 on MTurk (via nosub). The
+findings of the latter are occasionally referenced here.
 
 # Setup
 
@@ -58,6 +58,7 @@ library("gridExtra")
 
 ``` r
 library("tidyboot")
+library("ngram")
 ```
 
 If running/editing in RStudio, go to **Session \> Set Working Directory
@@ -68,7 +69,8 @@ The code below imports the experimental data, as extracted by
 data\_extraction.R
 
 ``` r
-system_dava <- read.csv("system_data.csv")
+system_data <- read.csv("system_data.csv")
+catch_trials_data <- read.csv("catch_trials_data.csv")
 followup_response_data <- read.csv("followup_response_data.csv")
 subject_information <- read.csv("subject_information.csv")
 trials_data <- read.csv("trials_data.csv") %>% filter(trial_type == "trial")
@@ -102,7 +104,56 @@ CIs <- trials_data %>%
     ## Warning: `cols` is now required when using unnest().
     ## Please use `cols = c(strap)`
 
+Add word- and character-count columns as new freeform followup response
+data data frame
+
+``` r
+freeform_followup <- followup_response_data %>% filter(response_type == "freeform")
+
+freeform_followup$n_words <- sapply(strsplit(freeform_followup$response, split=" "), length)
+freeform_followup$n_chars <- str_count(freeform_followup$response)
+```
+
+Create data frame for errors in post-experiment followup questions
+
+``` r
+errors_followup <- followup_response_data %>%
+  select(workerid, is_correct, response_time_in_seconds, response_type) %>%
+  filter(response_type != "slider") %>% # slider responses are guaranteed nonnull and therefore all reported as "correct"
+  select(-response_type) %>%
+  group_by(workerid) %>%
+  count(is_correct = "FALSE") %>%
+  rename(
+    followup_is_correct = is_correct
+  )
+```
+
+Create data frame comparing slider responses in-trial vs. in-followup
+
+``` r
+trials_sliders <- trials_data %>%
+  select(workerid, response, response_time_in_seconds, item_presentation_condition, n_examples) %>%
+  rename(
+    trials_response = response,
+    trials_response_time_in_seconds = response_time_in_seconds
+  )
+
+followup_sliders <- followup_response_data %>%
+  filter(response_type == "slider") %>%
+  select(workerid, response, response_time_in_seconds) %>%
+  rename(
+    followup_response = response,
+    followup_response_time_in_seconds = response_time_in_seconds
+  )
+
+all_sliders <- merge(trials_sliders, followup_sliders, by="workerid")
+all_sliders$followup_response <- as.double(all_sliders$followup_response)
+all_sliders$trials_minus_followup_sliders <- (all_sliders$trials_response - all_sliders$followup_response)
+```
+
 # Visualization
+
+## Trials data
 
 Box plot of slider response vs. number of examples
 
@@ -132,12 +183,11 @@ theme(legend.position = "none")
 
 *Observations:*
 
-  - *The plot looks relatively symmetrically distributed. This is not
-    unexpected, since all pilot trials had the same number of examples
-    (1) and are grouped together*
-  - *As responses for all conditions (accidental and pedagogical) are
-    plotted here, it looks like the responses may have balanced each
-    other out*
+  - *The slider responses with two examples have a smaller spread and a
+    median higher than with one example*
+  - *Slider responses with both one and two examples tend toward the
+    higher end, with only the left tail of the one-example responses
+    protruding below 0.4*
 
 Box plot of slider response vs. item presentation condition
 
@@ -167,11 +217,9 @@ theme(legend.position = "none")
 
 *Observations:*
 
-  - *Accidental condition slider response appears to have greater
-    variability; this is consistent with previous pilot trials of this
-    condition*
-  - *Pedagogical condition slider response median value is greater than
-    Q3 for accidental (\!)*
+  - *Pedagogical median \> naive median \> accidental median*
+  - *Pedagogical IQR \> naive IQR \> accidental IQR*
+  - *Naive range \~ pedagogical range \< accidental range*
 
 Box plot of average slider response time for each subject, grouped by
 number of examples
@@ -202,9 +250,9 @@ theme(legend.position = "none")
 
 *Observations:*
 
-  - *For 1 example: Median response time is around 10 seconds (about
-    double the median for Spring 2020 pilots on MTurk), with several
-    large outliers*
+  - *Slider response times for both 1 and 2 examples had several high
+    outliers*
+  - *Same shape for both (right-skewed)*
 
 Box plot of average slider response time for each subject, grouped by
 item presentation condition
@@ -234,11 +282,9 @@ theme(legend.position = "none")
 
 *Observations:*
 
-  - *Accidental condition participants had median slider response time
-    greater than Q3 for pedagogical; perhaps this, along with the wider
-    slider response distribution, reflect greater participant
-    uncertainty?*
-  - *Accidental condition also saw two high outliers*
+  - *High outliers in all conditions*
+  - *Median and range for naive slightly greater than accidental and
+    pedagogical*
 
 Facet grid of slider response plotted on number of examples vs. item
 presentation condition
@@ -257,7 +303,8 @@ geom_histogram(
   bins = 16
 ) +
 labs(
-  x = "Slider response", y = "Fraction of total count"
+  x = "Slider response",
+  y = "Fraction of total count"
 ) +
 facet_grid(n_examples ~ item_presentation_condition) +
 scale_fill_manual(
@@ -270,8 +317,12 @@ theme(legend.position = "none")
 
 *Observations:*
 
-  - *Both accidental and pedagogical distributions saw wide spread*
-  - *Low accidental peak \< 0.5; high pedagogical peak at 1.0*
+  - *Wide spread in all conditions and example counts*
+  - *Pedagogical mode at 1.0 for both 1 and 2 examples*
+  - *1-example accidental mode below 0.5; 2-example accidental
+    distributed mostly above 0.5*
+  - *Naive similarly distributed as accidental for both 1 and 2
+    examples*
 
 Facet grid of slider response plotted on number of examples vs. item
 presentation condition and item property
@@ -303,13 +354,11 @@ theme(legend.position = "none")
 
 *Observations:*
 
-  - *Accidental condition: squeaking is grouped in mid-high range;
-    purple petals are in mid-low; accidental green feathers is lowest
-    overall*
-  - *Pedagogical condition: purple petals grouped in middle to mid-high
-    range; squeaking spread widely from \< 0.5 to 1.0*
-  - *Unclear if squeaking presentation is causing strange range of
-    slider responses; will revisit this trend with greater sample size*
+  - *Accidental condition: 2-example purple petals and 2-example
+    squeaking are high-clustered; 1-example green feathers is
+    low-clustered*
+  - *Pedagogical condition: 2-example purple petals seem to have weakest
+    inference strength*
 
 Facet grid of slider response plotted on speaker vs. item presentation
 condition
@@ -341,52 +390,9 @@ theme(legend.position = "none")
 
 *Observations:*
 
-  - *Some conditions (accidental/sb, pedagogical/tg) with relatively
-    high spread*
-  - *As with other facet grids above, later larger sample size should
-    confirm or refute these observed patterns*
+  - *High mode of 1.0 for sb/pedagogical*
 
-Line range of slider response means and confidence intervals grouped by
-item presentation condition
-
-``` r
-ggplot() +
-geom_linerange(
-  CIs,
-  mapping = aes(
-    x = item_presentation_condition,
-    ymin = ci_lower,
-    ymax = ci_upper,
-    color = as.factor(item_presentation_condition)),
-  size = 1
-) +
-geom_point(
-  CIs,
-  mapping = aes(
-    x = item_presentation_condition,
-    y = mean),
-  alpha = 0.5,
-  size = 2
-) +
-scale_color_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-labs(
-  y = "Slider response",
-  x = "Item presentation condition"
-) +
-theme(legend.position = "none")
-```
-
-![](data_analysis_files/figure-gfm/Slider%20response%20means%20and%20CIs%20vs.%20condition-1.png)<!-- -->
-
-*Observations:*
-
-  - *Both pedagogical and accidental appear to have similar confidence
-    intervals; this was also true for Spring 2020 pilot data*
-  - *Mean pedagogical slider response is about 0.15 higher than mean
-    accidental slider response, which is close to the 0.10 from the
-    spring*
+## Attention check and followup response data
 
 Gradient density ridges graph of slider response vs. item presentation
 condition
@@ -445,8 +451,178 @@ ggplot(
     
     ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
 
-    ## Warning: Removed 2 rows containing missing values (geom_linerangeh).
+    ## Warning: Removed 6 rows containing missing values (geom_linerangeh).
 
-    ## Warning: Removed 2 rows containing missing values (geom_point).
+    ## Warning: Removed 6 rows containing missing values (geom_point).
 
 ![](data_analysis_files/figure-gfm/Gradient%20plot%20of%20slider%20response%20vs.%20condition-1.png)<!-- -->
+
+Scatter plot of followup slider response word count vs. character count
+
+``` r
+ggplot(
+  merge(freeform_followup, trials_data[, c("workerid", "item_presentation_condition")], by="workerid"),
+  mapping = aes(
+    x = n_words,
+    y = n_chars,
+    color = item_presentation_condition
+  )
+) +
+  labs(
+    title = "Freeform followup word vs. character count",
+    x = "Number of words in freeform followup",
+    y = "Number of characters in freeform followup"
+  ) +
+  geom_point() +
+  scale_color_manual(
+    values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
+  )
+```
+
+![](data_analysis_files/figure-gfm/Freeform%20followup%20word%20vs.%20char%20count-1.png)<!-- -->
+
+*Observations*
+
+  - *Relationship appears linear, even with high outliers*
+
+Wordcount of freeform followup vs. item presentation condition
+
+``` r
+ggplot(
+  freeform_followup,
+  mapping = aes(
+    x = n_words,
+    y = proliferate.condition,
+    group = proliferate.condition,
+    fill = as.factor(proliferate.condition)
+  )
+) +
+geom_boxplot() +
+labs(
+  title = "Freeform wordcount vs. item presentation condition",
+  x = "Number of words in freeform followup response",
+  y = "Item presentation condition") +
+scale_fill_manual(
+  values = c("indianred1", "indianred1", "lightgoldenrod1", "lightgoldenrod1", "darkolivegreen2", "darkolivegreen2", "cornflowerblue", "cornflowerblue")
+) +
+theme(legend.position = "none")
+```
+
+![](data_analysis_files/figure-gfm/Freeform%20followup%20wordcount%20vs.%20item%20presentation%20condition-1.png)<!-- -->
+
+*Observations*
+
+  - *1-example naive condition has largest IQR for number of words in
+    freeform followup*
+  - *2-example pedagogical has smallest IQR and smallest median for
+    number of words in freeform followup*
+
+Character count of freeform followup vs. item presentation condition
+
+``` r
+ggplot(
+  freeform_followup,
+  mapping = aes(
+    x = n_chars,
+    y = proliferate.condition,
+    group = proliferate.condition,
+    fill = as.factor(proliferate.condition)
+  )
+) +
+geom_boxplot() +
+labs(
+  title = "Freeform charcount vs. item presentation condition",
+  x = "Number of chars in freeform followup response",
+  y = "Item presentation condition") +
+scale_fill_manual(
+  values = c("indianred1", "indianred1", "lightgoldenrod1", "lightgoldenrod1", "darkolivegreen2", "darkolivegreen2", "cornflowerblue", "cornflowerblue")
+) +
+theme(legend.position = "none")
+```
+
+![](data_analysis_files/figure-gfm/Freeform%20followup%20character%20count%20vs.%20item%20presentation%20condition-1.png)<!-- -->
+
+Scatter plot of trials slider response to followup slider response
+
+``` r
+ggplot(
+  all_sliders,
+  mapping = aes(
+    x = trials_response,
+    y = followup_response,
+    color = item_presentation_condition
+  )
+) +
+  labs(
+    title = "Trials slider response vs. followup slider response",
+    x = "Trials slider response",
+    y = "Followup slider response"
+  ) +
+  geom_point() +
+  scale_color_manual(
+    values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
+  )
+```
+
+![](data_analysis_files/figure-gfm/Trials%20slider%20response%20vs.%20followup%20slider%20response-1.png)<!-- -->
+
+*Observations*
+
+  - *Does not seem to be clear 1:1 relationship between slider responses
+    nor even strong linear relationship*
+  - *Suggests participants may perceive difference between inferring
+    event (e.g., witnessing another example with same feature)
+    vs. inferring generic (e.g., “All Xs do Y”)*
+
+Facet grid of difference between trial and followup slider responses
+plotted on number of examples vs. item presentation condition
+
+``` r
+ggplot(
+  all_sliders,
+  mapping = aes(
+    x = trials_minus_followup_sliders,
+    y = (..count..) / tapply(..count.., ..PANEL.., sum)[..PANEL..],
+    fill = as.factor(item_presentation_condition)
+  )
+) +
+geom_histogram(
+  color = "black",
+  bins = 16) +
+labs(
+  x = "Trials slider response - followup slider response",
+  y = "Fraction of total count"
+) +
+facet_grid(n_examples ~ item_presentation_condition) +
+scale_fill_manual(
+  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
+) +
+theme(legend.position = "none")
+```
+
+![](data_analysis_files/figure-gfm/Slider%20diff.%20on%20num.%20examples%20vs.%20item%20presentation%20condition-1.png)<!-- -->
+
+Scatter plot of freeform followup word count vs. difference between
+trial and followup slider responses
+
+``` r
+ggplot(
+  merge(all_sliders, freeform_followup),
+  mapping = aes(
+    x = n_words,
+    y = trials_minus_followup_sliders,
+    color = item_presentation_condition
+  )
+) +
+  labs(
+    title = "Freeform followup word count vs. trials-followup slider response diff",
+    x = "Num words in freeform followup",
+    y = "Trials slider response - followup slider response"
+  ) +
+  geom_point() +
+  scale_color_manual(
+    values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
+  )
+```
+
+![](data_analysis_files/figure-gfm/Followup%20wordcoutn%20vs.%20slider%20diff.-1.png)<!-- -->
