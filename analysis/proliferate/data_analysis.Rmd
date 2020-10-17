@@ -32,12 +32,12 @@ If running/editing in RStudio, go to **Session > Set Working Directory > To Sour
 The code below imports the experimental data, as extracted by data_extraction.R
 
 ```{r Import data (CSVs)}
-
-system_data <- read.csv("system_data.csv")
-catch_trials_data <- read.csv("catch_trials_data.csv")
-followup_response_data <- read.csv("followup_response_data.csv")
-subject_information <- read.csv("subject_information.csv")
-trials_data <- read.csv("trials_data.csv") %>% filter(trial_type == "trial")
+# MH: read_csv > read.csv
+system_data <- read_csv("system_data.csv")
+catch_trials_data <- read_csv("catch_trials_data.csv")
+followup_response_data <- read_csv("followup_response_data.csv")
+subject_information <- read_csv("subject_information.csv")
+trials_data <- read_csv("trials_data.csv") %>% filter(trial_type == "trial")
 
 ```
 
@@ -48,13 +48,12 @@ trials_data <- read.csv("trials_data.csv") %>% filter(trial_type == "trial")
 Compute bootstrapped means and confidence intervals of user slider response
 
 ```{r Compute boostrapped means, CIs}
-
+## MH: shouldn't we be removing participants who fail the attention checks before computing summary statistics? 
 CIs <- trials_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = response)
-
 ```
-
+MH: if you print out `CIs`, there seem to be 62 entries for the accidental condition for 2 examples. is that correct?
 
 
 Add word- and character-count columns as new freeform followup response data data frame
@@ -62,6 +61,11 @@ Add word- and character-count columns as new freeform followup response data dat
 ```{r Create freeform followup df with word- and char-count}
 
 freeform_followup <- followup_response_data %>% filter(response_type == "freeform")
+
+# MH: Look into the tidytext package for text processing...
+# https://www.tidytextmining.com/tidytext.html
+
+# also, the stringr package is good, for lighter weight text processing..
 
 freeform_followup$n_words <- sapply(strsplit(freeform_followup$response, split=" "), length)
 freeform_followup$n_chars <- str_count(freeform_followup$response)
@@ -79,7 +83,7 @@ errors_followup <- followup_response_data %>%
   filter(response_type != "slider") %>% # slider responses are guaranteed nonnull and therefore all reported as "correct"
   select(-response_type) %>%
   group_by(workerid) %>%
-  count(is_correct = "FALSE") %>%
+  count(is_correct = "FALSE") %>% # MH: What is this line supposed to be doing? in R, booleans are referenced without the quotes...
   rename(
     followup_is_correct = is_correct
   )
@@ -108,14 +112,24 @@ followup_sliders <- followup_response_data %>%
   )
 
 all_sliders <- merge(trials_sliders, followup_sliders, by="workerid")
-all_sliders$followup_response <- as.double(all_sliders$followup_response)
-all_sliders$trials_minus_followup_sliders <- (all_sliders$trials_response - all_sliders$followup_response)
+# MH: Look into the "join" family (e.g., left_join())
 
+all_sliders$followup_response <- as.double(all_sliders$followup_response)
+# use mutate() instead of df$col_name creation
+## e.g., all_sliders %>% mutate(followup_response = as.double(followup_response))
+
+all_sliders$trials_minus_followup_sliders <- (all_sliders$trials_response - all_sliders$followup_response)
+# same...
 ```
 
 
 
 # Visualization
+
+MH: Start the visualization section with histograms, then show the more "condensed" / summary representations (eg boxplots)
+- also, i find boxplots generally confusing. i prefer histograms + 95 CIs (shown with geom_linerange())
+- also, i would start with the 3x2 (condition x n_examples) histograms (and then the 3x2 CIs, or put the CIs in the histogram plot if you can figure that out)
+  - then, show other cuts of the data
 
 ## Trials data
 
@@ -249,7 +263,7 @@ theme(legend.position = "none")
 * *High outliers in all conditions*
 * *Median and range for naive slightly greater than accidental and pedagogical*
 
-
+MH: I would move the response time analysis to the end... also, I would go for histograms rather than boxplots (across the)
 
 Facet grid of slider response plotted on number of examples vs. item presentation condition
 
@@ -360,11 +374,16 @@ theme(legend.position = "none")
 Gradient density ridges graph of slider response vs. item presentation condition
 
 ```{r Gradient plot of slider response vs. condition}
+
+CIs <- CIs %>%
+    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ggplot(
-  trials_data,
+  trials_data %>%
+    mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
   mapping = aes(
     x = response,
-    y = item_presentation_condition, fill = ..x..
+    y = exp_cond, 
+    fill = ..x..
   )
 ) +
   ggridges::geom_density_ridges_gradient(
@@ -379,7 +398,7 @@ ggplot(
     inherit.aes = F,
     mapping = aes(
       xmin = ci_lower, xmax = ci_upper,
-      y = as.numeric(item_presentation_condition) + 0.8
+      y = as.numeric(exp_cond) + 0.8
     ),
     size = 1.25, color = "black"
   ) + geom_point(
@@ -387,7 +406,7 @@ ggplot(
     inherit.aes = F,
     mapping = aes(
       x = mean,
-      y = as.numeric(item_presentation_condition) + 0.8
+      y = as.numeric(exp_cond) + 0.8
     ),
     size = 3, color = "black", shape = 3
   ) +
