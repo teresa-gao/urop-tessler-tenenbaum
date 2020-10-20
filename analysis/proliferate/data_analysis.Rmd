@@ -24,18 +24,21 @@ library("ggplot2")
 library("gridExtra")
 library("tidyboot")
 library("ngram")
+library("readr")
 
 ```
 
 If running/editing in RStudio, go to **Session > Set Working Directory > To Source File Location**. This ensures that we can find and access the files we need!
 
-The code below imports the experimental data, as extracted by data_extraction.R
+The code below imports the experimental data, as extracted by data_extraction.R; this removes data from participants who failed attention checks before or after main experiment.
+
+Make sure to run data_extraction.R before continuing!
 
 ```{r Import data (CSVs)}
 # MH: read_csv > read.csv
 system_data <- read_csv("system_data.csv")
-catch_trials_data <- read_csv("catch_trials_data.csv")
-followup_response_data <- read_csv("followup_response_data.csv")
+catch_data <- read_csv("catch_data.csv")
+followup_data <- read_csv("followup_data.csv")
 subject_information <- read_csv("subject_information.csv")
 trials_data <- read_csv("trials_data.csv") %>% filter(trial_type == "trial")
 
@@ -48,19 +51,20 @@ trials_data <- read_csv("trials_data.csv") %>% filter(trial_type == "trial")
 Compute bootstrapped means and confidence intervals of user slider response
 
 ```{r Compute boostrapped means, CIs}
-## MH: shouldn't we be removing participants who fail the attention checks before computing summary statistics? 
 CIs <- trials_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = response)
 ```
-MH: if you print out `CIs`, there seem to be 62 entries for the accidental condition for 2 examples. is that correct?
+
 
 
 Add word- and character-count columns as new freeform followup response data data frame
 
 ```{r Create freeform followup df with word- and char-count}
 
-freeform_followup <- followup_response_data %>% filter(response_type == "freeform")
+freeform_followup <- followup_data %>% filter(response_type == "freeform")
+
+# TODO
 
 # MH: Look into the tidytext package for text processing...
 # https://www.tidytextmining.com/tidytext.html
@@ -78,11 +82,12 @@ Create data frame for errors in post-experiment followup questions
 
 ```{r Create error df from followup}
 
-errors_followup <- followup_response_data %>%
+errors_followup <- followup_data %>%
   select(workerid, is_correct, response_time_in_seconds, response_type) %>%
   filter(response_type != "slider") %>% # slider responses are guaranteed nonnull and therefore all reported as "correct"
   select(-response_type) %>%
   group_by(workerid) %>%
+  # TODO
   count(is_correct = "FALSE") %>% # MH: What is this line supposed to be doing? in R, booleans are referenced without the quotes...
   rename(
     followup_is_correct = is_correct
@@ -103,22 +108,25 @@ trials_sliders <- trials_data %>%
     trials_response_time_in_seconds = response_time_in_seconds
   )
 
-followup_sliders <- followup_response_data %>%
+followup_sliders <- followup_data %>%
   filter(response_type == "slider") %>%
   select(workerid, response, response_time_in_seconds) %>%
   rename(
     followup_response = response,
-    followup_response_time_in_seconds = response_time_in_seconds
+    followup_time_in_seconds = response_time_in_seconds
   )
 
 all_sliders <- merge(trials_sliders, followup_sliders, by="workerid")
+# TODO
 # MH: Look into the "join" family (e.g., left_join())
 
 all_sliders$followup_response <- as.double(all_sliders$followup_response)
+# TODO
 # use mutate() instead of df$col_name creation
 ## e.g., all_sliders %>% mutate(followup_response = as.double(followup_response))
 
 all_sliders$trials_minus_followup_sliders <- (all_sliders$trials_response - all_sliders$followup_response)
+# TODO
 # same...
 ```
 
@@ -126,6 +134,7 @@ all_sliders$trials_minus_followup_sliders <- (all_sliders$trials_response - all_
 
 # Visualization
 
+TODO: see below
 MH: Start the visualization section with histograms, then show the more "condensed" / summary representations (eg boxplots)
 - also, i find boxplots generally confusing. i prefer histograms + 95 CIs (shown with geom_linerange())
 - also, i would start with the 3x2 (condition x n_examples) histograms (and then the 3x2 CIs, or put the CIs in the histogram plot if you can figure that out)
@@ -263,6 +272,7 @@ theme(legend.position = "none")
 * *High outliers in all conditions*
 * *Median and range for naive slightly greater than accidental and pedagogical*
 
+TODO:
 MH: I would move the response time analysis to the end... also, I would go for histograms rather than boxplots (across the)
 
 Facet grid of slider response plotted on number of examples vs. item presentation condition
