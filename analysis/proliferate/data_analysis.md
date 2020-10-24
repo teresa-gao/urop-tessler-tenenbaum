@@ -186,6 +186,17 @@ trials_data <- read_csv("trials_data.csv") %>% filter(trial_type == "trial")
 
 # Calculations and Relabeling
 
+Add word- and character-count columns as new freeform followup response
+data data frame
+
+``` r
+freeform_followup <- followup_data %>% filter(response_type == "freeform")
+
+freeform_followup <- freeform_followup %>%
+  mutate(n_words = str_count(response, pattern=boundary(type="word"))) %>%
+  mutate(n_chars = str_count(response, pattern=boundary(type="character")))
+```
+
 Compute bootstrapped means and confidence intervals of user slider
 response
 
@@ -221,16 +232,14 @@ slider_response_time_CIs <- trials_data %>%
     ## Warning: `cols` is now required when using unnest().
     ## Please use `cols = c(strap)`
 
-Add word- and character-count columns as new freeform followup response
-data data frame
-
 ``` r
-freeform_followup <- followup_data %>% filter(response_type == "freeform")
-
-freeform_followup <- freeform_followup %>%
-  mutate(n_words = str_count(response, pattern=boundary(type="word"))) %>%
-  mutate(n_chars = str_count(response, pattern=boundary(type="character")))
+freeform_followup_wordcount_CIs <- freeform_followup %>%
+  group_by(proliferate.condition) %>%
+  tidyboot_mean(column = n_words, na.rm=TRUE)
 ```
+
+    ## Warning: `cols` is now required when using unnest().
+    ## Please use `cols = c(strap)`
 
 Create data frame comparing slider responses in-trial vs. in-followup
 
@@ -482,36 +491,6 @@ theme(legend.position = "none")
 
 ## Attention check and followup response data
 
-Scatter plot of followup slider response word count vs. character count
-
-``` r
-ggplot(
-  merge(freeform_followup, trials_data[, c("workerid", "item_presentation_condition")], by="workerid"),
-  mapping = aes(
-    x = n_words,
-    y = n_chars,
-    color = item_presentation_condition
-  )
-) +
-  labs(
-    title = "Freeform followup word vs. character count",
-    x = "Number of words in freeform followup",
-    y = "Number of characters in freeform followup"
-  ) +
-  geom_point() +
-  scale_color_manual(
-    values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-  )
-```
-
-    ## Warning: Removed 1 rows containing missing values (geom_point).
-
-![](data_analysis_files/figure-gfm/Freeform%20followup%20word%20vs.%20char%20count-1.png)<!-- -->
-
-*Observations*
-
-  - *Relationship appears linear, even with high outliers*
-
 Scatter plot of trials slider response to followup slider response
 
 ``` r
@@ -599,6 +578,36 @@ ggplot(
 
 ![](data_analysis_files/figure-gfm/Followup%20wordcount%20vs.%20slider%20diff.-1.png)<!-- -->
 
+Scatter plot of followup slider response word count vs. character count
+
+``` r
+ggplot(
+  merge(freeform_followup, trials_data[, c("workerid", "item_presentation_condition")], by="workerid"),
+  mapping = aes(
+    x = n_words,
+    y = n_chars,
+    color = item_presentation_condition
+  )
+) +
+  labs(
+    title = "Freeform followup word vs. character count",
+    x = "Number of words in freeform followup",
+    y = "Number of characters in freeform followup"
+  ) +
+  geom_point() +
+  scale_color_manual(
+    values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
+  )
+```
+
+    ## Warning: Removed 1 rows containing missing values (geom_point).
+
+![](data_analysis_files/figure-gfm/Freeform%20followup%20word%20vs.%20char%20count-1.png)<!-- -->
+
+*Observations*
+
+  - *Relationship appears linear, even with high outliers*
+
 Plot of word frequency for top 10 in freeform followup responses for
 each condition
 
@@ -633,3 +642,71 @@ ggplot(freeform_followup_frequency %>% top_n(10), aes(word, frequency)) +
     ## will replace the existing scale.
 
 ![](data_analysis_files/figure-gfm/Freeform%20followup%20word%20frequency-1.png)<!-- -->
+
+Gradient density ridges graph of freeform followup word count vs. item
+presentation condition
+
+``` r
+ggplot(
+  freeform_followup,
+
+  mapping = aes(
+    x = n_words,
+    y = proliferate.condition, 
+    fill = ..x..
+  )
+) +
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    freeform_followup_wordcount_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(proliferate.condition) + 0.8
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    freeform_followup_wordcount_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(proliferate.condition) + 0.8
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0)
+    
+    
+  ) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(x = "Freeform word count vs. condition")
+```
+
+    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
+    
+    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
+
+    ## Warning: Removed 6 rows containing missing values (geom_linerangeh).
+
+    ## Warning: Removed 6 rows containing missing values (geom_point).
+
+![](data_analysis_files/figure-gfm/Gradient%20plot%20of%20freeform%20word%20count%20vs.%20condition-1.png)<!-- -->
+
+``` r
+# TODO: resolve "NAs introduced by coercion", "Removed x rows containing missing values"
+```
