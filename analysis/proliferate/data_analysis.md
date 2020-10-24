@@ -33,14 +33,14 @@ library("dplyr")
 library("tidyverse")
 ```
 
-    ## -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+    ## -- Attaching packages ------------------------------------------------------------------------------------------------------------- tidyverse 1.3.0 --
 
     ## v ggplot2 3.3.2     v purrr   0.3.4
     ## v tibble  3.0.3     v stringr 1.4.0
     ## v tidyr   1.1.2     v forcats 0.5.0
     ## v readr   1.3.1
 
-    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+    ## -- Conflicts ---------------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -59,6 +59,14 @@ library("gridExtra")
 ``` r
 library("tidyboot")
 library("ngram")
+library("readr")
+library("tidytext")
+```
+
+    ## Warning: package 'tidytext' was built under R version 4.0.3
+
+``` r
+library("stringr")
 ```
 
 If running/editing in RStudio, go to **Session \> Set Working Directory
@@ -66,15 +74,115 @@ If running/editing in RStudio, go to **Session \> Set Working Directory
 the files we need\!
 
 The code below imports the experimental data, as extracted by
-data\_extraction.R
+data\_extraction.R; this removes data from participants who failed
+attention checks before or after main experiment.
+
+Make sure to run data\_extraction.R before continuing\!
 
 ``` r
-system_data <- read.csv("system_data.csv")
-catch_trials_data <- read.csv("catch_trials_data.csv")
-followup_response_data <- read.csv("followup_response_data.csv")
-subject_information <- read.csv("subject_information.csv")
-trials_data <- read.csv("trials_data.csv") %>% filter(trial_type == "trial")
+system_data <- read_csv("system_data.csv")
 ```
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   workerid = col_double(),
+    ##   proliferate.condition = col_character(),
+    ##   Browser = col_character(),
+    ##   OS = col_character(),
+    ##   screenH = col_double(),
+    ##   screenW = col_double(),
+    ##   error = col_logical()
+    ## )
+
+``` r
+catch_data <- read_csv("catch_data.csv")
+```
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   workerid = col_double(),
+    ##   proliferate.condition = col_character(),
+    ##   correct_answer = col_character(),
+    ##   num_fails = col_double(),
+    ##   response = col_character(),
+    ##   trial_time_in_seconds = col_double(),
+    ##   trial_type = col_character(),
+    ##   error = col_character()
+    ## )
+
+``` r
+followup_data <- read_csv("followup_data.csv")
+```
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   workerid = col_double(),
+    ##   proliferate.condition = col_character(),
+    ##   correct_answer = col_character(),
+    ##   is_correct = col_logical(),
+    ##   prompt = col_character(),
+    ##   response = col_character(),
+    ##   response_time_in_seconds = col_double(),
+    ##   response_type = col_character(),
+    ##   trial_num = col_double(),
+    ##   error = col_logical()
+    ## )
+
+``` r
+subject_information <- read_csv("subject_information.csv")
+```
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   X1 = col_double(),
+    ##   workerid = col_double(),
+    ##   proliferate.condition = col_character(),
+    ##   age = col_double(),
+    ##   assess = col_character(),
+    ##   comments = col_character(),
+    ##   education = col_double(),
+    ##   fairprice = col_character(),
+    ##   gender = col_character(),
+    ##   language = col_character(),
+    ##   problems = col_character(),
+    ##   error = col_logical()
+    ## )
+
+``` r
+trials_data <- read_csv("trials_data.csv") %>% filter(trial_type == "trial")
+```
+
+    ## Warning: Missing column names filled in: 'X1' [1]
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   .default = col_character(),
+    ##   X1 = col_double(),
+    ##   workerid = col_double(),
+    ##   background = col_double(),
+    ##   n_examples = col_double(),
+    ##   trial_num = col_double(),
+    ##   trial_time_in_seconds.x = col_logical(),
+    ##   correct_answer = col_logical(),
+    ##   is_correct = col_logical(),
+    ##   response = col_double(),
+    ##   response_time_in_seconds = col_double(),
+    ##   trial_time_in_seconds.y = col_double(),
+    ##   error.y = col_logical()
+    ## )
+
+    ## See spec(...) for full column specifications.
 
 # Calculations and Relabeling
 
@@ -82,7 +190,7 @@ Compute bootstrapped means and confidence intervals of user slider
 response
 
 ``` r
-CIs <- trials_data %>%
+slider_CIs <- trials_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = response)
 ```
@@ -104,28 +212,28 @@ CIs <- trials_data %>%
     ## Warning: `cols` is now required when using unnest().
     ## Please use `cols = c(strap)`
 
+``` r
+slider_response_time_CIs <- trials_data %>%
+  group_by(item_presentation_condition, n_examples) %>%
+  tidyboot_mean(column = response_time_in_seconds)
+```
+
+    ## Warning: `cols` is now required when using unnest().
+    ## Please use `cols = c(strap)`
+
 Add word- and character-count columns as new freeform followup response
 data data frame
 
 ``` r
-freeform_followup <- followup_response_data %>% filter(response_type == "freeform")
+freeform_followup <- followup_data %>% filter(response_type == "freeform")
 
-freeform_followup$n_words <- sapply(strsplit(freeform_followup$response, split=" "), length)
-freeform_followup$n_chars <- str_count(freeform_followup$response)
-```
+# TODO
+# MH: Look into the tidytext package for text processing...
+# https://www.tidytextmining.com/tidytext.html
 
-Create data frame for errors in post-experiment followup questions
-
-``` r
-errors_followup <- followup_response_data %>%
-  select(workerid, is_correct, response_time_in_seconds, response_type) %>%
-  filter(response_type != "slider") %>% # slider responses are guaranteed nonnull and therefore all reported as "correct"
-  select(-response_type) %>%
-  group_by(workerid) %>%
-  count(is_correct = "FALSE") %>%
-  rename(
-    followup_is_correct = is_correct
-  )
+freeform_followup <- freeform_followup %>%
+  mutate(n_words = str_count(response, pattern=boundary(type="word"))) %>%
+  mutate(n_chars = str_count(response, pattern=boundary(type="character")))
 ```
 
 Create data frame comparing slider responses in-trial vs. in-followup
@@ -138,153 +246,137 @@ trials_sliders <- trials_data %>%
     trials_response_time_in_seconds = response_time_in_seconds
   )
 
-followup_sliders <- followup_response_data %>%
+followup_sliders <- followup_data %>%
   filter(response_type == "slider") %>%
   select(workerid, response, response_time_in_seconds) %>%
   rename(
     followup_response = response,
-    followup_response_time_in_seconds = response_time_in_seconds
+    followup_time_in_seconds = response_time_in_seconds
   )
 
-all_sliders <- merge(trials_sliders, followup_sliders, by="workerid")
-all_sliders$followup_response <- as.double(all_sliders$followup_response)
-all_sliders$trials_minus_followup_sliders <- (all_sliders$trials_response - all_sliders$followup_response)
+all_sliders <- inner_join(trials_sliders, followup_sliders, by="workerid") %>%
+  mutate(followup_response = as.double(followup_response)) %>%
+  mutate(trials_minus_followup_sliders = trials_response - followup_response)
 ```
 
 # Visualization
 
 ## Trials data
 
-Box plot of slider response vs. number of examples
+Gradient density ridges graph of slider response vs. item presentation
+condition
 
 ``` r
+slider_CIs <- slider_CIs %>%
+    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ggplot(
-  trials_data,
+  trials_data %>%
+    mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
   mapping = aes(
     x = response,
-    y = n_examples,
-    group = n_examples,
-    fill = as.factor(n_examples)
+    y = exp_cond, 
+    fill = ..x..
   )
 ) +
-geom_boxplot() +
-labs(
-  title = "Slider response vs. number of examples",
-  x = "Slider response",
-  y = "Number of examples"
-) +
-scale_fill_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-theme(legend.position = "none")
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    slider_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(exp_cond) + 0.8
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    slider_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(exp_cond) + 0.8
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0),
+    limits = c(0, 1.02),
+    breaks = c(0, 0.25, 0.5, 0.75, 1)
+  ) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(x = "Probability of Future Instance having Property")
 ```
 
-![](data_analysis_files/figure-gfm/Slider%20response%20vs.%20num.%20examples-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/Gradient%20plot%20of%20slider%20response%20vs.%20condition-1.png)<!-- -->
 
-*Observations:*
-
-  - *The slider responses with two examples have a smaller spread and a
-    median higher than with one example*
-  - *Slider responses with both one and two examples tend toward the
-    higher end, with only the left tail of the one-example responses
-    protruding below 0.4*
-
-Box plot of slider response vs. item presentation condition
+Gradient density ridges graph of slider response *time* vs. item
+presentation condition
 
 ``` r
+slider_response_time_CIs <- slider_response_time_CIs %>%
+    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ggplot(
-  trials_data,
-  mapping = aes(
-    x = response,
-    y = item_presentation_condition,
-    group = item_presentation_condition,
-    fill = as.factor(item_presentation_condition)
-  )
-) +
-geom_boxplot() +
-labs(
-  title = "Slider response vs. item presentation condtion",
-  x = "Slider response",
-  y = "Item presentation condition"
-) +
-scale_fill_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-theme(legend.position = "none")
-```
-
-![](data_analysis_files/figure-gfm/Slider%20response%20vs.%20condition-1.png)<!-- -->
-
-*Observations:*
-
-  - *Pedagogical median \> naive median \> accidental median*
-  - *Pedagogical IQR \> naive IQR \> accidental IQR*
-  - *Naive range \~ pedagogical range \< accidental range*
-
-Box plot of average slider response time for each subject, grouped by
-number of examples
-
-``` r
-ggplot(
-  trials_data,
+  trials_data %>%
+    mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
   mapping = aes(
     x = response_time_in_seconds,
-    y = n_examples,
-    group = n_examples,
-    fill = as.factor(n_examples)
+    y = exp_cond, 
+    fill = ..x..
   )
 ) +
-geom_boxplot() +
-labs(
-  title = "Average slider response time",
-  x = "Average time (sec)",
-  y = "Number of examples"
-) +
-scale_fill_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-theme(legend.position = "none")
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    slider_response_time_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(exp_cond) + 0.8
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    slider_response_time_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(exp_cond) + 0.8
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0),
+    limits = c(0, max(trials_data$response_time_in_seconds)*1.1)
+  ) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(x = "Slider response time in seconds")
 ```
 
-![](data_analysis_files/figure-gfm/Avg.%20slider%20response%20time%20vs.%20num.%20examples-1.png)<!-- -->
-
-*Observations:*
-
-  - *Slider response times for both 1 and 2 examples had several high
-    outliers*
-  - *Same shape for both (right-skewed)*
-
-Box plot of average slider response time for each subject, grouped by
-item presentation condition
-
-``` r
-ggplot(
-  trials_data,
-  mapping = aes(
-    x = response_time_in_seconds,
-    y = item_presentation_condition,
-    group = item_presentation_condition,
-    fill = as.factor(item_presentation_condition)
-  )
-) +
-geom_boxplot() +
-labs(
-  title = "Average slider response time",
-  x = "Average time (sec)",
-  y = "Item presentation condition") +
-scale_fill_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-theme(legend.position = "none")
-```
-
-![](data_analysis_files/figure-gfm/Avg.%20slider%20response%20time%20vs.%20condition-1.png)<!-- -->
-
-*Observations:*
-
-  - *High outliers in all conditions*
-  - *Median and range for naive slightly greater than accidental and
-    pedagogical*
+![](data_analysis_files/figure-gfm/Gradient%20plot%20of%20slider%20response%20time%20vs.%20condition-1.png)<!-- -->
 
 Facet grid of slider response plotted on number of examples vs. item
 presentation condition
@@ -394,69 +486,6 @@ theme(legend.position = "none")
 
 ## Attention check and followup response data
 
-Gradient density ridges graph of slider response vs. item presentation
-condition
-
-``` r
-ggplot(
-  trials_data,
-  mapping = aes(
-    x = response,
-    y = item_presentation_condition, fill = ..x..
-  )
-) +
-  ggridges::geom_density_ridges_gradient(
-    jittered_points = T, alpha = 0.8, scale = 0.95,
-    position = ggridges::position_points_jitter(width = 0.01, height = 0),
-    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
-    rel_min_height = 0.01, gradient_lwd = 1,
-    stat = "binline", bins = 25, draw_baseline = F
-  ) +
-  ggstance::geom_linerangeh(
-    CIs,
-    inherit.aes = F,
-    mapping = aes(
-      xmin = ci_lower, xmax = ci_upper,
-      y = as.numeric(item_presentation_condition) + 0.8
-    ),
-    size = 1.25, color = "black"
-  ) + geom_point(
-    CIs,
-    inherit.aes = F,
-    mapping = aes(
-      x = mean,
-      y = as.numeric(item_presentation_condition) + 0.8
-    ),
-    size = 3, color = "black", shape = 3
-  ) +
-  scale_x_continuous(
-    expand = c(0.01, 0),
-    limits = c(0, 1.02),
-    breaks = c(0, 0.25, 0.5, 0.75, 1)
-  ) +
-  scale_y_discrete(expand = c(0.01, 0)) +
-  viridis::scale_fill_viridis(
-    name = "Implied Prevalence", option = "D",
-    breaks = c(0, 1)
-  ) +
-  guides(fill = F) +
-  theme(
-    axis.title.y = element_blank(),
-    axis.title.x = element_text(hjust = 0.5, vjust = 0)
-  ) +
-  labs(x = "Probability of Future Instance having Property")
-```
-
-    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
-    
-    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
-
-    ## Warning: Removed 6 rows containing missing values (geom_linerangeh).
-
-    ## Warning: Removed 6 rows containing missing values (geom_point).
-
-![](data_analysis_files/figure-gfm/Gradient%20plot%20of%20slider%20response%20vs.%20condition-1.png)<!-- -->
-
 Scatter plot of followup slider response word count vs. character count
 
 ``` r
@@ -478,6 +507,8 @@ ggplot(
     values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
   )
 ```
+
+    ## Warning: Removed 1 rows containing missing values (geom_point).
 
 ![](data_analysis_files/figure-gfm/Freeform%20followup%20word%20vs.%20char%20count-1.png)<!-- -->
 
@@ -507,6 +538,8 @@ scale_fill_manual(
 ) +
 theme(legend.position = "none")
 ```
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_boxplot).
 
 ![](data_analysis_files/figure-gfm/Freeform%20followup%20wordcount%20vs.%20item%20presentation%20condition-1.png)<!-- -->
 
@@ -539,6 +572,8 @@ scale_fill_manual(
 ) +
 theme(legend.position = "none")
 ```
+
+    ## Warning: Removed 1 rows containing non-finite values (stat_boxplot).
 
 ![](data_analysis_files/figure-gfm/Freeform%20followup%20character%20count%20vs.%20item%20presentation%20condition-1.png)<!-- -->
 
@@ -624,5 +659,7 @@ ggplot(
     values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
   )
 ```
+
+    ## Warning: Removed 1 rows containing missing values (geom_point).
 
 ![](data_analysis_files/figure-gfm/Followup%20wordcoutn%20vs.%20slider%20diff.-1.png)<!-- -->

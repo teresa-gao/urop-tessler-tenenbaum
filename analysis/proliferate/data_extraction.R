@@ -26,6 +26,7 @@ failed_catch_ids <- unique( catch_data[ which( catch_data$num_fails > 0), ]$work
 failed_followup_ids <- unique( followup_data[ which( followup_data$is_correct == "False"), ]$workerid )
 failed_ids <- unique( c(failed_catch_ids, failed_followup_ids) )
 trials_data <- trials_data[ -c(failed_ids) ]
+followup_data <- followup_data[ -(failed_followup_ids) ]
 
 # Write files, excluding test trial (workerid = 14)
 write.csv(system_data[system_data$workerid != 14, ], "system_data.csv")

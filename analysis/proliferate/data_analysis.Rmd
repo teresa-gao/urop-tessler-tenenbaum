@@ -25,6 +25,8 @@ library("gridExtra")
 library("tidyboot")
 library("ngram")
 library("readr")
+library("tidytext")
+library("stringr")
 
 ```
 
@@ -35,7 +37,6 @@ The code below imports the experimental data, as extracted by data_extraction.R;
 Make sure to run data_extraction.R before continuing!
 
 ```{r Import data (CSVs)}
-# MH: read_csv > read.csv
 system_data <- read_csv("system_data.csv")
 catch_data <- read_csv("catch_data.csv")
 followup_data <- read_csv("followup_data.csv")
@@ -50,10 +51,16 @@ trials_data <- read_csv("trials_data.csv") %>% filter(trial_type == "trial")
 
 Compute bootstrapped means and confidence intervals of user slider response
 
-```{r Compute boostrapped means, CIs}
-CIs <- trials_data %>%
+```{r Compute boostrapped means: slider_CIs, slider_response_time_CIs}
+
+slider_CIs <- trials_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = response)
+
+slider_response_time_CIs <- trials_data %>%
+  group_by(item_presentation_condition, n_examples) %>%
+  tidyboot_mean(column = response_time_in_seconds)
+
 ```
 
 
@@ -65,33 +72,12 @@ Add word- and character-count columns as new freeform followup response data dat
 freeform_followup <- followup_data %>% filter(response_type == "freeform")
 
 # TODO
-
 # MH: Look into the tidytext package for text processing...
 # https://www.tidytextmining.com/tidytext.html
 
-# also, the stringr package is good, for lighter weight text processing..
-
-freeform_followup$n_words <- sapply(strsplit(freeform_followup$response, split=" "), length)
-freeform_followup$n_chars <- str_count(freeform_followup$response)
-
-```
-
-
-
-Create data frame for errors in post-experiment followup questions
-
-```{r Create error df from followup}
-
-errors_followup <- followup_data %>%
-  select(workerid, is_correct, response_time_in_seconds, response_type) %>%
-  filter(response_type != "slider") %>% # slider responses are guaranteed nonnull and therefore all reported as "correct"
-  select(-response_type) %>%
-  group_by(workerid) %>%
-  # TODO
-  count(is_correct = "FALSE") %>% # MH: What is this line supposed to be doing? in R, booleans are referenced without the quotes...
-  rename(
-    followup_is_correct = is_correct
-  )
+freeform_followup <- freeform_followup %>%
+  mutate(n_words = str_count(response, pattern=boundary(type="word"))) %>%
+  mutate(n_chars = str_count(response, pattern=boundary(type="character")))
 
 ```
 
@@ -116,164 +102,134 @@ followup_sliders <- followup_data %>%
     followup_time_in_seconds = response_time_in_seconds
   )
 
-all_sliders <- merge(trials_sliders, followup_sliders, by="workerid")
-# TODO
-# MH: Look into the "join" family (e.g., left_join())
+all_sliders <- inner_join(trials_sliders, followup_sliders, by="workerid") %>%
+  mutate(followup_response = as.double(followup_response)) %>%
+  mutate(trials_minus_followup_sliders = trials_response - followup_response)
 
-all_sliders$followup_response <- as.double(all_sliders$followup_response)
-# TODO
-# use mutate() instead of df$col_name creation
-## e.g., all_sliders %>% mutate(followup_response = as.double(followup_response))
-
-all_sliders$trials_minus_followup_sliders <- (all_sliders$trials_response - all_sliders$followup_response)
-# TODO
-# same...
 ```
 
 
 
 # Visualization
 
-TODO: see below
-MH: Start the visualization section with histograms, then show the more "condensed" / summary representations (eg boxplots)
-- also, i find boxplots generally confusing. i prefer histograms + 95 CIs (shown with geom_linerange())
-- also, i would start with the 3x2 (condition x n_examples) histograms (and then the 3x2 CIs, or put the CIs in the histogram plot if you can figure that out)
-  - then, show other cuts of the data
-
 ## Trials data
 
-Box plot of slider response vs. number of examples
+Gradient density ridges graph of slider response vs. item presentation condition
 
-```{r Slider response vs. num. examples}
+```{r Gradient plot of slider response vs. condition}
 
+slider_CIs <- slider_CIs %>%
+    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ggplot(
-  trials_data,
+  trials_data %>%
+    mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
   mapping = aes(
     x = response,
-    y = n_examples,
-    group = n_examples,
-    fill = as.factor(n_examples)
+    y = exp_cond, 
+    fill = ..x..
   )
 ) +
-geom_boxplot() +
-labs(
-  title = "Slider response vs. number of examples",
-  x = "Slider response",
-  y = "Number of examples"
-) +
-scale_fill_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-theme(legend.position = "none")
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    slider_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(exp_cond) + 0.8
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    slider_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(exp_cond) + 0.8
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0),
+    limits = c(0, 1.02),
+    breaks = c(0, 0.25, 0.5, 0.75, 1)
+  ) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(x = "Probability of Future Instance having Property")
 
 ```
 
-*Observations:*
-
-* *The slider responses with two examples have a smaller spread and a median higher than with one example*
-* *Slider responses with both one and two examples tend toward the higher end, with only the left tail of the one-example responses protruding below 0.4*
 
 
+Gradient density ridges graph of slider response *time* vs. item presentation condition
 
-Box plot of slider response vs. item presentation condition
+```{r Gradient plot of slider response time vs. condition}
 
-```{r Slider response vs. condition}
-
+slider_response_time_CIs <- slider_response_time_CIs %>%
+    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ggplot(
-  trials_data,
-  mapping = aes(
-    x = response,
-    y = item_presentation_condition,
-    group = item_presentation_condition,
-    fill = as.factor(item_presentation_condition)
-  )
-) +
-geom_boxplot() +
-labs(
-  title = "Slider response vs. item presentation condtion",
-  x = "Slider response",
-  y = "Item presentation condition"
-) +
-scale_fill_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-theme(legend.position = "none")
-
-```
-
-*Observations:*
-
-* *Pedagogical median > naive median > accidental median*
-* *Pedagogical IQR > naive IQR > accidental IQR*
-* *Naive range ~ pedagogical range < accidental range*
-
-
-
-Box plot of average slider response time for each subject, grouped by number of examples
-
-```{r Avg. slider response time vs. num. examples}
-
-ggplot(
-  trials_data,
+  trials_data %>%
+    mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
   mapping = aes(
     x = response_time_in_seconds,
-    y = n_examples,
-    group = n_examples,
-    fill = as.factor(n_examples)
+    y = exp_cond, 
+    fill = ..x..
   )
 ) +
-geom_boxplot() +
-labs(
-  title = "Average slider response time",
-  x = "Average time (sec)",
-  y = "Number of examples"
-) +
-scale_fill_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-theme(legend.position = "none")
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    slider_response_time_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(exp_cond) + 0.8
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    slider_response_time_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(exp_cond) + 0.8
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0),
+    limits = c(0, max(trials_data$response_time_in_seconds)*1.1)
+  ) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(x = "Slider response time in seconds")
 
 ```
 
-*Observations:*
 
-* *Slider response times for both 1 and 2 examples had several high outliers*
-* *Same shape for both (right-skewed)*
-
-
-
-Box plot of average slider response time for each subject, grouped by item presentation condition
-
-```{r Avg. slider response time vs. condition}
-
-ggplot(
-  trials_data,
-  mapping = aes(
-    x = response_time_in_seconds,
-    y = item_presentation_condition,
-    group = item_presentation_condition,
-    fill = as.factor(item_presentation_condition)
-  )
-) +
-geom_boxplot() +
-labs(
-  title = "Average slider response time",
-  x = "Average time (sec)",
-  y = "Item presentation condition") +
-scale_fill_manual(
-  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
-) +
-theme(legend.position = "none")
-
-```
-
-*Observations:*
-
-* *High outliers in all conditions*
-* *Median and range for naive slightly greater than accidental and pedagogical*
-
-TODO:
-MH: I would move the response time analysis to the end... also, I would go for histograms rather than boxplots (across the)
 
 Facet grid of slider response plotted on number of examples vs. item presentation condition
 
@@ -380,64 +336,6 @@ theme(legend.position = "none")
 
 
 ## Attention check and followup response data
-
-Gradient density ridges graph of slider response vs. item presentation condition
-
-```{r Gradient plot of slider response vs. condition}
-
-CIs <- CIs %>%
-    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
-ggplot(
-  trials_data %>%
-    mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
-  mapping = aes(
-    x = response,
-    y = exp_cond, 
-    fill = ..x..
-  )
-) +
-  ggridges::geom_density_ridges_gradient(
-    jittered_points = T, alpha = 0.8, scale = 0.95,
-    position = ggridges::position_points_jitter(width = 0.01, height = 0),
-    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
-    rel_min_height = 0.01, gradient_lwd = 1,
-    stat = "binline", bins = 25, draw_baseline = F
-  ) +
-  ggstance::geom_linerangeh(
-    CIs,
-    inherit.aes = F,
-    mapping = aes(
-      xmin = ci_lower, xmax = ci_upper,
-      y = as.numeric(exp_cond) + 0.8
-    ),
-    size = 1.25, color = "black"
-  ) + geom_point(
-    CIs,
-    inherit.aes = F,
-    mapping = aes(
-      x = mean,
-      y = as.numeric(exp_cond) + 0.8
-    ),
-    size = 3, color = "black", shape = 3
-  ) +
-  scale_x_continuous(
-    expand = c(0.01, 0),
-    limits = c(0, 1.02),
-    breaks = c(0, 0.25, 0.5, 0.75, 1)
-  ) +
-  scale_y_discrete(expand = c(0.01, 0)) +
-  viridis::scale_fill_viridis(
-    name = "Implied Prevalence", option = "D",
-    breaks = c(0, 1)
-  ) +
-  guides(fill = F) +
-  theme(
-    axis.title.y = element_blank(),
-    axis.title.x = element_text(hjust = 0.5, vjust = 0)
-  ) +
-  labs(x = "Probability of Future Instance having Property")
-
-```
 
 
 
