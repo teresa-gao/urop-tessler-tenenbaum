@@ -227,10 +227,6 @@ data data frame
 ``` r
 freeform_followup <- followup_data %>% filter(response_type == "freeform")
 
-# TODO
-# MH: Look into the tidytext package for text processing...
-# https://www.tidytextmining.com/tidytext.html
-
 freeform_followup <- freeform_followup %>%
   mutate(n_words = str_count(response, pattern=boundary(type="word"))) %>%
   mutate(n_chars = str_count(response, pattern=boundary(type="character")))
@@ -516,67 +512,6 @@ ggplot(
 
   - *Relationship appears linear, even with high outliers*
 
-Wordcount of freeform followup vs. item presentation condition
-
-``` r
-ggplot(
-  freeform_followup,
-  mapping = aes(
-    x = n_words,
-    y = proliferate.condition,
-    group = proliferate.condition,
-    fill = as.factor(proliferate.condition)
-  )
-) +
-geom_boxplot() +
-labs(
-  title = "Freeform wordcount vs. item presentation condition",
-  x = "Number of words in freeform followup response",
-  y = "Item presentation condition") +
-scale_fill_manual(
-  values = c("indianred1", "indianred1", "lightgoldenrod1", "lightgoldenrod1", "darkolivegreen2", "darkolivegreen2", "cornflowerblue", "cornflowerblue")
-) +
-theme(legend.position = "none")
-```
-
-    ## Warning: Removed 1 rows containing non-finite values (stat_boxplot).
-
-![](data_analysis_files/figure-gfm/Freeform%20followup%20wordcount%20vs.%20item%20presentation%20condition-1.png)<!-- -->
-
-*Observations*
-
-  - *1-example naive condition has largest IQR for number of words in
-    freeform followup*
-  - *2-example pedagogical has smallest IQR and smallest median for
-    number of words in freeform followup*
-
-Character count of freeform followup vs. item presentation condition
-
-``` r
-ggplot(
-  freeform_followup,
-  mapping = aes(
-    x = n_chars,
-    y = proliferate.condition,
-    group = proliferate.condition,
-    fill = as.factor(proliferate.condition)
-  )
-) +
-geom_boxplot() +
-labs(
-  title = "Freeform charcount vs. item presentation condition",
-  x = "Number of chars in freeform followup response",
-  y = "Item presentation condition") +
-scale_fill_manual(
-  values = c("indianred1", "indianred1", "lightgoldenrod1", "lightgoldenrod1", "darkolivegreen2", "darkolivegreen2", "cornflowerblue", "cornflowerblue")
-) +
-theme(legend.position = "none")
-```
-
-    ## Warning: Removed 1 rows containing non-finite values (stat_boxplot).
-
-![](data_analysis_files/figure-gfm/Freeform%20followup%20character%20count%20vs.%20item%20presentation%20condition-1.png)<!-- -->
-
 Scatter plot of trials slider response to followup slider response
 
 ``` r
@@ -662,4 +597,39 @@ ggplot(
 
     ## Warning: Removed 1 rows containing missing values (geom_point).
 
-![](data_analysis_files/figure-gfm/Followup%20wordcoutn%20vs.%20slider%20diff.-1.png)<!-- -->
+![](data_analysis_files/figure-gfm/Followup%20wordcount%20vs.%20slider%20diff.-1.png)<!-- -->
+
+Plot of word frequency for top 10 in freeform followup responses for
+each condition
+
+``` r
+freeform_followup_frequency <- freeform_followup %>%
+  unnest_tokens(word, response) %>%
+  anti_join(stop_words) %>%
+  group_by(proliferate.condition, word) %>%
+  summarise(frequency=n())
+```
+
+    ## Joining, by = "word"
+
+    ## `summarise()` regrouping output by 'proliferate.condition' (override with `.groups` argument)
+
+``` r
+ggplot(freeform_followup_frequency %>% top_n(10), aes(word, frequency)) +
+  geom_col(aes(fill=proliferate.condition)) +
+  xlab(NULL) +
+  scale_y_continuous(expand = c(0,0)) +
+  coord_flip() +
+  labs(fill = "Condition", title="Freeform followup word frequency for top 10 words") +
+  scale_fill_brewer() +
+  scale_fill_manual(
+    values = c("indianred1", "indianred2", "lightgoldenrod1", "lightgoldenrod2", "darkolivegreen2", "darkolivegreen3", "cornflowerblue", "dodgerblue3")
+  )
+```
+
+    ## Selecting by frequency
+
+    ## Scale for 'fill' is already present. Adding another scale for 'fill', which
+    ## will replace the existing scale.
+
+![](data_analysis_files/figure-gfm/Freeform%20followup%20word%20frequency-1.png)<!-- -->
