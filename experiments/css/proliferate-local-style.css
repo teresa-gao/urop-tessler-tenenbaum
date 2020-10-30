@@ -61,7 +61,7 @@ h3 {
 
 .object {
     position:       absolute;
-    height:         85.5px;
+    height:         90px;
 }
 
 .object.closed {
@@ -86,6 +86,31 @@ h3 {
 .object4 {
     right:          56px;
     z-index:        5;
+}
+
+.label {
+    position:       absolute;
+    padding:        2px;
+    z-index:        7;
+    font-size:      0.65rem;
+    background:     #fcffcf;
+    outline:        2px solid black;
+}
+
+#label1 {
+    left:           320px;
+}
+
+#label2 {
+    left:           390px;
+}
+
+#label3 {
+    left:           460px;
+}
+
+#label4 {
+    left:           530px;
 }
 
 .table {
@@ -116,7 +141,7 @@ h3 {
     position:       absolute;
     bottom:         0px;
     right:          0px;
-    width:          400px;
+    width:          350px;
     z-index:        1;
 }
 

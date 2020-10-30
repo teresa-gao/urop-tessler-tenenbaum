@@ -20,7 +20,7 @@ var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
 
 var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
-var n_examples =        [4]; // TODO: reinstate _.shuffle([1, 2]);
+var n_examples =        _.shuffle([1, 2]);
 var item_presentation_condition = _.shuffle(["accidental"]);
 
 
@@ -34,6 +34,7 @@ function change_image(class_name, source) {
     for (var i=0; i<changing_images.length; i+=1) {
         changing_images[i].src = source;
     }
+
 }
 
 function agent_say(display_text, trial_num, bubble_width=400, duration=2000) {
@@ -53,13 +54,14 @@ function agent_say(display_text, trial_num, bubble_width=400, duration=2000) {
     return deferred.promise();
 }
 
-// TODO: implement!
 function set_agent_object_scene(stim) {
 
     let deferred = new $.Deferred();
 
-    let fade_in_duration = 2000;
-    let fade_out_duration = 2000;
+    let fade_in_duration = 1750;
+    let fade_out_duration = 1750;
+
+    let fade_in_tags = "#background, #" + stim.agent;
 
     $(".speech").hide();
     $(".agent_intro, #background, #" + stim.agent).fadeOut(fade_out_duration, complete=function() {
@@ -72,36 +74,27 @@ function set_agent_object_scene(stim) {
 
             let counter;
             for (counter = 1; counter <= stim.n_examples; counter++) {
-                $(".object" + counter + ".closed").fadeIn(fade_in_duration);
-            };
-
-            let fade_in_tags = "#background, #" + stim.agent;
+                $("#label" + counter).text(stim.item_name[0].toUpperCase());
+                fade_in_tags += ", .object" + counter + ".closed, #label" + counter;
+            }
 
             if (stim.object[0] == "bird") {
-
                 fade_in_tags += ", #tree";
-
-                // TODO: fade in label tags
-
-                $(".object").css("bottom", "230px");
+                $(".label").css("bottom", "210px");
+                $(".object").css("bottom", "225px");
             }
 
             if (stim.object[0] == "flower") {
-
                 fade_in_tags += ", #dirt";
-
-                // TODO: fade in label tags
-
+                $(".label").css("bottom", "27px");
                 $(".object").css("bottom", "35px");
             }
 
             if (stim.object[0] == "artifact") {
-
                 fade_in_tags += ", #table";
-
-                // TODO: fade in label tags
-
-                $(".object").css("bottom", "125px");
+                $(".label").css("bottom", "200px");
+                $(".object").css("bottom", "110px");
+                $(".object").css("height", "105px");
             }
 
             $(fade_in_tags).fadeIn(fade_in_duration);
@@ -112,16 +105,13 @@ function set_agent_object_scene(stim) {
 
     setTimeout (function() {
         deferred.resolve();
-    }, 4000);
+    }, fade_in_duration + fade_out_duration);
 
     return deferred.promise();
 
 }
 
 function show_object_property(stim, object_num) {
-
-    console.log("begin show_object_property for stim " + stim);
-    console.log("object_num is " + object_num);
 
     let deferred = new $.Deferred();
 
@@ -143,9 +133,11 @@ function show_object_property(stim, object_num) {
 
         if (stim.object[0] == "bird") {
             property_sound = new Audio("audio/bird_chirp.mp3");
+        }
 
-        } else if (stim.object[0] == "flower") {
+        if (stim.object[0] == "flower") {
             property_sound = new Audio("audio/gliss_up.mp3");
+            $(".object.open").css("height", "99px");
         }
 
         property_sound.play();
@@ -160,6 +152,7 @@ function show_object_property(stim, object_num) {
     }, 1000);
 
     return deferred.promise();
+
 }
 
 // TODO: implement!
@@ -169,7 +162,7 @@ function run_trial(stim) {
 
     if (stim.type == "agent_intro") {
 
-        $(".agent, .object, #tree, #dirt, #table").hide();
+        $(".agent, .object, #tree, #dirt, #table, .label").hide();
         $("#background").attr("src", "images/back" + stim.background + ".jpg");
         $(".agent_intro, #" + stim.agent).show();
 
@@ -240,7 +233,7 @@ function run_trial(stim) {
                         statement = "Oh, I see! This is a " + stim.item_name[0] + ".";
                     }
 
-                    agent_say(statement, stim.trial_num, bubble_width=250);
+                    agent_say(statement, stim.trial_num, bubble_width=225);
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -285,8 +278,6 @@ function run_trial(stim) {
                 function() {
 
                     $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=65px");
-
-                    console.log("started post-agent animation function");
 
                     // TODO: objects reveal property (staggered)
                     show_object_property(stim, 1).then(
@@ -398,7 +389,18 @@ function run_trial(stim) {
 
                         function() {
                             $(".object.open").fadeOut(600);
-                            $(".object.closed").fadeIn(600);
+
+                            let fade_in_tags = "";
+
+                            let counter;
+                            for (counter = 1; counter <= stim.n_examples; counter++) {
+                                fade_in_tags += ".object" + counter + ".closed";
+                                if (counter != stim.n_examples) {
+                                    fade_in_tags += ", ";
+                                }
+                            }
+
+                            $(fade_in_tags).fadeIn(600);
                             $(".speech").hide();
                         }
 
