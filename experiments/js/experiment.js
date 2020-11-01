@@ -19,9 +19,9 @@ var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]);
 var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
 
-var item_name =         _.shuffle([ ["dax", "daxes"], ["fep", "feps"], ["blicket", "blickets"] ]);
+var item_name =         _.shuffle([ ["blicket", "blickets"], ["dax", "daxes"], ["fep", "feps"] ]);
 var n_examples =        _.shuffle([1, 2]);
-var item_presentation_condition = _.shuffle(["accidental"]);
+var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 
 
 
@@ -155,7 +155,88 @@ function show_object_property(stim, object_num) {
 
 }
 
-// TODO: implement!
+function show_all_object_properties(stim) {
+
+    let deferred = new $.Deferred();
+
+    let total_wait_time = 500; // for guaranteed first object showing property
+
+    show_object_property(stim, 1).then(
+
+        function() {
+
+            let deferred = new $.Deferred();
+            let wait_time = 0;
+
+            if (stim.n_examples >= 2) {
+                show_object_property(stim, 2);
+                wait_time = 500;
+            }
+
+            total_wait_time += wait_time;
+
+            setTimeout (function() {
+                deferred.resolve();
+            }, wait_time);
+
+            return deferred.promise();
+
+        }
+
+    ).then(
+
+        function() {
+
+            let deferred = new $.Deferred();
+            let wait_time = 0;
+
+            if (stim.n_examples >= 3) {
+                show_object_property(stim, 3);
+                wait_time = 500;
+            }
+
+            total_wait_time += wait_time;
+
+            setTimeout (function() {
+                deferred.resolve();
+            }, wait_time);
+
+            return deferred.promise();
+
+        }
+
+    ).then(
+
+        function() {
+
+            let deferred = new $.Deferred();
+            let wait_time = 0;
+
+            if (stim.n_examples >= 4) {
+                show_object_property(stim, 4);
+                wait_time = 500;
+            }
+
+            total_wait_time += wait_time;
+
+            setTimeout (function() {
+                deferred.resolve();
+            }, wait_time);
+
+            return deferred.promise();
+
+        }
+
+    )
+
+    setTimeout (function() {
+        deferred.resolve();
+    }, total_wait_time + 1250); // extra time accounts for browser delay
+
+    return deferred.promise();
+
+}
+
 function run_trial(stim) {
 
     $(".continue_button").hide();
@@ -184,6 +265,36 @@ function run_trial(stim) {
                     setTimeout (function() {
                         deferred.resolve();
                     }, 2000); // TODO: update duration
+
+                    return deferred.promise();
+
+                }
+
+            ).then(
+
+                function() {
+                    $(".speech").hide();
+                    $("#continue_button").show();
+                }
+
+            );
+
+        }
+
+        if (stim.item_presentation_condition == "pedagogical") {
+
+            agent_say("Hello! I've been doing research on this planet for a while.", stim.trial_num, width=425, duration=4000).then(
+
+                function() {
+
+                    let deferred = new $.Deferred();
+
+                    agent_say("I know all about the animals, plants, and objects here.", stim.trial_num, width=400, duration=2500);
+                    // TODO: add speaker voice audio
+
+                    setTimeout (function() {
+                        deferred.resolve();
+                    }, 2500); // TODO: update duration
 
                     return deferred.promise();
 
@@ -254,6 +365,60 @@ function run_trial(stim) {
 
         }
 
+        if (stim.item_presentation_condition == "pedagogical") {
+
+            agent_say("I have something to show you. Follow me!", stim.trial_num, bubble_width=325).then(
+
+                function() {
+
+                    let deferred = new $.Deferred();
+
+                    set_agent_object_scene(stim);
+
+                    setTimeout (function() {
+                        deferred.resolve();
+                    }, 3500); // TODO: update duration
+
+                    return deferred.promise();
+                }
+
+            ).then(
+
+                function() {
+
+                    let deferred = new $.Deferred();
+
+                    let statement = "These are " + stim.item_name[1] + ".";
+                    if (stim.n_examples == 1) {
+                        statement = "This is a " + stim.item_name[0] + ".";
+                    }
+
+                    let bubble_width = 125;
+                    if (stim.item_name[0] == "blicket") {
+                        bubble_width += 50;
+                    }
+
+                    agent_say(statement, stim.trial_num, bubble_width=bubble_width);
+
+                    setTimeout (function() {
+                        deferred.resolve();
+                    }, 2000); // TODO: update duration
+
+                    return deferred.promise();
+
+                }
+
+            ).then(
+
+                function() {
+                    $(".speech").hide();
+                    $("#continue_button").show();
+                }
+
+            );
+
+        }
+
     }
 
     if (stim.type == "object_property") {
@@ -263,7 +428,8 @@ function run_trial(stim) {
             $(".object2.open").css("right", "140px");
             $(".object3.open").css("right", "70px");
             $(".object4.open").css("right", "0px");
-        } else if (stim.object[0] == "flower") {
+        }
+        if (stim.object[0] == "flower") {
             $(".open").css("height", "95.5px");
         }
 
@@ -279,74 +445,13 @@ function run_trial(stim) {
 
                     $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=65px");
 
-                    // TODO: objects reveal property (staggered)
-                    show_object_property(stim, 1).then(
-
-                        function() {
-
-                            let deferred = new $.Deferred();
-                            let wait_time = 0;
-
-                            if (stim.n_examples >= 2) {
-                                show_object_property(stim, 2);
-                                wait_time = 500;
-                            }
-
-                            setTimeout (function() {
-                                deferred.resolve();
-                            }, wait_time);
-
-                            return deferred.promise();
-
-                        }
-
-                    ).then(
-
-                        function() {
-
-                            let deferred = new $.Deferred();
-                            let wait_time = 0;
-
-                            if (stim.n_examples >= 3) {
-                                show_object_property(stim, 3);
-                                wait_time = 500;
-                            }
-
-                            setTimeout (function() {
-                                deferred.resolve();
-                            }, wait_time);
-
-                            return deferred.promise();
-
-                        }
-
-                    ).then(
-
-                        function() {
-
-                            let deferred = new $.Deferred();
-                            let wait_time = 0;
-
-                            if (stim.n_examples >= 4) {
-                                show_object_property(stim, 4);
-                                wait_time = 500;
-                            }
-
-                            setTimeout (function() {
-                                deferred.resolve();
-                            }, wait_time);
-
-                            return deferred.promise();
-
-                        }
-
-                    ).then(
+                    show_all_object_properties(stim).then(
 
                         function() {
 
                             let deferred = new $.Deferred();
 
-                            // TODO: add — readd speaker voice audio
+                            // TODO: readd speaker voice audio
                             let delay_time = 3000;
                             // let audio_file_name = "see_"; // TODO
 
@@ -413,6 +518,106 @@ function run_trial(stim) {
                         }
 
                     );
+
+                }
+
+            )
+
+        }
+
+        if (stim.item_presentation_condition == "pedagogical") {
+
+            agent_say("Watch this!", stim.trial_num, bubble_width=100, duration=1500).then(
+
+                function() {
+
+                    $(".speech").hide();
+
+                    $("#" + stim.agent).animate(
+                        { right: "-=65px"},
+                        500,
+                        function() {
+
+                            $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=65px");
+
+                            show_all_object_properties(stim).then(
+
+                                function() {
+
+                                    let deferred = new $.Deferred();
+
+                                    // TODO: readd speaker voice audio
+                                    let delay_time = 3000;
+                                    let audio_file_name = "see_"; // TODO
+                                    let bubble_width = 150;
+
+                                    say_text = "See? ";
+                                    delay_time += 500;
+
+                                    if (stim.object[0] == "artifact") {
+                                        say_text += "Squeaking!";
+                                        audio_file_name += "squeaking";
+                                        delay_time -= 500;
+                                    } else {
+
+                                        say_text += stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
+
+                                        if (stim.object[2] == "purple petals") {
+                                            audio_file_name += "purple_petals";
+
+                                        } else if (stim.object[2] == "green feathers") {
+                                            audio_file_name += "green_feathers";
+                                            bubble_width += 50;
+                                        }
+
+                                    }
+
+                                    // TODO: readd speaker voice audio
+                                    // remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
+                                    // remark.play();
+
+                                    agent_say(say_text, stim.trial_num, bubble_width=bubble_width);
+
+                                    setTimeout (function() {
+                                        deferred.resolve();
+                                    }, delay_time);
+
+                                    return deferred.promise();
+
+                                }
+
+                            ).then(
+
+                                function() {
+                                    $(".object.open").fadeOut(600);
+
+                                    let fade_in_tags = "";
+
+                                    let counter;
+                                    for (counter = 1; counter <= stim.n_examples; counter++) {
+                                        fade_in_tags += ".object" + counter + ".closed";
+                                        if (counter != stim.n_examples) {
+                                            fade_in_tags += ", ";
+                                        }
+                                    }
+
+                                    $(fade_in_tags).fadeIn(600);
+                                    $(".speech").hide();
+                                }
+
+                            ).then(
+
+                                function() {
+
+                                    $("#submit_data_button").show();
+
+                                }
+
+                            );
+
+                        }
+
+                    )
 
                 }
 
@@ -628,7 +833,6 @@ function make_slides(f) {
         }
     });
 
-    // TODO: implement!
     // Run experiment (sub)trials
     slides.trials = slide({
 
@@ -724,6 +928,7 @@ function make_slides(f) {
     });
 
     return slides;
+
 }
 
 
@@ -833,4 +1038,5 @@ function init() {
 
     exp.startT = Date.now();
     exp.go();
+
 }
