@@ -69,22 +69,22 @@ h3 {
 }
 
 .object1 {
-    right:          266px;
+    right:          255px;
     z-index:        2;
 }
 
 .object2 {
-    right:          196px;
+    right:          185px;
     z-index:        3;
 }
 
 .object3 {
-    right:          126px;
+    right:          115px;
     z-index:        4;
 }
 
 .object4 {
-    right:          56px;
+    right:          45px;
     z-index:        5;
 }
 
@@ -98,19 +98,19 @@ h3 {
 }
 
 #label1 {
-    left:           320px;
+    left:           330px;
 }
 
 #label2 {
-    left:           390px;
+    left:           400px;
 }
 
 #label3 {
-    left:           460px;
+    left:           470px;
 }
 
 #label4 {
-    left:           530px;
+    left:           540px;
 }
 
 .table {
@@ -133,7 +133,7 @@ h3 {
     position:       absolute;
     bottom:         0px;
     right:          0px;
-    width:          400px;
+    width:          370px;
     z-index:        1;
 }
 
@@ -141,7 +141,7 @@ h3 {
     position:       absolute;
     bottom:         0px;
     right:          0px;
-    width:          350px;
+    width:          305px;
     z-index:        1;
 }
 

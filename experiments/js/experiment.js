@@ -88,13 +88,21 @@ function set_agent_object_scene(stim) {
                 fade_in_tags += ", #dirt";
                 $(".label").css("bottom", "27px");
                 $(".object").css("bottom", "35px");
+
+                // Shift artifacts and labels right
+                $(".label").css("left", "+=5px");
+                $(".object").css("right", "-=5px");
             }
 
             if (stim.object[0] == "artifact") {
                 fade_in_tags += ", #table";
-                $(".label").css("bottom", "200px");
-                $(".object").css("bottom", "110px");
+                $(".label").css("bottom", "215px");
+                $(".object").css("bottom", "125px");
                 $(".object").css("height", "105px");
+
+                // Shift artifacts and labels right
+                $(".label").css("left", "+=5px");
+                $(".object").css("right", "-=5px");
             }
 
             $(fade_in_tags).fadeIn(fade_in_duration);
@@ -133,6 +141,10 @@ function show_object_property(stim, object_num) {
 
         if (stim.object[0] == "bird") {
             property_sound = new Audio("audio/bird_chirp.mp3");
+            $(".object1.open").css("right", "210px");
+            $(".object2.open").css("right", "140px");
+            $(".object3.open").css("right", "70px");
+            $(".object4.open").css("right", "0px");
         }
 
         if (stim.object[0] == "flower") {
@@ -423,24 +435,16 @@ function run_trial(stim) {
 
     if (stim.type == "object_property") {
 
-        if (stim.object[0] == "bird") {
-            $(".object1.open").css("right", "210px");
-            $(".object2.open").css("right", "140px");
-            $(".object3.open").css("right", "70px");
-            $(".object4.open").css("right", "0px");
-        }
-        if (stim.object[0] == "flower") {
-            $(".open").css("height", "95.5px");
-        }
-
+        let agent_right_distance = 88;
+        let agent_animate_duration = 500;
 
         if (stim.item_presentation_condition == "accidental") {
 
             $(".speech").hide();
 
             $("#" + stim.agent).animate(
-                { right: "-=65px"},
-                500,
+                { right: "-=" + agent_right_distance + "px"},
+                agent_animate_duration,
                 function() {
 
                     $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=65px");
@@ -534,8 +538,8 @@ function run_trial(stim) {
                     $(".speech").hide();
 
                     $("#" + stim.agent).animate(
-                        { right: "-=65px"},
-                        500,
+                        { right: "-=" + agent_right_distance + "px"},
+                        agent_animate_duration,
                         function() {
 
                             $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=65px");
@@ -1030,6 +1034,8 @@ function init() {
         item_presentation_condition: item_presentation_condition[0],
         n_examples: n_examples
     };
+
+    console.log(exp.condition);
 
     exp.slides = make_slides(exp);
     exp.nQs = utils.get_exp_length();
