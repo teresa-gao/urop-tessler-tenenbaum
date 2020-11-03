@@ -37,7 +37,7 @@ function change_image(class_name, source) {
 
 }
 
-function agent_say(display_text, trial_num, bubble_width=400, duration=2000) {
+function agent_say(display_text, bubble_width=400, duration=2000) {
 
     let deferred = new $.Deferred();
 
@@ -255,7 +255,7 @@ function run_trial(stim) {
 
     if (stim.type == "agent_intro") {
 
-        $(".agent, .object, #tree, #dirt, #table, .label").hide();
+        $(".agent, .object, #tree, #dirt, #table, .label, #followup").hide();
         $("#background").attr("src", "images/back" + stim.background + ".jpg");
         $(".agent_intro, #" + stim.agent).show();
 
@@ -265,13 +265,13 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "accidental") {
 
-            agent_say("Hello! I am a new researcher. I just arrived on this planet.", stim.trial_num, width=425, duration=4000).then(
+            agent_say("Hello! I am a new researcher. I just arrived on this planet.", width=425, duration=4000).then(
 
                 function() {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("I don't know anything about the animals, plants, or objects here.", stim.trial_num, width=475);
+                    agent_say("I don't know anything about the animals, plants, or objects here.", width=475);
                     // TODO: add speaker voice audio
 
                     setTimeout (function() {
@@ -295,13 +295,13 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("Hello! I've been doing research on this planet for a while.", stim.trial_num, width=425, duration=4000).then(
+            agent_say("Hello! I've been doing research on this planet for a while.", width=425, duration=4000).then(
 
                 function() {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("I know all about the animals, plants, and objects here.", stim.trial_num, width=400, duration=2500);
+                    agent_say("I know all about the animals, plants, and objects here.", width=400, duration=2500);
                     // TODO: add speaker voice audio
 
                     setTimeout (function() {
@@ -335,7 +335,7 @@ function run_trial(stim) {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("Hmm, I wonder what we have here.", stim.trial_num, bubble_width=300);
+                    agent_say("Hmm, I wonder what we have here.", bubble_width=300);
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -356,7 +356,7 @@ function run_trial(stim) {
                         statement = "Oh, I see! This is a " + stim.item_name[0] + ".";
                     }
 
-                    agent_say(statement, stim.trial_num, bubble_width=225);
+                    agent_say(statement, bubble_width=225);
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -379,7 +379,7 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("I have something to show you. Follow me!", stim.trial_num, bubble_width=325).then(
+            agent_say("I have something to show you. Follow me!", bubble_width=325).then(
 
                 function() {
 
@@ -410,7 +410,7 @@ function run_trial(stim) {
                         bubble_width += 50;
                     }
 
-                    agent_say(statement, stim.trial_num, bubble_width=bubble_width);
+                    agent_say(statement, bubble_width=bubble_width);
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -484,7 +484,7 @@ function run_trial(stim) {
                             // remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
                             // remark.play();
 
-                            agent_say(say_text, stim.trial_num, bubble_width=200);
+                            agent_say(say_text, bubble_width=200);
 
                             setTimeout (function() {
                                 deferred.resolve();
@@ -517,7 +517,7 @@ function run_trial(stim) {
 
                         function() {
 
-                            $("#submit_data_button").show();
+                            $("#continue_button").show();
 
                         }
 
@@ -531,7 +531,7 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("Watch this!", stim.trial_num, bubble_width=100, duration=1500).then(
+            agent_say("Watch this!", bubble_width=100, duration=1500).then(
 
                 function() {
 
@@ -580,7 +580,7 @@ function run_trial(stim) {
                                     // remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
                                     // remark.play();
 
-                                    agent_say(say_text, stim.trial_num, bubble_width=bubble_width);
+                                    agent_say(say_text, bubble_width=bubble_width);
 
                                     setTimeout (function() {
                                         deferred.resolve();
@@ -613,7 +613,7 @@ function run_trial(stim) {
 
                                 function() {
 
-                                    $("#submit_data_button").show();
+                                    $("#continue_button").show();
 
                                 }
 
@@ -631,8 +631,107 @@ function run_trial(stim) {
 
     }
 
-}
+    // TODO: followup
 
+    if (stim.type == "followup") {
+
+        console.log("stim.type is followup")
+
+        $("#followup, #trials_text, #followup_title").show();
+        $("#animation_container, .error, .slider, .grid, .mc, .freeform").hide();
+        $("#trials_text").text(stim.prompt);
+
+        if (stim.show_scene) {
+
+            console.log("stim.show_scene is true");
+
+            agent_straight(stim.agent);
+            $("." + stim.agent + "_straight").css("right", 360);
+            change_image("background", "images/back" + stim.background + ".jpg");
+            set_table(stim, false);
+            $(".label").hide();
+            $("#animation_container").show();
+        }
+
+        if (stim.show_generic) {
+
+            console.log("stim.show_generic is true");
+
+            $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
+
+            let generic_statement = generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + stim.property;
+            if (stim.property == "squeaking") {
+                generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak";
+            }
+
+            $("#generic_text").text("\"" + generic_statement + ".\"");
+            $("#generic_text").show();
+        }
+
+        if (stim.response_type == "slider") {
+
+            console.log("stim.response_type is slider");
+
+            // Create slider, initialized without position
+            utils.make_slider("#trials_slider", function(event, ui) {
+                exp.sliderPost = ui.value;
+            });
+            exp.sliderPost = null;
+
+            $("#slider_label_l").text(stim.slider_label_l);
+            $("#slider_label_r").text(stim.slider_label_r);
+
+            $(".slider").show();
+
+        }
+
+        if (stim.response_type == "mc") {
+
+            console.log("stim.response_type is mc");
+
+            // Clear previous multiple choice responses
+            $("input[name=mc_choice]").prop("checked", false);
+
+            // Display correct mc options and labels
+            let temp_counter = 0;
+            for (temp_counter = 0; temp_counter < stim.options.length; temp_counter++) {
+                $("#mc_choice" + (temp_counter + 1)).show();
+                $("#mc_choice" + (temp_counter + 1)).attr("value", stim.options[temp_counter][1]);
+                $("#mc_choice" + (temp_counter + 1)).parent().show();
+                $("#mc_label" + (temp_counter + 1)).text(stim.options[temp_counter][0]);
+            }
+
+            $(".mc").show();
+
+        }
+
+        if (stim.response_type == "grid") {
+
+            console.log("stim.response_type is grid");
+
+            $(".grid").show();
+
+            let counter;
+            for (counter=1; counter <= 9; counter++) {
+                $("#grid_label" + counter).text(stim.grid_labels[counter-1]);
+                $("#grid_choice" + counter).attr("value", stim.grid_labels[counter-1]);
+            }
+
+        }
+
+        if (stim.response_type == "freeform") {
+
+            console.log("stim.response_type is freeform");
+
+            $("#freeform").show();
+
+        }
+
+        $("#submit_data_button").show();
+
+    }
+
+}
 
 
 //////////////////////////////////////////
@@ -816,7 +915,7 @@ function make_slides(f) {
             // Log introduction data (esp. duration) to full Prolific data
             _.extend(exp.trials_stimuli_full[0],
                 {
-                    trial_num: 0, // Introduction
+                    slide_num: 0, // Introduction
                     trial_type: "introduction",
                     trial_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000,
                     display_text: "You are a scientist being deployed to a remote field site on a faraway planet. Your job is to catalogue and describe new kinds of plants, animals, and objects that have been discovered on the planet. When you arrive at the field site, you meet other scientists there."
@@ -826,7 +925,7 @@ function make_slides(f) {
             // Log introduction data (esp. duration) to streamlined Prolific data
             _.extend(exp.trials_stimuli_streamlined[0],
                 {
-                    trial_num: 0, // Introduction
+                    slide_num: 0, // Introduction
                     trial_type: "introduction",
                     trial_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000
                 }
@@ -837,7 +936,7 @@ function make_slides(f) {
         }
     });
 
-    // Run experiment (sub)trials
+    // Run experiment
     slides.trials = slide({
 
         name : "trials",
@@ -852,7 +951,6 @@ function make_slides(f) {
         present_handle : function(stim) {
 
             this.stim = stim;
-            console.log(this.stim);
 
             // This is animation sequence is defined as a separate function to avoid excessive indentation
             run_trial(this.stim);
@@ -866,22 +964,20 @@ function make_slides(f) {
 
         },
 
-        // Create slider
-        init_sliders: function() {
-
-            utils.make_slider("#trials_slider", function(event, ui) {
-                exp.sliderPost = ui.value;
-            });
-
-        },
-
-        // Continue to next subtrial after slider response
         submit_data_button : function() {
 
-            // TODO: implement data-logging!
-            _stream.apply(this);
+            // No response on slider -> error
+            if ((this.stim.response_type == "slider") && (exp.sliderPost == null)) {
+                $(".slider_error").show();
+            } else {
+
+                 // TODO: implement data-logging!
+                _stream.apply(this);
+
+            }
 
         }
+
     });
 
     // Form to collect optional subject data
@@ -969,10 +1065,10 @@ function init() {
     exp.trials_stimuli = [];
 
     // Used to submit to Prolific — very complete data, not flattened
-    exp.trials_stimuli_full = [{}]; // Initialized empty so trial_num 0 (introduction) data can be filled in later
+    exp.trials_stimuli_full = [{}]; // Initialized empty so slide_num 0 (introduction) data can be filled in later
 
     // Used to submit to Prolific — streamlined and flattened
-    exp.trials_stimuli_streamlined = [{}]; // Initialized with empty {} so trial_num 0 (introduction) can be filled in later
+    exp.trials_stimuli_streamlined = [{}]; // Initialized with empty {} so slide_num 0 (introduction) can be filled in later
 
     // Used to submit to Prolific — contains user slider responses and times for main trials
     exp.trials_response_data = [];
@@ -982,13 +1078,23 @@ function init() {
 
     // TODO: implement data-logging!
 
-    trial_num = 1 // intro is first trials slide
+    slide_num = 1
+
+    let article = " another ";
+    if (item_presentation_condition[0].includes("generic")) {
+        article = " a ";
+    }
+
+    let prompt = "Imagine that you come across" + article + item_name[0][0] + ". What are the chances that it has " + objects[0][2] + "?";
+    if (objects[0][2] == "squeaking") {
+        prompt = "Imagine that you come across" + article + item_name[0][0] + ". What are the chances that it squeaks?";
+    }
 
     exp.trials_stimuli = exp.trials_stimuli.concat([
 
         _.extend(
             {
-                trial_num: trial_num++,
+                slide_num: slide_num++,
                 type: "agent_intro",
                 item_presentation_condition: item_presentation_condition[0],
                 background: back[0],
@@ -999,7 +1105,7 @@ function init() {
 
         _.extend(
             {
-                trial_num: trial_num++,
+                slide_num: slide_num++,
                 type: "object_encounter",
                 item_presentation_condition: item_presentation_condition[0],
                 background: back[0],
@@ -1013,7 +1119,7 @@ function init() {
 
         _.extend(
             {
-                trial_num: trial_num++,
+                slide_num: slide_num++,
                 type: "object_property",
                 item_presentation_condition: item_presentation_condition[0],
                 background: back[0],
@@ -1021,6 +1127,22 @@ function init() {
                 speaker: speakers[0],
                 object: objects[0],
                 item_name: item_name[0],
+                n_examples: n_examples[0]
+            }
+        ),
+
+        _.extend(
+            {
+                slide_num: slide_num++,
+                type: "followup",
+                prompt: prompt,
+                correct_answer: "NA",
+                show_scene: false,
+                show_generic: false,
+                response_type: "slider",
+                slider_label_l: "0% (impossible)",
+                slider_label_r: "100% (certain)",
+                item_presentation_condition: item_presentation_condition[0],
                 n_examples: n_examples[0]
             }
         )

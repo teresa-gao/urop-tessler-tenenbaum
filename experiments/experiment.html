@@ -104,15 +104,13 @@
             <button onclick="_s.button()">Continue</button>
         </div>
 
-        <!-- Trials slides, containing background, agent, table, and object images -->
+        <!-- Trials slides -->
         <div class="slide" id="trials">
 
-            <div class="container">
+            <div id="animation_container">
 
-                <!-- Background, whose source image is determined within experiment.js -->
                 <img id="background" class="agent_intro" src="">
 
-                <!-- Animal agents -->
                 <img id="Monkey" class="agent"  src="images/Monkey_straight.png">
                 <img id="Dog" class="agent"  src="images/Dog_straight.png">
                 <img id="Elephant" class="agent"  src="images/Elephant_straight.png">
@@ -122,12 +120,10 @@
                 <img id="Sheep" class="agent"  src="images/Sheep_straight.png">
                 <img id="Tiger" class="agent"  src="images/Tiger_straight.png">
 
-                <!-- Speech bubble, used to display agent spoken text -->
                 <div id="speech-bubble" class="speech"></div>
                 <div id="speech-bubble-tail" class="speech"></div>
                 <div id="speech-bubble-outline" class="speech"></div>
 
-                <!-- Objects, whose source images are determined within experiment.js -->
                 <img class="object object1 closed" src="">
                 <img class="object object1 open" src="">
                 <img class="object object2 closed" src="">
@@ -137,12 +133,10 @@
                 <img class="object object4 closed" src="">
                 <img class="object object4 open" src="">
 
-                <!-- Tree, dirt mound, and table for objects to be displayed on -->
                 <img id="tree" src="images/tree.svg">
                 <img id="dirt" src="images/dirt.svg">
                 <img id="table" src="images/table.svg">
 
-                <!-- Object labels, which display object names -->
                 <div id="label1" class="label">{{}}</div>
                 <div id="label2" class="label">{{}}</div>
                 <div id="label3" class="label">{{}}</div>
@@ -150,105 +144,103 @@
 
             </div>
 
-            <!-- Continues to next slide within subtrial -->
+            <div id="followup">
+
+                <h3 id="followup_title">Follow-up Question</h3>
+
+                <p id="trials_text">{{}}</p>
+
+                <!-- Slider -->
+                <div class="slider">
+                    <table class="slider slider_table">
+                        <tr>
+                            <td id="slider_label_l" class="slider_label_l"></td>
+                            <td id="slider_label_r" class="slider_label_r"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div id="trials_slider"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Fixed "grid" for identification of item names and properties (separately) -->
+                <div class="grid">
+                    <table class="grid grid_table">
+                        <tr>
+                            <td>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice1" value=""/>
+                                <span id="grid_label1">{{}}</span><br>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice4" value=""/>
+                                <span id="grid_label4">{{}}</span><br>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice7" value=""/>
+                                <span id="grid_label7">{{}}</span><br>
+
+                            <td>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice2" value=""/>
+                                <span id="grid_label2">{{}}</span><br>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice5" value=""/>
+                                <span id="grid_label5">{{}}</span><br>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice8" value=""/>
+                                <span id="grid_label8">{{}}</span><br>
+
+                            </td>
+                            <td>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice3" value=""/>
+                                <span id="grid_label3">{{}}</span><br>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice6" value=""/>
+                                <span id="grid_label6">{{}}</span><br>
+
+                                <input type="checkbox" class="grid_choice" id="grid_choice9" value=""/>
+                                <span id="grid_label9">{{}}</span><br>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Multiple choice options (modified in experiment.js) -->
+                <div class="mc">
+                    <label for="mc_choice1" class="mc_label">
+                        <input type="radio" name="mc_choice" id="mc_choice1" class="multiple_choice"/>
+                        <span id="mc_label1">{{}}</span>
+                    </label>
+                    <label for="mc_choice2" class="mc_label">
+                        <input type="radio" name="mc_choice" id="mc_choice2" class="multiple_choice"/>
+                        <span id="mc_label2">{{}}</span>
+                    </label>
+                </div>
+
+                <!-- Freeform text response -->
+                <div class="freeform">
+                    <textarea id="freeform"></textarea>
+                </div>
+
+                <!-- Error shown is the user does not provide a response with MC options -->
+                <div class="error grid_error">{{}}</div>
+
+                <!-- Error shown is the user does not provide a response with MC options -->
+                <div class="error mc_error">Please select an option before continuing.</div>
+
+                <!-- Error shown if the user does not provide a response on the slider -->
+                <div class="error slider_error">Please adjust the slider before continuing.</div>
+            </div>
+
+            <!-- Continues to next slide  -->
             <button id="continue_button" class="continue_button" onclick="_s.continue_button()">Continue</button>
 
             <!-- Submits user slider response and continues -->
             <button id="submit_data_button" class="continue_button" onclick="_s.submit_data_button()">Continue</button>
-        </div>
 
-        <!-- Followup slides -->
-        <div class="slide" id="followup">
-
-            <!-- Title; displayed only for comprehension checks -->
-            <h3 id="followup_title">Follow-up Question</h3>
-
-            <!-- Written instructions, if applicable -->
-            <p id="trials_text">{{}}</p>
-
-            <!-- Slider (set up in experiment.js) -->
-            <div class="slider">
-                <table class="slider slider_table">
-                    <tr>
-                        <td id="slider_label_l" class="slider_label_l"></td>
-                        <td id="slider_label_r" class="slider_label_r"></td>
-                    </tr>
-                    <tr>
-                        <td colspan="2">
-                            <div id="trials_slider"></div>
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Fixed "grid" for identification of item names and properties (separately) -->
-            <div class="grid">
-                <table class="grid grid_table">
-                    <tr>
-                        <td>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice1" value=""/>
-                            <span id="grid_label1">{{}}</span><br>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice4" value=""/>
-                            <span id="grid_label4">{{}}</span><br>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice7" value=""/>
-                            <span id="grid_label7">{{}}</span><br>
-
-                        <td>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice2" value=""/>
-                            <span id="grid_label2">{{}}</span><br>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice5" value=""/>
-                            <span id="grid_label5">{{}}</span><br>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice8" value=""/>
-                            <span id="grid_label8">{{}}</span><br>
-
-                        </td>
-                        <td>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice3" value=""/>
-                            <span id="grid_label3">{{}}</span><br>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice6" value=""/>
-                            <span id="grid_label6">{{}}</span><br>
-
-                            <input type="checkbox" class="grid_choice" id="grid_choice9" value=""/>
-                            <span id="grid_label9">{{}}</span><br>
-
-                        </td>
-                    </tr>
-                </table>
-            </div>
-
-            <!-- Multiple choice options (modified in experiment.js) -->
-            <div class="mc">
-                <label for="mc_choice1" class="mc_label">
-                    <input type="radio" name="mc_choice" id="mc_choice1" class="multiple_choice"/>
-                    <span id="mc_label1">{{}}</span>
-                </label>
-                <label for="mc_choice2" class="mc_label">
-                    <input type="radio" name="mc_choice" id="mc_choice2" class="multiple_choice"/>
-                    <span id="mc_label2">{{}}</span>
-                </label>
-            </div>
-
-            <!-- Freeform text response -->
-            <div>
-                <textarea id="freeform"></textarea>
-            </div>
-
-            <!-- Error shown is the user does not provide a response with MC options -->
-            <div class="error grid_error">{{}}</div>
-
-            <!-- Error shown is the user does not provide a response with MC options -->
-            <div class="error mc_error">Please select an option before continuing.</div>
-
-            <!-- Error shown if the user does not provide a response on the slider -->
-            <div class="error slider_error">Please adjust the slider before continuing.</div>
         </div>
 
         <!-- Optional form to collect subject demographic information -->

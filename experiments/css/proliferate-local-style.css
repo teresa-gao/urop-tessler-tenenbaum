@@ -37,7 +37,7 @@ h3 {
     text-align:     left;
 }
 
-.container {
+#animation_container {
     position:       relative;
     margin-top:     15px;
     margin-bottom:  15px;
