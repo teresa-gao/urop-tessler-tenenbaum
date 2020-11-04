@@ -23,6 +23,8 @@ var item_name =         _.shuffle([ ["blicket", "blickets"], ["dax", "daxes"], [
 var n_examples =        _.shuffle([1, 2]);
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 
+var grid_name_labels = _.shuffle(["krim", "shen", "thoop", "glud", "zobby", "vug", "glabbin", "yeph"]); // used in followup as distractors
+
 
 
 //////////////////////////////////////////
@@ -52,14 +54,19 @@ function agent_say(display_text, bubble_width=400, duration=2000) {
     }, duration);
 
     return deferred.promise();
+
 }
 
-function set_agent_object_scene(stim) {
+function set_agent_object_scene(stim, fade=true) {
 
     let deferred = new $.Deferred();
 
     let fade_in_duration = 1750;
     let fade_out_duration = 1750;
+    if (!fade) {
+        fade_in_duration = 0;
+        fade_out_duration = 0;
+    }
 
     let fade_in_tags = "#background, #" + stim.agent;
 
@@ -128,6 +135,7 @@ function show_object_property(stim, object_num) {
         squeak = new Audio("audio/squeak.mp3");
         squeak.play();
 
+        // Object compresses and decompresses
         $(".object" + object_num).animate(
             { height: "-=10px", width: "+=0px"},
             { duration: 300}
@@ -243,7 +251,7 @@ function show_all_object_properties(stim) {
 
     setTimeout (function() {
         deferred.resolve();
-    }, total_wait_time + 1250); // extra time accounts for browser delay
+    }, total_wait_time + 1000 + 250*stim.n_examples); // extra time accounts for browser delay
 
     return deferred.promise();
 
@@ -253,13 +261,15 @@ function run_trial(stim) {
 
     $(".continue_button").hide();
 
+    let agent_from_right = 200; // agent's intro slide distance from the right
+    let agent_travel_distance = 90; // distance agent moves to the right to trigger object property reveal
+
     if (stim.type == "agent_intro") {
 
-        $(".agent, .object, #tree, #dirt, #table, .label, #followup").hide();
+        $(".agent, .object, #tree, #dirt, #table, .label, #followup, #title, #trials_text").hide();
         $("#background").attr("src", "images/back" + stim.background + ".jpg");
         $(".agent_intro, #" + stim.agent).show();
 
-        let agent_from_right = 200;
         $(".agent").css("right", agent_from_right + "px");
         $("#speech-bubble-tail, #speech-bubble-outline").css("left", 475 - agent_from_right + "px");
 
@@ -295,7 +305,7 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("Hello! I've been doing research on this planet for a while.", width=425, duration=4000).then(
+            agent_say("Hello! I've been doing research on this planet for a while.", width=425, duration=2500).then(
 
                 function() {
 
@@ -435,7 +445,6 @@ function run_trial(stim) {
 
     if (stim.type == "object_property") {
 
-        let agent_right_distance = 88;
         let agent_animate_duration = 500;
 
         if (stim.item_presentation_condition == "accidental") {
@@ -443,7 +452,7 @@ function run_trial(stim) {
             $(".speech").hide();
 
             $("#" + stim.agent).animate(
-                { right: "-=" + agent_right_distance + "px"},
+                { right: "-=" + agent_travel_distance + "px"},
                 agent_animate_duration,
                 function() {
 
@@ -538,7 +547,7 @@ function run_trial(stim) {
                     $(".speech").hide();
 
                     $("#" + stim.agent).animate(
-                        { right: "-=" + agent_right_distance + "px"},
+                        { right: "-=" + agent_travel_distance + "px"},
                         agent_animate_duration,
                         function() {
 
@@ -631,26 +640,22 @@ function run_trial(stim) {
 
     }
 
-    // TODO: followup
-
     if (stim.type == "followup") {
 
         console.log("stim.type is followup")
 
-        $("#followup, #trials_text, #followup_title").show();
-        $("#animation_container, .error, .slider, .grid, .mc, .freeform").hide();
+        $("#followup, #trials_text, #title").show();
+        $("#animation_container, #generic_text, .error, .slider, .grid, .mc, #freeform").hide();
         $("#trials_text").text(stim.prompt);
 
         if (stim.show_scene) {
 
             console.log("stim.show_scene is true");
 
-            agent_straight(stim.agent);
-            $("." + stim.agent + "_straight").css("right", 360);
-            change_image("background", "images/back" + stim.background + ".jpg");
-            set_table(stim, false);
-            $(".label").hide();
+            $("#" + stim.agent).css("right", agent_from_right - agent_travel_distance);
+            set_agent_object_scene(stim, fade=false)
             $("#animation_container").show();
+
         }
 
         if (stim.show_generic) {
@@ -659,13 +664,14 @@ function run_trial(stim) {
 
             $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
 
-            let generic_statement = generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + stim.property;
+            let generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + stim.property;
             if (stim.property == "squeaking") {
                 generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak";
             }
 
             $("#generic_text").text("\"" + generic_statement + ".\"");
             $("#generic_text").show();
+
         }
 
         if (stim.response_type == "slider") {
@@ -734,6 +740,7 @@ function run_trial(stim) {
 }
 
 
+
 //////////////////////////////////////////
 // MAIN PROGRAM //////////////////////////
 //////////////////////////////////////////
@@ -748,6 +755,7 @@ function make_slides(f) {
             $(".progress").show();
             exp.go();
         }
+
     });
 
     // Botcaptcha (simple language followup check to include at beginning of experiment)
@@ -833,6 +841,7 @@ function make_slides(f) {
                 }
             }
         }
+
     });
 
     // Quasi-attention check and test for suitable user audio system/followup
@@ -896,6 +905,7 @@ function make_slides(f) {
                 }
             }
         }
+
     });
 
     // Display specific experiment context and instructions
@@ -934,6 +944,7 @@ function make_slides(f) {
             // Continue to next slide
             exp.go();
         }
+
     });
 
     // Run experiment
@@ -951,6 +962,7 @@ function make_slides(f) {
         present_handle : function(stim) {
 
             this.stim = stim;
+            console.log(this.stim);
 
             // This is animation sequence is defined as a separate function to avoid excessive indentation
             run_trial(this.stim);
@@ -1000,6 +1012,7 @@ function make_slides(f) {
             };
             exp.go(); //use exp.go() if and only if there is no "present" data.
         }
+
     });
 
     slides.thanks = slide({
@@ -1025,6 +1038,7 @@ function make_slides(f) {
             // Delay sending data to proliferate for 1000 ms
             proliferate.submit(exp.data);
         }
+
     });
 
     return slides;
@@ -1078,20 +1092,24 @@ function init() {
 
     // TODO: implement data-logging!
 
-    slide_num = 1
-
-    let article = " another ";
-    if (item_presentation_condition[0].includes("generic")) {
-        article = " a ";
-    }
-
-    let prompt = "Imagine that you come across" + article + item_name[0][0] + ". What are the chances that it has " + objects[0][2] + "?";
+    // Form grammatically correct followup statements
+    let has_property_statement = "has " + objects[0][2];
     if (objects[0][2] == "squeaking") {
-        prompt = "Imagine that you come across" + article + item_name[0][0] + ". What are the chances that it squeaks?";
+        has_property_statement = "squeaks";
     }
 
+    // Set right answer for followup
+    let character_arrival = "been_while";
+    if (item_presentation_condition[0] == "accidental") {
+        character_arrival = "just_arrived";
+    }
+
+    let slide_num = 1;
+
+    // Create stim (~ slides) to run experiment
     exp.trials_stimuli = exp.trials_stimuli.concat([
 
+        // Animated agent introduces self
         _.extend(
             {
                 slide_num: slide_num++,
@@ -1103,6 +1121,7 @@ function init() {
             }
         ),
 
+        // Animated agent encounters object(s)
         _.extend(
             {
                 slide_num: slide_num++,
@@ -1117,6 +1136,7 @@ function init() {
             }
         ),
 
+        // Animated agent discovers property of object(s)s
         _.extend(
             {
                 slide_num: slide_num++,
@@ -1131,11 +1151,47 @@ function init() {
             }
         ),
 
+        // Followup for learned object name recognition
         _.extend(
             {
                 slide_num: slide_num++,
                 type: "followup",
-                prompt: prompt,
+                prompt: "What is the name of the item you learned about? Please select its name from the options below.",
+                correct_answer: item_name[0],
+                show_scene: false,
+                show_generic: false,
+                response_type: "grid",
+                grid_labels: grid_name_labels,
+                item_presentation_condition: item_presentation_condition[0]
+            }
+        ),
+
+        // Followup for character knowledge before object encounter and property reveal
+        _.extend(
+            {
+                slide_num: slide_num++,
+                type: "followup",
+                prompt: "Please refer to the image below. How long has this character been doing research on this planet?",
+                correct_answer: character_arrival,
+                show_scene: true,
+                show_generic: false,
+                agent: agents[0],
+                background: back[0],
+                object: objects[0],
+                item_name: item_name[0],
+                n_examples: n_examples[0],
+                response_type: "mc",
+                options: [ ["This character is a new researcher and just arrived here", "just_arrived"], ["This character has been doing research on this planet for a while", "been_while"] ],
+                item_presentation_condition: item_presentation_condition[0]
+            }
+        ),
+
+        // Followup for likelihood of next encountered object to have same property
+        _.extend(
+            {
+                slide_num: slide_num++,
+                type: "followup",
+                prompt: "Imagine that you come across another " +item_name[0][0] + ". What are the chances that it " + has_property_statement + "?",
                 correct_answer: "NA",
                 show_scene: false,
                 show_generic: false,
@@ -1144,6 +1200,39 @@ function init() {
                 slider_label_r: "100% (certain)",
                 item_presentation_condition: item_presentation_condition[0],
                 n_examples: n_examples[0]
+            }
+        ),
+
+        // Followup for perceived strength of inference for generic
+        _.extend(
+            {
+                slide_num: slide_num++,
+                type: "followup",
+                prompt: "Would you say the following is true?",
+                correct_answer: "NA",
+                show_scene: false,
+                show_generic: true,
+                property: objects[0][2],
+                item_name: item_name[0],
+                response_type: "slider",
+                grid_labels: grid_name_labels,
+                slider_label_l: "0% (definitely false)",
+                slider_label_r: "100% (definitely true)",
+                item_presentation_condition: item_presentation_condition[0]
+            }
+        ),
+
+        // Followup freeform response to gauge data quality
+        _.extend(
+            {
+                slide_num: slide_num++,
+                type: "followup",
+                prompt: "In the text box below, please describe briefly what happened in this experiment.",
+                correct_answer: "NA",
+                show_scene: false,
+                show_generic: false,
+                response_type: "freeform",
+                item_presentation_condition: item_presentation_condition[0]
             }
         )
 

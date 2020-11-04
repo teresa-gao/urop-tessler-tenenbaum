@@ -107,4 +107,4 @@ In the text box below, please describe briefly what happened in this experiment.
 | "Please refer to the image below. Did this character know that <pl. object name\> could have <property\> before you observed it together?" | multiple choice (radio button) | Y           | Y      | Y            |
 | "In the text box below, please describe briefly what happened in this experiment."\*                                                       | freeform (text box)            | Y           | Y      | Y            |
 
-\* This is included for data quality assessment purposes.`
+\* This is included for data quality assessment purposes.

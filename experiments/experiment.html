@@ -6,7 +6,7 @@
         <!--CSS-->
         <link href="_shared/full-projects/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
         <link href="_shared/css/cocolab-style.css" rel="stylesheet" type="text/css"/>
-        <link href="css/proliferate-local-style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/local-style.css" rel="stylesheet" type="text/css"/>
 
     </head>
 
@@ -44,6 +44,7 @@
             <p id="legal">
                 Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the MIT Computational Cognitive Science Group. If you have questions about this research, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a> or tessler@mit.edu. You must be  at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions; you may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.
             </p>
+
         </div>
 
         <!-- Botcaptcha slide, which blocks the user if they are clearly not paying attention -->
@@ -65,6 +66,7 @@
                 <br/><br/>
                 If you believe you are receiving this message in error, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a> or tessler@mit.edu.
             </p>
+
         </div>
 
         <!-- Sound check slide, which makes sure the user has a suitable system volume for the trials -->
@@ -87,6 +89,7 @@
                 <br/><br/>
                 If you believe you are receiving this message in error, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a> or tessler@mit.edu.
             </p>
+
         </div>
 
         <!-- Background and instructions for "trial" -->
@@ -102,10 +105,15 @@
                 When you arrive at the field site, you meet another scientist there.
             </p>
             <button onclick="_s.button()">Continue</button>
+
         </div>
 
         <!-- Trials slides -->
         <div class="slide" id="trials">
+
+            <h3 id="title">Follow-up Question</h3>
+
+            <p id="trials_text">{{}}</p>
 
             <div id="animation_container">
 
@@ -146,9 +154,7 @@
 
             <div id="followup">
 
-                <h3 id="followup_title">Follow-up Question</h3>
-
-                <p id="trials_text">{{}}</p>
+                <p id="generic_text">{{}}</p>
 
                 <!-- Slider -->
                 <div class="slider">
@@ -221,7 +227,7 @@
                 </div>
 
                 <!-- Freeform text response -->
-                <div class="freeform">
+                <div>
                     <textarea id="freeform"></textarea>
                 </div>
 
@@ -289,11 +295,13 @@
                 <br/>
                 <button id="submit_button" onclick="_s.submit()" style="margin-top:20px;" type="button">Submit</button>
             </div>
+
         </div>
 
         <!-- Displays simple thank-you message -->
         <div class="slide" id="thanks">
             <h3>Thank you for your participation!</h3>
+
         </div>
 
         <!-- Displays black progress bar at top of screen throughout experiment -->
@@ -302,6 +310,7 @@
                 <div class="bar" width="0%">
                 </div>
             </div>
+
         </div>
 
 
