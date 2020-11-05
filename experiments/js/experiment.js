@@ -508,6 +508,10 @@ function run_trial(stim) {
 
                             }
 
+                            // TODO: readd speaker voice audio
+                            // remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
+                            // remark.play();
+
                             agent_say(say_text, slide_num=stim.slide_num, bubble_width=200);
 
                             setTimeout (function() {
@@ -1098,9 +1102,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
+        "i0",
+        "botcaptcha",
+        "sound_check",
         "introduction",
         "trials", // includes animations as well as followup questions
         "subj_info",
