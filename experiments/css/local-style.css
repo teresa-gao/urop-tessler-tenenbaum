@@ -239,7 +239,9 @@ h3 {
 }
 
 .grid_table {
-    width:          100%;
+    width:          50%;
+    margin-left:    auto;
+    margin-right:   auto;
     border:         hidden;
     margin-bottom:  15px;
 }

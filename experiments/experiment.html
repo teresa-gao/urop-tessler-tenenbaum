@@ -177,37 +177,19 @@
                         <tr>
                             <td>
 
-                                <input type="checkbox" class="grid_choice" id="grid_choice1" value=""/>
-                                <span id="grid_label1">{{}}</span><br>
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice1" value=""/>
+                                <span id="grid_label1">1</span><br>
 
-                                <input type="checkbox" class="grid_choice" id="grid_choice4" value=""/>
-                                <span id="grid_label4">{{}}</span><br>
-
-                                <input type="checkbox" class="grid_choice" id="grid_choice7" value=""/>
-                                <span id="grid_label7">{{}}</span><br>
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice4" value=""/>
+                                <span id="grid_label2">2</span><br>
 
                             <td>
 
-                                <input type="checkbox" class="grid_choice" id="grid_choice2" value=""/>
-                                <span id="grid_label2">{{}}</span><br>
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice2" value=""/>
+                                <span id="grid_label3">3</span><br>
 
-                                <input type="checkbox" class="grid_choice" id="grid_choice5" value=""/>
-                                <span id="grid_label5">{{}}</span><br>
-
-                                <input type="checkbox" class="grid_choice" id="grid_choice8" value=""/>
-                                <span id="grid_label8">{{}}</span><br>
-
-                            </td>
-                            <td>
-
-                                <input type="checkbox" class="grid_choice" id="grid_choice3" value=""/>
-                                <span id="grid_label3">{{}}</span><br>
-
-                                <input type="checkbox" class="grid_choice" id="grid_choice6" value=""/>
-                                <span id="grid_label6">{{}}</span><br>
-
-                                <input type="checkbox" class="grid_choice" id="grid_choice9" value=""/>
-                                <span id="grid_label9">{{}}</span><br>
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice5" value=""/>
+                                <span id="grid_label4">4</span><br>
 
                             </td>
                         </tr>
@@ -231,14 +213,18 @@
                     <textarea id="freeform"></textarea>
                 </div>
 
-                <!-- Error shown is the user does not provide a response with MC options -->
-                <div class="error grid_error">{{}}</div>
+                <!-- Error shown is the user does not provide a response with MC grid -->
+                <div id="grid_error" class="error">Please select exactly 1 item name before continuing.</div>
 
                 <!-- Error shown is the user does not provide a response with MC options -->
-                <div class="error mc_error">Please select an option before continuing.</div>
+                <div id="mc_error" class="error">Please select an option before continuing.</div>
 
                 <!-- Error shown if the user does not provide a response on the slider -->
-                <div class="error slider_error">Please adjust the slider before continuing.</div>
+                <div id="slider_error" class="error">Please adjust the slider before continuing.</div>
+
+                <!-- Error shown if the user does not provide a response in the freeform text box -->
+                <div id="freeform_error" class="error">Please type something in the text box before continuing.</div>
+
             </div>
 
             <!-- Continues to next slide  -->

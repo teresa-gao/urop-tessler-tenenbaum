@@ -23,7 +23,8 @@ var item_name =         _.shuffle([ ["blicket", "blickets"], ["dax", "daxes"], [
 var n_examples =        _.shuffle([1, 2]);
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 
-var grid_name_labels = _.shuffle(["krim", "shen", "thoop", "glud", "zobby", "vug", "glabbin", "yeph"]); // used in followup as distractors
+var distractor_names = _.shuffle(["zobby", "vug", "yem"])
+var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_name[0][0]] ) );
 
 
 
@@ -642,15 +643,11 @@ function run_trial(stim) {
 
     if (stim.type == "followup") {
 
-        console.log("stim.type is followup")
-
         $("#followup, #trials_text, #title").show();
         $("#animation_container, #generic_text, .error, .slider, .grid, .mc, #freeform").hide();
         $("#trials_text").text(stim.prompt);
 
         if (stim.show_scene) {
-
-            console.log("stim.show_scene is true");
 
             $("#" + stim.agent).css("right", agent_from_right - agent_travel_distance);
             set_agent_object_scene(stim, fade=false)
@@ -659,8 +656,6 @@ function run_trial(stim) {
         }
 
         if (stim.show_generic) {
-
-            console.log("stim.show_generic is true");
 
             $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
 
@@ -676,8 +671,6 @@ function run_trial(stim) {
 
         if (stim.response_type == "slider") {
 
-            console.log("stim.response_type is slider");
-
             // Create slider, initialized without position
             utils.make_slider("#trials_slider", function(event, ui) {
                 exp.sliderPost = ui.value;
@@ -692,8 +685,6 @@ function run_trial(stim) {
         }
 
         if (stim.response_type == "mc") {
-
-            console.log("stim.response_type is mc");
 
             // Clear previous multiple choice responses
             $("input[name=mc_choice]").prop("checked", false);
@@ -713,12 +704,10 @@ function run_trial(stim) {
 
         if (stim.response_type == "grid") {
 
-            console.log("stim.response_type is grid");
-
             $(".grid").show();
 
             let counter;
-            for (counter=1; counter <= 9; counter++) {
+            for (counter=1; counter <= grid_name_labels.length; counter++) {
                 $("#grid_label" + counter).text(stim.grid_labels[counter-1]);
                 $("#grid_choice" + counter).attr("value", stim.grid_labels[counter-1]);
             }
@@ -726,8 +715,6 @@ function run_trial(stim) {
         }
 
         if (stim.response_type == "freeform") {
-
-            console.log("stim.response_type is freeform");
 
             $("#freeform").show();
 
@@ -980,8 +967,22 @@ function make_slides(f) {
 
             // No response on slider -> error
             if ((this.stim.response_type == "slider") && (exp.sliderPost == null)) {
-                $(".slider_error").show();
+                $("#slider_error").show();
+
+            // Incorrect number of responses on grid -> error
+            } else if ((this.stim.response_type == "grid") && (!($("input[name='grid_choice']").is(":checked")))) {
+                $("#grid_error").show();
+
+            // No response on MC (radio) buttons -> error
+            } else if ((this.stim.response_type == "mc") && (!($("input[name='mc_choice']").is(":checked")))) {
+                $("#mc_error").show();
+
+            } else if ((this.stim.response_type == "freeform") && ($("textarea#freeform").val() == "")) {
+                $("#freeform_error").show();
+
+            // Log response data
             } else {
+                this.trials_endT = Date.now();
 
                  // TODO: implement data-logging!
                 _stream.apply(this);
