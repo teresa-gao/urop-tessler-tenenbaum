@@ -40,7 +40,7 @@ function change_image(class_name, source) {
 
 }
 
-function agent_say(display_text, bubble_width=400, duration=2000) {
+function agent_say(display_text, slide_num, bubble_width=400, duration=2000) {
 
     let deferred = new $.Deferred();
 
@@ -48,7 +48,14 @@ function agent_say(display_text, bubble_width=400, duration=2000) {
     $("#speech-bubble").text(display_text);
     $("#speech-bubble").width(bubble_width);
 
-    // TODO: log spoken text to trials_stimuli_full (to be sent to Prolific)
+    // log spoken text to be sent to Prolific)
+    exp.trials_stimuli_full[0]["spoken_text"].push(
+        {
+            text: display_text,
+            slide_num: slide_num,
+            duration: duration
+        }
+    );
 
     setTimeout (function() {
         deferred.resolve();
@@ -276,13 +283,13 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "accidental") {
 
-            agent_say("Hello! I am a new researcher. I just arrived on this planet.", width=425, duration=4000).then(
+            agent_say("Hello! I am a new researcher. I just arrived on this planet.", slide_num=stim.slide_num, width=425, duration=4000).then(
 
                 function() {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("I don't know anything about the animals, plants, or objects here.", width=475);
+                    agent_say("I don't know anything about the animals, plants, or objects here.", slide_num=stim.slide_num, width=475);
                     // TODO: add speaker voice audio
 
                     setTimeout (function() {
@@ -306,13 +313,13 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("Hello! I've been doing research on this planet for a while.", width=425, duration=2500).then(
+            agent_say("Hello! I've been doing research on this planet for a while.", slide_num=stim.slide_num, width=425, duration=2500).then(
 
                 function() {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("I know all about the animals, plants, and objects here.", width=400, duration=2500);
+                    agent_say("I know all about the animals, plants, and objects here.", slide_num=stim.slide_num, width=400, duration=2500);
                     // TODO: add speaker voice audio
 
                     setTimeout (function() {
@@ -346,7 +353,7 @@ function run_trial(stim) {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("Hmm, I wonder what we have here.", bubble_width=300);
+                    agent_say("Hmm, I wonder what we have here.", slide_num=stim.slide_num, bubble_width=300);
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -367,7 +374,7 @@ function run_trial(stim) {
                         statement = "Oh, I see! This is a " + stim.item_name[0] + ".";
                     }
 
-                    agent_say(statement, bubble_width=225);
+                    agent_say(statement, slide_num=stim.slide_num, bubble_width=225);
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -390,7 +397,7 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("I have something to show you. Follow me!", bubble_width=325).then(
+            agent_say("I have something to show you. Follow me!", slide_num=stim.slide_num, bubble_width=325).then(
 
                 function() {
 
@@ -421,7 +428,7 @@ function run_trial(stim) {
                         bubble_width += 50;
                     }
 
-                    agent_say(statement, bubble_width=bubble_width);
+                    agent_say(statement, slide_num=stim.slide_num, bubble_width=bubble_width);
 
                     setTimeout (function() {
                         deferred.resolve();
@@ -494,7 +501,7 @@ function run_trial(stim) {
                             // remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
                             // remark.play();
 
-                            agent_say(say_text, bubble_width=200);
+                            agent_say(say_text, slide_num=stim.slide_num, bubble_width=200);
 
                             setTimeout (function() {
                                 deferred.resolve();
@@ -541,7 +548,7 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("Watch this!", bubble_width=100, duration=1500).then(
+            agent_say("Watch this!", slide_num=stim.slide_num, bubble_width=100, duration=1500).then(
 
                 function() {
 
@@ -590,7 +597,7 @@ function run_trial(stim) {
                                     // remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
                                     // remark.play();
 
-                                    agent_say(say_text, bubble_width=bubble_width);
+                                    agent_say(say_text, slide_num=stim.slide_num, bubble_width=bubble_width);
 
                                     setTimeout (function() {
                                         deferred.resolve();
@@ -794,12 +801,13 @@ function make_slides(f) {
                 if (bot_response.toLowerCase() == listener.toLowerCase()) {
 
                     // Log data to Prolific
-                    exp.catch_trials.push({
-                        trial_type: "botcaptcha",
+                    exp.response_data.push({
+                        type: "attention",
+                        prompt: this.bot_utterance + " " + this.bot_question,
                         correct_answer: listener,
                         num_fails: this.bot_trials,
                         responses: this.all_responses,
-                        trial_time_in_seconds: (Date.now() - this.botcaptcha_startT) / 1000
+                        duration: (Date.now() - this.botcaptcha_startT) / 1000
                     });
 
                     // Continue to next slide
@@ -864,12 +872,13 @@ function make_slides(f) {
                 if (sound_response.toLowerCase() == this.sound_word) {
 
                     // Log data to Prolific
-                    exp.catch_trials.push({
-                        trial_type: "sound_response",
+                    exp.response_data.push({
+                        type: "attention",
+                        prompt: "Please adjust your system volume to a comfortable level. When you are ready, click the Test button. You will hear a word like \"skyscraper\". Enter the word you hear into the box below and click Continue\ when you are finished.",
                         correct_answer: this.sound_word,
                         num_fails: this.sound_trials,
                         responses: this.all_responses,
-                        trial_time_in_seconds: (Date.now() - this.sound_startT) / 1000
+                        duration: (Date.now() - this.sound_startT) / 1000
                     });
 
                     exp.go();
@@ -909,24 +918,12 @@ function make_slides(f) {
             // Track introduction slide end time
             this.intro_endT = Date.now();
 
-            // Log introduction data (esp. duration) to full Prolific data
-            _.extend(exp.trials_stimuli_full[0],
+            exp.response_data.push(
                 {
-                    slide_num: 0, // Introduction
-                    trial_type: "introduction",
-                    trial_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000,
-                    display_text: "You are a scientist being deployed to a remote field site on a faraway planet. Your job is to catalogue and describe new kinds of plants, animals, and objects that have been discovered on the planet. When you arrive at the field site, you meet other scientists there."
+                    type: "introduction",
+                    duration: (this.intro_endT - this.intro_startT) / 1000
                 }
-            );
-
-            // Log introduction data (esp. duration) to streamlined Prolific data
-            _.extend(exp.trials_stimuli_streamlined[0],
-                {
-                    slide_num: 0, // Introduction
-                    trial_type: "introduction",
-                    trial_time_in_seconds: (this.intro_endT - this.intro_startT) / 1000
-                }
-            );
+            )
 
             // Continue to next slide
             exp.go();
@@ -940,13 +937,9 @@ function make_slides(f) {
         name : "trials",
         present: exp.trials_stimuli,
 
-        start: function() {
+        present_handle : function(stim) {
 
             this.trials_startT = Date.now();
-
-        },
-
-        present_handle : function(stim) {
 
             this.stim = stim;
             console.log(this.stim);
@@ -983,6 +976,48 @@ function make_slides(f) {
             // Log response data
             } else {
                 this.trials_endT = Date.now();
+
+                // collect response
+                if (this.stim.response_type == "slider") {
+
+                    this.response = exp.sliderPost;
+
+                } else if (this.stim.response_type == "grid") {
+
+                    this.response = $("input[name=grid_choice]:checked").val();
+
+                } else if (this.stim.response_type == "mc") {
+                    this.response = $("input[name=mc_choice]:checked").val();
+
+                } else if (this.stim.response_type == "freeform") {
+                    this.response = $("#freeform").val();
+
+                }
+
+                // Checks if the user response is correct
+                if (this.stim.correct_answer == "NA") {
+                    this.is_correct = true; // For simplicity, slider and freeform responses are always considered "right"
+                } else {
+                    if (typeof(this.stim.correct_answer) == "object") {
+                        this.is_correct = (this.response[0] == this.stim.correct_answer[0]);
+                    } else {
+                        this.is_correct = (this.response == this.stim.correct_answer);
+                    }
+
+                }
+
+                // Log followup duration and slider response to MTurk
+                exp.response_data.push(
+                    {
+                        slide_num: this.stim.slide_num,
+                        prompt: this.stim.prompt,
+                        response: this.response,
+                        response_type: this.stim.response_type,
+                        correct_answer: this.stim.correct_answer,
+                        is_correct: this.is_correct,
+                        duration: (this.trials_endT - this.trials_startT) / 1000
+                    }
+                );
 
                  // TODO: implement data-logging!
                 _stream.apply(this);
@@ -1025,15 +1060,12 @@ function make_slides(f) {
 
             // Logs data to Prolific
             exp.data = {
-                catch_trials: exp.catch_trials,
                 condition: exp.condition,
-                trials_stimuli_full: exp.trials_stimuli_full, // What is displayed to the user (unflattened)
-                trials_stimuli_streamlined: exp.trials_stimuli_streamlined, // What is displayed to the user (flattened)
-                trials_response_data: exp.trials_response_data, // What the user responds (times and sliders) for the main trials
+                trials_stimuli_full: exp.trials_stimuli_full,
+                trials_stimuli_streamlined: exp.trials_stimuli_streamlined,
+                response_data: exp.response_data,
                 system: exp.system,
-                followup_response_data: exp.followup_response_data, // What the user responds for the followup questions
-                subject_information: exp.subj_data,
-                total_time_in_seconds: (Date.now() - exp.startT) / 1000
+                subject_information: exp.subj_data
             };
 
             // Delay sending data to proliferate for 1000 ms
@@ -1066,32 +1098,53 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[ // TODO: uncomment below experiment blocks
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
+        "i0",
+        "botcaptcha",
+        "sound_check",
         "introduction",
-        "trials",
-        // "followup", // TODO: add followup as separate section of slides
+        "trials", // includes animations as well as followup questions
         "subj_info",
         "thanks"
     ];
 
-    // Used to run present_handle
-    exp.trials_stimuli = [];
+    let environment_name;
+    if (objects[0][0] == "bird") {
+        environment_name = "tree";
+    } else if (objects[0][0] == "artifact") {
+        environment_name = "table";
+    } else if (objects[0][0] == "flower") {
+        environment_name = "dirt";
+    }
 
-    // Used to submit to Prolific — very complete data, not flattened
-    exp.trials_stimuli_full = [{}]; // Initialized empty so slide_num 0 (introduction) data can be filled in later
+    // Submitted to Prolific — very complete data, not flattened
+    exp.trials_stimuli_full = [{
+        item_presentation_condition: item_presentation_condition[0],
+        n_examples: n_examples[0],
+        agent: {
+            name: agents[0],
+            image: agents[0] + "_straight.png"
+        },
+        object: {
+            name: objects[0][0],
+            closed_image: objects[0][1] + "_closed.svg",
+            open_image: objects[0][1] + "_open.svg",
+            property: objects[0][2]
+        },
+        item_name: {
+            singular: item_name[0][0],
+            plural: item_name[0][1]
+        },
+        environment: {
+            name: environment_name,
+            image: environment_name + ".svg"
+        },
+        speaker: speakers[0],
+        background: back[0],
+        spoken_text: []
+    }]
 
-    // Used to submit to Prolific — streamlined and flattened
-    exp.trials_stimuli_streamlined = [{}]; // Initialized with empty {} so slide_num 0 (introduction) can be filled in later
-
-    // Used to submit to Prolific — contains user slider responses and times for main trials
-    exp.trials_response_data = [];
-
-    // Used to submit to Prolific — contains followup "trial" response data
-    exp.followup_response_data = [];
-
-    // TODO: implement data-logging!
+    // Submitted to Prolific — contains response data from catch trials, animated trials slides, and followups
+    exp.response_data = [];
 
     // Form grammatically correct followup statements
     let has_property_statement = "has " + objects[0][2];
@@ -1105,146 +1158,136 @@ function init() {
         character_arrival = "just_arrived";
     }
 
-    let slide_num = 1;
-
     // Create stim (~ slides) to run experiment
-    exp.trials_stimuli = exp.trials_stimuli.concat([
+    let slide_num = 0;
+    exp.trials_stimuli_streamlined = [
+        {
+        slide_num: slide_num++, // Introduction
+        type: "introduction",
+        prompt: "You are a scientist being deployed to a remote field site on a faraway planet. Your job is to catalogue and describe new kinds of animals, plants, and objects that have been discovered on the planet. When you arrive at the field site, you meet another scientist there."
+        }
+    ];
+
+    exp.trials_stimuli = [
 
         // Animated agent introduces self
-        _.extend(
-            {
-                slide_num: slide_num++,
-                type: "agent_intro",
-                item_presentation_condition: item_presentation_condition[0],
-                background: back[0],
-                agent: agents[0],
-                speaker: speakers[0]
-            }
-        ),
+        {
+            slide_num: slide_num++,
+            type: "agent_intro",
+            item_presentation_condition: item_presentation_condition[0],
+            background: back[0],
+            agent: agents[0],
+            speaker: speakers[0]
+        },
 
         // Animated agent encounters object(s)
-        _.extend(
-            {
-                slide_num: slide_num++,
-                type: "object_encounter",
-                item_presentation_condition: item_presentation_condition[0],
-                background: back[0],
-                agent: agents[0],
-                speaker: speakers[0],
-                object: objects[0],
-                item_name: item_name[0],
-                n_examples: n_examples[0]
-            }
-        ),
+        {
+            slide_num: slide_num++,
+            type: "object_encounter",
+            item_presentation_condition: item_presentation_condition[0],
+            background: back[0],
+            agent: agents[0],
+            speaker: speakers[0],
+            object: objects[0],
+            item_name: item_name[0],
+            n_examples: n_examples[0]
+        },
 
         // Animated agent discovers property of object(s)s
-        _.extend(
-            {
-                slide_num: slide_num++,
-                type: "object_property",
-                item_presentation_condition: item_presentation_condition[0],
-                background: back[0],
-                agent: agents[0],
-                speaker: speakers[0],
-                object: objects[0],
-                item_name: item_name[0],
-                n_examples: n_examples[0]
-            }
-        ),
+        {
+            slide_num: slide_num++,
+            type: "object_property",
+            item_presentation_condition: item_presentation_condition[0],
+            background: back[0],
+            agent: agents[0],
+            speaker: speakers[0],
+            object: objects[0],
+            item_name: item_name[0],
+            n_examples: n_examples[0]
+        },
 
         // Followup for learned object name recognition
-        _.extend(
-            {
-                slide_num: slide_num++,
-                type: "followup",
-                prompt: "What is the name of the item you learned about? Please select its name from the options below.",
-                correct_answer: item_name[0],
-                show_scene: false,
-                show_generic: false,
-                response_type: "grid",
-                grid_labels: grid_name_labels,
-                item_presentation_condition: item_presentation_condition[0]
-            }
-        ),
+        {
+            slide_num: slide_num++,
+            type: "followup",
+            prompt: "What is the name of the item you learned about? Please select its name from the options below.",
+            correct_answer: item_name[0][0],
+            show_scene: false,
+            show_generic: false,
+            response_type: "grid",
+            grid_labels: grid_name_labels,
+            item_presentation_condition: item_presentation_condition[0]
+        },
 
         // Followup for character knowledge before object encounter and property reveal
-        _.extend(
-            {
-                slide_num: slide_num++,
-                type: "followup",
-                prompt: "Please refer to the image below. How long has this character been doing research on this planet?",
-                correct_answer: character_arrival,
-                show_scene: true,
-                show_generic: false,
-                agent: agents[0],
-                background: back[0],
-                object: objects[0],
-                item_name: item_name[0],
-                n_examples: n_examples[0],
-                response_type: "mc",
-                options: [ ["This character is a new researcher and just arrived here", "just_arrived"], ["This character has been doing research on this planet for a while", "been_while"] ],
-                item_presentation_condition: item_presentation_condition[0]
-            }
-        ),
+        {
+            slide_num: slide_num++,
+            type: "followup",
+            prompt: "Please refer to the image below. How long has this character been doing research on this planet?",
+            correct_answer: character_arrival,
+            show_scene: true,
+            show_generic: false,
+            agent: agents[0],
+            background: back[0],
+            object: objects[0],
+            item_name: item_name[0],
+            n_examples: n_examples[0],
+            response_type: "mc",
+            options: [ ["This character is a new researcher and just arrived here", "just_arrived"], ["This character has been doing research on this planet for a while", "been_while"] ],
+            item_presentation_condition: item_presentation_condition[0]
+        },
 
         // Followup for likelihood of next encountered object to have same property
-        _.extend(
-            {
-                slide_num: slide_num++,
-                type: "followup",
-                prompt: "Imagine that you come across another " +item_name[0][0] + ". What are the chances that it " + has_property_statement + "?",
-                correct_answer: "NA",
-                show_scene: false,
-                show_generic: false,
-                response_type: "slider",
-                slider_label_l: "0% (impossible)",
-                slider_label_r: "100% (certain)",
-                item_presentation_condition: item_presentation_condition[0],
-                n_examples: n_examples[0]
-            }
-        ),
+        {
+            slide_num: slide_num++,
+            type: "followup",
+            prompt: "Imagine that you come across another " +item_name[0][0] + ". What are the chances that it " + has_property_statement + "?",
+            correct_answer: "NA",
+            show_scene: false,
+            show_generic: false,
+            response_type: "slider",
+            slider_label_l: "0% (impossible)",
+            slider_label_r: "100% (certain)",
+            item_presentation_condition: item_presentation_condition[0],
+            n_examples: n_examples[0]
+        },
 
         // Followup for perceived strength of inference for generic
-        _.extend(
-            {
-                slide_num: slide_num++,
-                type: "followup",
-                prompt: "Would you say the following is true?",
-                correct_answer: "NA",
-                show_scene: false,
-                show_generic: true,
-                property: objects[0][2],
-                item_name: item_name[0],
-                response_type: "slider",
-                grid_labels: grid_name_labels,
-                slider_label_l: "0% (definitely false)",
-                slider_label_r: "100% (definitely true)",
-                item_presentation_condition: item_presentation_condition[0]
-            }
-        ),
+        {
+            slide_num: slide_num++,
+            type: "followup",
+            prompt: "Would you say the following is true?",
+            correct_answer: "NA",
+            show_scene: false,
+            show_generic: true,
+            property: objects[0][2],
+            item_name: item_name[0],
+            response_type: "slider",
+            grid_labels: grid_name_labels,
+            slider_label_l: "0% (definitely false)",
+            slider_label_r: "100% (definitely true)",
+            item_presentation_condition: item_presentation_condition[0]
+        },
 
         // Followup freeform response to gauge data quality
-        _.extend(
-            {
-                slide_num: slide_num++,
-                type: "followup",
-                prompt: "In the text box below, please describe briefly what happened in this experiment.",
-                correct_answer: "NA",
-                show_scene: false,
-                show_generic: false,
-                response_type: "freeform",
-                item_presentation_condition: item_presentation_condition[0]
-            }
-        )
+        {
+            slide_num: slide_num++,
+            type: "followup",
+            prompt: "In the text box below, please describe briefly what happened in this experiment.",
+            correct_answer: "NA",
+            show_scene: false,
+            show_generic: false,
+            response_type: "freeform",
+            item_presentation_condition: item_presentation_condition[0]
+        }
 
-    ]);
+    ];
 
-    // Initialize data frames to be submitted to Prolific — data will be added as slides are run
-    exp.catch_trials = [];
-    exp.followup_data = [];
+    exp.trials_stimuli_streamlined = exp.trials_stimuli_streamlined.concat(JSON.parse(JSON.stringify(exp.trials_stimuli))); // deep copy
+
     exp.condition = {
         item_presentation_condition: item_presentation_condition[0],
-        n_examples: n_examples
+        n_examples: n_examples[0]
     };
 
     console.log(exp.condition);
