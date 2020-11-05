@@ -38,12 +38,16 @@ Contains agent, object, and background images as well as Adobe Illustrator files
 
 Contains experiment.js.
 
+## version2
+
+Contains previous experiment version's code (prior to 2020-10-29). Note that only files and subdirectories which differ from the current ones are included.
+
 ### Structure
 
 * **Variable declarations.** Much of the experiment can be modified solely by changing these variable values
-* **Functions.** These are used primarily in `slides.trials` (trials slide).
-* **Slides.** These include intro slide, catch trials, (experimental) trial slides, followup trials, optional info, and thank-you (data submission to MTurk).
-* **Setup.**  Here, we create the data frames which are passed as stim into slides.trials, slides.attention_check, and slides.manipulation_check and/or used to collect data to be submitted to MTurk; declare exp.structure; and set up things such as Unique Turker.
+* **Helper functions.** These are used primarily in `slides.trials` (trials slide).
+* **Main program.** These include intro slide, catch trials (attention checks), trial slides (animated experiment) and followup trials, optional personal info, and thank-you (data submission to Prolific).
+* **Init and setup.**  Here, we create the data frames which are passed as stim to the slides and/or used to collect data to be submitted to Prolific and declare exp.structure.
 
 ### How does everything work within the slides?
 
@@ -60,51 +64,38 @@ Additional semi-botcaptcha, in which user must type the word that they hear. Che
 Provides context for following experimental task.
 
 #### slides.trials
-Contains both experimental trials (display and slider response) as well as followup comprehension checks.
+Contains both experimental trials as well as followup comprehension checks.
 
 ##### Scripts
-Currently, only pedagogical, accidental, and naive conditions are in use.
+Currently, only pedagogical and accidental conditions are in use.
 
-| text (script) \| agent action                                                                               | duration in ms\* | accidental\*\*? | naive? | pedagogical? |
-| ----------------------------------------------------------------------------------------------------------- | ---------------- | --------------- | ------ | ------------ |
-| "Hello! I've been doing research on this planet for a while."                                               | 4750             | N               | N      | Y            |
-| "Hello! I am a new researcher. I just arrived on this planet."                                              | 4000             | Y               | Y      | N            |
-| "Here we have a <sing. object name\> on the table." \| "Here we have some <pl. object name\> on the table." | 3500             | N               | N      | Y            |
-| "Hmm, I wonder what we have here on the table."                                                             | 3500             | Y               | Y      | N            |
-| "Oh, I see! This is a <sing. object name\>." \| "Oh, I see! These are <pl. object name\>."                  | 4000             | Y               | Y      | N            |
-| "I know all about <pl. object name\>."                                                                      | 3000             | N               | N      | Y            |
-| "I don't know anything about <pl. object name\>."                                                           | 3000             | Y               | Y      | N            |
-| "Let me show you something."                                                                                | 2000             | N               | N      | Y            |
-| "Let's take a look."                                                                                        | 1750             | N               | Y      | N            |
-| *Agent interacts with blanket.*                                                                             |                  | Y               | Y      | Y            |
-| "Watch this!"                                                                                               | 1750             | N               | N      | Y            |
-| *Blanket falls off, revealing object.*                                                                      |                  | Y               | Y      | Y            |
-| "Oops!"                                                                                                     | 1000             | Y               | N      | N            |
-| *Object reveals its property.*                                                                              |                  | Y               | Y      | Y            |
-| "See? <non-squeaking property\>!"                                                                           | 3000             | N               | N      | Y            |
-| "Oh wow! <non-squeaking property\>!"                                                                        | 3500             | Y               | Y      | N            |
-| "See? Squeaking!"                                                                                           | 2500             | N               | N      | Y            |
-| "Oh wow! Squeaking!"                                                                                        | 3000             | Y               | Y      | N            |
-| "Let me show you another one."                                                                              | 2500             | N               | N      | Y            |
-| "Let's look at another one."                                                                                | 2250             | N               | Y      | N            |
+| text (script) \| agent action                                                                            | duration in ms\* | accidental? | pedagogical? |
+| ---------------------------------------------------------------------------------------------------------| ---------------- | ----------- | ------------ |
+| *Agent appears on planet with background.*                                                               | TBD              | Y           | Y            |
+| "Hello! I am a new researcher. I just arrived on this planet."                                           | TBD              | Y           | N            |
+| "Hello! I've been doing research on this planet for a while."                                            | TBD              | N           | Y            |
+| "I don't know anything about the animals, plants, or objects here."                                      | TBD              | Y           | N            |
+| "I know all about the animals, plants, and objects here."                                                | TBD              | N           | Y            |
+| "I have something to show you. Follow me!"                                                               | TBD              | N           | Y            |
+| *Agent appears on planet with background and birds in tree, plants in dirt pile, or artifacts on table.* | TBD              | Y           | Y            |
+| "Hmm, I wonder what we have here."                                                                       | TBD              | Y           | N            |
+| "Oh, I see! This is a <sing. object name\>." \| "Oh, I see! These are <pl. object name\>."               | TBD              | Y           | N            |
+| "This is a <sing. object name\>." \| "These are <pl. object name\>."                                     | TBD              | N           | Y            |
+| "Watch this!"                                                                                            | TBD              | N           | Y            |
+| *Agent moves toward object(s): object(s) reveal property.*                                               | TBD              | Y           | Y            |
+| "Oh wow! <property\>!"                                                                                   | TBD              | Y           | N            |
+| "See? <property\>!"                                                                                      | TBD              | N           | Y            |
 
-\* After recording and clipping, these MP3s should be 250-750 ms less than this value so the audio tracks don't seem clipped.
-\*\* The accidental trial displays only a single object and agent at once, repeated with the same object and a different agent for however many times is specified by `total_trials_num` in **experiment.js**.
+\* After recording and clipping, the actual length of each MP3 should be 250-750 ms less than this value so the audio tracks don't seem clipped, especially when considering that some browsers may cause unpredictable delays.
 
 ##### Followup (comprehension) checks
 
-table with prompt ("Would you say the following is true?"), condition
-"What are the names of the " + total_trials_num + " items you learned about? Please select its/their name/names from the options below.
-Please refer to the image below. How long has this character been doing research on this planet?
-"Please refer to the image below. Did this character know that " + article_statement + " " + have_property + " before you observed it together?"
-In the text box below, please describe briefly what happened in this experiment.
+| prompt                                                                                                                                     | response type                  |
+| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
+| "What is the name of the item you learned about? Please select its name from the options below."                                           | grid (radio button)            |
+| "Please refer to the image below. Did this character know that <pl. object name\> could have <property\> before you observed it together?" | multiple choice (radio button) |
+| "Imagine that you come across another <sing. object name\>. What are the chances that it <has property\>?"                                 | slider (0% to 100%, labeled)   |
+| "Would you say the following is true? <generic statement\>."                                                                               | slider (0% to 100%, labeled)   |
+| "In the text box below, please describe briefly what happened in this experiment." \*                                                      | freeform (text box)            |
 
-| prompt                                                                                                                                     | answer type                    | accidental? | naive? | pedagogical? |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ | ----------- | ------ | ------------ |
-| "Would you say the following is true? <generic statement\>."                                                                               | slider (0% to 100%, labeled)   | Y           | Y      | Y            |
-| "What is/are the names of the <total trials num.\>" items you learned about?"                                                              | grid (checkboxes)              | Y           | Y      | Y            |
-| "Please refer to the image below. How long has this character been doing research on this planet?"                                         | multiple choice (radio button) | Y           | Y      | Y            |
-| "Please refer to the image below. Did this character know that <pl. object name\> could have <property\> before you observed it together?" | multiple choice (radio button) | Y           | Y      | Y            |
-| "In the text box below, please describe briefly what happened in this experiment."\*                                                       | freeform (text box)            | Y           | Y      | Y            |
-
-\* This is included for data quality assessment purposes.
+\* included for data quality assessment purposes.
