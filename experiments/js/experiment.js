@@ -11,7 +11,7 @@
 //////////////////////////////////////////
 
 var back =              _.shuffle( [1,2,3,4,5,6,7,8,9,10] ); // Background images
-var agents =            _.shuffle( ["Elephant","Pig","Monkey","Dog","Bear","Tiger","Cat","Sheep"] );
+var agents =            _.shuffle( ["Elephant","Monkey","Dog","Bear","Tiger","Sheep"] );
 var speakers =          _.shuffle( ["mh", "tg", "sb"] );
 
 var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
@@ -19,15 +19,15 @@ var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]);
 var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
 
-var item_name =         _.shuffle([ ["blicket", "blickets"], ["dax", "daxes"], ["fep", "feps"] ]);
+var item_names =         _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", "feps"] ]);
 var n_examples =        _.shuffle([1, 2]);
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 
 var distractor_names = _.shuffle(["zobby", "vug", "yem"])
-var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_name[0][0]] ) );
+var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_names[0][0]] ) );
 
-console.log(objects[0][0]);
-console.log(n_examples[0]);
+console.log(item_presentation_condition[0]);
+console.log(n_examples[0] + " " + objects[0][0] + " (\"" + item_names[0][0] + "\")");
 
 
 
@@ -85,10 +85,14 @@ function set_agent_object_scene(stim, fade=true) {
     let fade_in_tags = "#background, #" + stim.agent;
 
     $(".speech").hide();
+    $("#speech-bubble").css("left", "5px");
     $(".agent_intro, #background, #" + stim.agent).fadeOut(fade_out_duration, complete=function() {
 
-            $(".agent").css("right", "+=100px")
-            $("#speech-bubble-tail, #speech-bubble-outline").css("left", "-=100px");
+            $(".agent").css("right", "+=100px");
+            $(".agent").css("height", "-=25px");
+
+            $(".speech").css("top", "+=25px");
+            $("#speech-bubble-tail, #speech-bubble-outline").css("left", "-=85px");
 
             change_image("closed", "images/" + stim.object[1] + "_closed.svg");
             change_image("open", "images/" + stim.object[1] + "_open.svg");
@@ -122,8 +126,8 @@ function set_agent_object_scene(stim, fade=true) {
                 $(".object").css("height", "105px");
 
                 // Shift artifacts and labels right
-                $(".label").css("left", "+=5px");
-                $(".object").css("right", "-=5px");
+                $(".label").css("left", "+=12px");
+                $(".object").css("right", "-=12px");
             }
 
             $(fade_in_tags).fadeIn(fade_in_duration);
@@ -278,8 +282,8 @@ function run_trial(stim) {
 
     $(".continue_button").hide();
 
-    let agent_from_right = 200; // agent's intro slide distance from the right
-    let agent_travel_distance = 90; // distance agent moves to the right to trigger object property reveal
+    let agent_from_right = 250; // agent's intro slide distance from the right
+    let agent_travel_distance = 140; // distance agent moves to the right to trigger object property reveal
 
     if (stim.type == "agent_intro") {
 
@@ -362,7 +366,7 @@ function run_trial(stim) {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("Hmm, I wonder what we have here.", slide_num=stim.slide_num, bubble_width=300);
+                    agent_say("Hmm, I wonder what we have here.", slide_num=stim.slide_num, bubble_width=260);
                     // TODO: add speaker voice audio
 
                     setTimeout (function() {
@@ -379,12 +383,15 @@ function run_trial(stim) {
 
                     let deferred = new $.Deferred();
 
+                    let bubble_width = 210;
+
                     let statement = "Oh, I see! These are " + stim.item_name[1] + ".";
                     if (stim.n_examples == 1) {
                         statement = "Oh, I see! This is a " + stim.item_name[0] + ".";
+                        bubble_width -= 25;
                     }
 
-                    agent_say(statement, slide_num=stim.slide_num, bubble_width=225);
+                    agent_say(statement, slide_num=stim.slide_num, bubble_width=bubble_width);
                     // TODO: add speaker voice audio
 
                     setTimeout (function() {
@@ -429,14 +436,12 @@ function run_trial(stim) {
 
                     let deferred = new $.Deferred();
 
+                    let bubble_width = 125;
+
                     let statement = "These are " + stim.item_name[1] + ".";
                     if (stim.n_examples == 1) {
                         statement = "This is a " + stim.item_name[0] + ".";
-                    }
-
-                    let bubble_width = 125;
-                    if (stim.item_name[0] == "blicket") {
-                        bubble_width += 50;
+                        bubble_width -= 25;
                     }
 
                     agent_say(statement, slide_num=stim.slide_num, bubble_width=bubble_width);
@@ -465,7 +470,9 @@ function run_trial(stim) {
 
     if (stim.type == "object_property") {
 
-        let agent_animate_duration = 500;
+        let agent_animate_duration = 800;
+
+        let speech_bubble_shift_distance = 50;
 
         if (stim.item_presentation_condition == "accidental") {
 
@@ -476,7 +483,8 @@ function run_trial(stim) {
                 agent_animate_duration,
                 function() {
 
-                    $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=65px");
+                    $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=" + agent_travel_distance + "px");
+                    $("#speech-bubble").css("left", "+=" + speech_bubble_shift_distance + "px");
 
                     show_all_object_properties(stim).then(
 
@@ -559,7 +567,7 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("Watch this!", slide_num=stim.slide_num, bubble_width=100, duration=1500).then(
+            agent_say("Watch this!", slide_num=stim.slide_num, bubble_width=90, duration=1500).then(
 
                 function() {
 
@@ -570,7 +578,8 @@ function run_trial(stim) {
                         agent_animate_duration,
                         function() {
 
-                            $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=65px");
+                            $("#speech-bubble-tail, #speech-bubble-outline").css("left", "+=" + agent_travel_distance + "px");
+                            $("#speech-bubble").css("left", "+=" + speech_bubble_shift_distance + "px");
 
                             show_all_object_properties(stim).then(
 
@@ -599,7 +608,7 @@ function run_trial(stim) {
 
                                         } else if (stim.object[2] == "green feathers") {
                                             audio_file_name += "green_feathers";
-                                            bubble_width += 50;
+                                            bubble_width += 25;
                                         }
 
                                     }
@@ -1102,9 +1111,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        "i0",
-        "botcaptcha",
-        "sound_check",
+        // "i0",
+        // "botcaptcha",
+        // "sound_check",
         "introduction",
         "trials", // includes animations as well as followup questions
         "subj_info",
@@ -1135,8 +1144,8 @@ function init() {
             property: objects[0][2]
         },
         item_name: {
-            singular: item_name[0][0],
-            plural: item_name[0][1]
+            singular: item_names[0][0],
+            plural: item_names[0][1]
         },
         environment: {
             name: environment_name,
@@ -1195,7 +1204,7 @@ function init() {
             agent: agents[0],
             speaker: speakers[0],
             object: objects[0],
-            item_name: item_name[0],
+            item_name: item_names[0],
             n_examples: n_examples[0]
         },
 
@@ -1208,7 +1217,7 @@ function init() {
             agent: agents[0],
             speaker: speakers[0],
             object: objects[0],
-            item_name: item_name[0],
+            item_name: item_names[0],
             n_examples: n_examples[0]
         },
 
@@ -1217,7 +1226,7 @@ function init() {
             slide_num: slide_num++,
             type: "followup",
             prompt: "What is the name of the item you learned about? Please select its name from the options below.",
-            correct_answer: item_name[0][0],
+            correct_answer: item_names[0][0],
             show_scene: false,
             show_generic: false,
             response_type: "grid",
@@ -1229,14 +1238,14 @@ function init() {
         {
             slide_num: slide_num++,
             type: "followup",
-            prompt: "Please refer to the image below. Did this character know that " + item_name[0][1] + " " + could_have_property_statement + " before you observed it together?",
+            prompt: "Please refer to the image below. Did this character know that " + item_names[0][1] + " " + could_have_property_statement + " before you observed it together?",
             correct_answer: character_knowledge,
             show_scene: true,
             show_generic: false,
             agent: agents[0],
             background: back[0],
             object: objects[0],
-            item_name: item_name[0],
+            item_name: item_names[0],
             n_examples: n_examples[0],
             response_type: "mc",
             options: [ ["Yes"], ["No"] ],
@@ -1247,7 +1256,7 @@ function init() {
         {
             slide_num: slide_num++,
             type: "followup",
-            prompt: "Imagine that you come across another " +item_name[0][0] + ". What are the chances that it " + has_property_statement + "?",
+            prompt: "Imagine that you come across another " +item_names[0][0] + ". What are the chances that it " + has_property_statement + "?",
             correct_answer: "NA",
             show_scene: false,
             show_generic: false,
@@ -1267,7 +1276,7 @@ function init() {
             show_scene: false,
             show_generic: true,
             property: objects[0][2],
-            item_name: item_name[0],
+            item_name: item_names[0],
             response_type: "slider",
             grid_labels: grid_name_labels,
             slider_label_l: "0% (definitely false)",

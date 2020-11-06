@@ -69,22 +69,22 @@ h3 {
 }
 
 .object1 {
-    right:          255px;
+    right:          248px;
     z-index:        2;
 }
 
 .object2 {
-    right:          185px;
+    right:          178px;
     z-index:        3;
 }
 
 .object3 {
-    right:          115px;
+    right:          108px;
     z-index:        4;
 }
 
 .object4 {
-    right:          45px;
+    right:          38px;
     z-index:        5;
 }
 
@@ -159,7 +159,7 @@ h3 {
     border-radius:  4px;
     border:         2px solid black;
     top:            10px;
-    left:           10px;
+    left:           50px;
     right:          10px;
 }
 
