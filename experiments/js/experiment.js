@@ -23,7 +23,7 @@ var item_names =         _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", 
 var n_examples =        _.shuffle([1, 2]);
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 
-var distractor_names = _.shuffle(["zobby", "vug", "yem"])
+var distractor_names = _.shuffle(["zobby", "vicket", "yem"])
 var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_names[0][0]] ) );
 
 console.log(item_presentation_condition[0]);
@@ -54,7 +54,7 @@ function agent_say(display_text, slide_num, bubble_width=400, duration=2000) {
     $("#speech-bubble").width(bubble_width);
 
     // log spoken text to be sent to Prolific)
-    exp.trials_stimuli_full[0]["spoken_text"].push(
+    exp.full_trials_stimuli[0]["spoken_text"].push(
         {
             text: display_text,
             slide_num: slide_num,
@@ -416,6 +416,7 @@ function run_trial(stim) {
         if (stim.item_presentation_condition == "pedagogical") {
 
             agent_say("I have something to show you. Follow me!", slide_num=stim.slide_num, bubble_width=325).then(
+            // TODO: add speaker voice audio
 
                 function() {
 
@@ -676,7 +677,7 @@ function run_trial(stim) {
 
         if (stim.show_scene) {
 
-            $("#" + stim.agent).css("right", agent_from_right - agent_travel_distance);
+            $("#" + stim.agent).css("right", agent_from_right);
             set_agent_object_scene(stim, fade=false)
             $("#animation_container").show();
 
@@ -821,7 +822,7 @@ function make_slides(f) {
                 if (bot_response.toLowerCase() == listener.toLowerCase()) {
 
                     // Log data to Prolific
-                    exp.response_data.push({
+                    exp.full_response_data.push({
                         type: "attention",
                         prompt: this.bot_utterance + " " + this.bot_question,
                         correct_answer: listener,
@@ -830,6 +831,8 @@ function make_slides(f) {
                         duration: (Date.now() - this.botcaptcha_startT) / 1000
                     });
 
+                    exp.streamlined_data["catch_trial_fails"] += this.bot_trials;
+
                     // Continue to next slide
                     exp.go();
 
@@ -837,6 +840,7 @@ function make_slides(f) {
                 } else {
 
                     this.bot_trials++;
+
                     $(".error").hide();
                     $(".error_incorrect").show();
 
@@ -892,7 +896,7 @@ function make_slides(f) {
                 if (sound_response.toLowerCase() == this.sound_word) {
 
                     // Log data to Prolific
-                    exp.response_data.push({
+                    exp.full_response_data.push({
                         type: "attention",
                         prompt: "Please adjust your system volume to a comfortable level. When you are ready, click the Test button. You will hear a word like \"skyscraper\". Enter the word you hear into the box below and click Continue\ when you are finished.",
                         correct_answer: this.sound_word,
@@ -901,11 +905,15 @@ function make_slides(f) {
                         duration: (Date.now() - this.sound_startT) / 1000
                     });
 
+                    exp.streamlined_data["catch_trial_fails"] += this.sound_trials;
+
                     exp.go();
 
                 // gives participant two more trials if the response was incorrect
                 } else {
+
                     this.sound_trials++;
+
                     $(".error").hide();
                     $(".error_incorrect").show();
                     if (this.sound_trials == 1) {
@@ -938,7 +946,7 @@ function make_slides(f) {
             // Track introduction slide end time
             this.intro_endT = Date.now();
 
-            exp.response_data.push(
+            exp.full_response_data.push(
                 {
                     type: "introduction",
                     duration: (this.intro_endT - this.intro_startT) / 1000
@@ -959,9 +967,11 @@ function make_slides(f) {
 
         present_handle : function(stim) {
 
-            this.trials_startT = Date.now();
+            this.startT = Date.now();
 
             this.stim = stim;
+
+            exp.full_trials_slides.push(this.stim);
 
             // defined as a separate function to avoid excessive indentation
             run_trial(this.stim);
@@ -989,15 +999,20 @@ function make_slides(f) {
 
             // If response, log response data
             } else {
-                this.trials_endT = Date.now();
+                this.duration = (Date.now() - this.startT) / 1000;
 
                 // collect response
                 if (this.stim.response_type == "slider") {
-
                     this.response = exp.sliderPost;
+                    if (this.stim.show_generic) {
+                        exp.streamlined_data["generic_slider"] = this.response;
+                        exp.streamlined_data["generic_slider_duration"] = this.duration;
+                    } else {
+                        exp.streamlined_data["next_encounter_slider"] = this.response;
+                        exp.streamlined_data["next_encounter_slider_duration"] = this.duration;
+                    }
 
                 } else if (this.stim.response_type == "grid") {
-
                     this.response = $("input[name=grid_choice]:checked").val();
 
                 } else if (this.stim.response_type == "mc") {
@@ -1005,6 +1020,8 @@ function make_slides(f) {
 
                 } else if (this.stim.response_type == "freeform") {
                     this.response = $("#freeform").val();
+                    exp.streamlined_data["freeform_followup"] = this.response;
+                    exp.streamlined_data["freeform_followup_duration"] = this.duration;
 
                 }
 
@@ -1020,10 +1037,13 @@ function make_slides(f) {
 
                 }
 
-                // Log followup duration and slider response to MTurk
-                exp.response_data.push(
+                if (!(this.is_correct)) {
+                    exp.streamlined_data["followup_fails"]++;
+                }
+
+                // Log followup duration and slider response to Prolific MTurk
+                exp.full_response_data.push(
                     {
-                        slide_num: this.stim.slide_num,
                         prompt: this.stim.prompt,
                         response: this.response,
                         response_type: this.stim.response_type,
@@ -1073,10 +1093,10 @@ function make_slides(f) {
 
             // Logs data to Prolific
             exp.data = {
-                condition: exp.condition,
-                trials_stimuli_full: exp.trials_stimuli_full,
-                trials_stimuli_streamlined: exp.trials_stimuli_streamlined,
-                response_data: exp.response_data,
+                streamlined_data: exp.streamlined_data,
+                full_response_data: exp.full_response_data, // contains user response from attention checks and followup question data
+                full_trials_stimuli: exp.full_trials_stimuli, // detailed items displayed to users
+                full_trials_slides: exp.full_trials_slides, // slides to run animated experiment and followup
                 system: exp.system,
                 subject_information: exp.subj_data
             };
@@ -1111,9 +1131,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
+        "i0",
+        "botcaptcha",
+        "sound_check",
         "introduction",
         "trials", // includes animations as well as followup questions
         "subj_info",
@@ -1128,36 +1148,6 @@ function init() {
     } else if (objects[0][0] == "flower") {
         environment_name = "dirt";
     }
-
-    // Submitted to Prolific — very complete data, not flattened
-    exp.trials_stimuli_full = [{
-        item_presentation_condition: item_presentation_condition[0],
-        n_examples: n_examples[0],
-        agent: {
-            name: agents[0],
-            image: agents[0] + "_straight.png"
-        },
-        object: {
-            name: objects[0][0],
-            closed_image: objects[0][1] + "_closed.svg",
-            open_image: objects[0][1] + "_open.svg",
-            property: objects[0][2]
-        },
-        item_name: {
-            singular: item_names[0][0],
-            plural: item_names[0][1]
-        },
-        environment: {
-            name: environment_name,
-            image: environment_name + ".svg"
-        },
-        speaker: speakers[0],
-        background: back[0],
-        spoken_text: []
-    }]
-
-    // Submitted to Prolific — will contain response data from catch trials, animated trials slides, and followups
-    exp.response_data = [];
 
     // Form grammatically correct followup statements
     let has_property_statement = "has " + objects[0][2];
@@ -1174,15 +1164,7 @@ function init() {
     }
 
     // Create stim (~ slides) to run experiment
-    let slide_num = 0;
-    exp.trials_stimuli_streamlined = [
-        {
-        slide_num: slide_num++, // Introduction
-        type: "introduction",
-        prompt: "You are a scientist being deployed to a remote field site on a faraway planet. Your job is to catalogue and describe new kinds of animals, plants, and objects that have been discovered on the planet. When you arrive at the field site, you meet another scientist there."
-        }
-    ];
-
+    let slide_num = 1;
     exp.trials_stimuli = [
 
         // Animated agent introduces self
@@ -1298,12 +1280,56 @@ function init() {
 
     ];
 
-    exp.trials_stimuli_streamlined = exp.trials_stimuli_streamlined.concat(JSON.parse(JSON.stringify(exp.trials_stimuli))); // deep copy
-
-    exp.condition = {
+    // flattened file containing all info needed for data analysis
+    exp.streamlined_data = {
         item_presentation_condition: item_presentation_condition[0],
-        n_examples: n_examples[0]
+        n_examples: n_examples[0],
+        object: objects[0][0],
+        item_name: item_names[0][0],
+        agent: agents[0],
+        speaker: speakers[0],
+        catch_trial_fails: 0,
+        followup_fails: 0,
+        next_encounter_slider: null,
+        next_encounter_slider_duration: 0,
+        generic_slider: null,
+        generic_slider_duration: 0,
+        freeform_followup: "",
+        freeform_followup_duration: 0
     };
+
+    // Submitted to Prolific — very complete data, not flattened
+    exp.full_trials_stimuli = [
+        {
+            item_presentation_condition: item_presentation_condition[0],
+            n_examples: n_examples[0],
+            agent: {
+                name: agents[0],
+                image: agents[0] + "_straight.png"
+            },
+            object: {
+                name: objects[0][0],
+                closed_image: objects[0][1] + "_closed.svg",
+                open_image: objects[0][1] + "_open.svg",
+                property: objects[0][2]
+            },
+            item_name: {
+                singular: item_names[0][0],
+                plural: item_names[0][1]
+            },
+            environment: {
+                name: environment_name,
+                image: environment_name + ".svg"
+            },
+            speaker: speakers[0],
+            background: back[0],
+            spoken_text: []
+        }
+    ];
+
+    exp.full_trials_slides = [];
+
+    exp.full_response_data = [];
 
     exp.slides = make_slides(exp);
     exp.nQs = utils.get_exp_length();
