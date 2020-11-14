@@ -13,6 +13,7 @@
 var back =              _.shuffle( [1,2,3,4,5,6,7,8,9,10] ); // Background images
 var agents =            _.shuffle( ["Elephant","Monkey","Dog","Bear","Tiger","Sheep"] );
 var speakers =          _.shuffle( ["mh", "tg", "sb"] );
+var audio_version =     "fall-2020-v2";
 
 var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]);
@@ -26,8 +27,8 @@ var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 var distractor_names = _.shuffle(["zobby", "vicket", "yem"])
 var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_names[0][0]] ) );
 
-console.log(item_presentation_condition[0]);
-console.log(n_examples[0] + " " + objects[0][0] + " (\"" + item_names[0][0] + "\")");
+console.log(item_presentation_condition[0] + ", " + n_examples[0] + " " + objects[0][0] + " (\"" + item_names[0][0] + "\")");
+console.log(agents[0] + ", voiced by " + speakers[0]);
 
 
 
@@ -45,13 +46,13 @@ function change_image(class_name, source) {
 }
 
 // Display text in speech bubble and log data to Prolific
-function agent_say(display_text, slide_num, bubble_width=400, duration=2000) {
+function agent_say(display_text, slide_num, width=400, duration=2000) {
 
     let deferred = new $.Deferred();
 
     $(".speech").show();
     $("#speech-bubble").text(display_text);
-    $("#speech-bubble").width(bubble_width);
+    $("#speech-bubble").width(width);
 
     // log spoken text to be sent to Prolific)
     exp.full_trials_stimuli[0]["spoken_text"].push(
@@ -296,18 +297,23 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "accidental") {
 
-            agent_say("Hello! I am a new researcher. I just arrived on this planet.", slide_num=stim.slide_num, width=425, duration=4000).then(
+            let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/just_arrived.wav");
+            sound.play()
+
+            agent_say("Hello! I am a new researcher. I just arrived on this planet.", slide_num=stim.slide_num, width=425, duration=5500).then(
 
                 function() {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("I don't know anything about the animals, plants, or objects here.", slide_num=stim.slide_num, width=475);
-                    // TODO: add speaker voice audio
+                    agent_say("I don't know anything about the animals, plants, or objects here.", slide_num=stim.slide_num, width=475, duration=6000);
+
+                    let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/idk_anything.wav");
+                    sound.play()
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 2000); // TODO: update duration
+                    }, 6000);
 
                     return deferred.promise();
 
@@ -326,18 +332,23 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("Hello! I've been doing research on this planet for a while.", slide_num=stim.slide_num, width=425, duration=2500).then(
+            let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/been_while.wav");
+            sound.play()
+
+            agent_say("Hello! I've been doing research on this planet for a while.", slide_num=stim.slide_num, width=425, duration=5500).then(
 
                 function() {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("I know all about the animals, plants, and objects here.", slide_num=stim.slide_num, width=400, duration=2500);
-                    // TODO: add speaker voice audio
+                    agent_say("I know all about the animals, plants, and objects here.", slide_num=stim.slide_num, width=400, duration=6000);
+
+                    let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/i_know_all.wav");
+                    sound.play()
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 2500); // TODO: update duration
+                    }, 6000);
 
                     return deferred.promise();
 
@@ -366,12 +377,13 @@ function run_trial(stim) {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("Hmm, I wonder what we have here.", slide_num=stim.slide_num, bubble_width=260);
-                    // TODO: add speaker voice audio
+                    agent_say("Hmm, I wonder what we have here.", slide_num=stim.slide_num, width=260, duration=4000);
+                    let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/hmm_i_wonder.wav");
+                    sound.play()
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 3000); // TODO: update duration
+                    }, 4000);
 
                     return deferred.promise();
 
@@ -384,19 +396,23 @@ function run_trial(stim) {
                     let deferred = new $.Deferred();
 
                     let bubble_width = 210;
-
+                    let audio_file_name = "oh_" + stim.item_name[1];
                     let statement = "Oh, I see! These are " + stim.item_name[1] + ".";
+
                     if (stim.n_examples == 1) {
                         statement = "Oh, I see! This is a " + stim.item_name[0] + ".";
+                        audio_file_name = "oh_" + stim.item_name[0];
                         bubble_width -= 25;
                     }
 
-                    agent_say(statement, slide_num=stim.slide_num, bubble_width=bubble_width);
-                    // TODO: add speaker voice audio
+                    agent_say(statement, slide_num=stim.slide_num, width=bubble_width, duration=4000);
+
+                    let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/" + audio_file_name + ".wav");
+                    sound.play()
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 2000); // TODO: update duration
+                    }, 4000);
 
                     return deferred.promise();
 
@@ -415,8 +431,10 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("I have something to show you. Follow me!", slide_num=stim.slide_num, bubble_width=325).then(
-            // TODO: add speaker voice audio
+            let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/show_you.wav");
+            sound.play();
+
+            agent_say("I have something to show you. Follow me!", slide_num=stim.slide_num, width=325, duration=4250).then(
 
                 function() {
 
@@ -426,7 +444,7 @@ function run_trial(stim) {
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 3500); // TODO: update duration
+                    }, 3500);
 
                     return deferred.promise();
                 }
@@ -438,19 +456,23 @@ function run_trial(stim) {
                     let deferred = new $.Deferred();
 
                     let bubble_width = 125;
-
+                    let audio_file_name = "these_" + stim.item_name[1];
                     let statement = "These are " + stim.item_name[1] + ".";
+
                     if (stim.n_examples == 1) {
                         statement = "This is a " + stim.item_name[0] + ".";
+                        audio_file_name = "this_" + stim.item_name[0];
                         bubble_width -= 25;
                     }
 
-                    agent_say(statement, slide_num=stim.slide_num, bubble_width=bubble_width);
-                    // TODO: add speaker voice audio
+                    agent_say(statement, slide_num=stim.slide_num, width=bubble_width, duration=2000);
+
+                    let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/" + audio_file_name + ".wav");
+                    sound.play()
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 2000); // TODO: update duration
+                    }, 2000);
 
                     return deferred.promise();
 
@@ -493,17 +515,12 @@ function run_trial(stim) {
 
                             let deferred = new $.Deferred();
 
-                            // TODO: add speaker voice audio
-                            let delay_time = 3000;
-
                             say_text = "Oh wow! ";
                             audio_file_name = "wow_";
-                            delay_time += 500;
 
                             if (stim.object[0] == "artifact") {
                                 say_text += "Squeaking!";
                                 audio_file_name += "squeaking";
-                                delay_time -= 500;
                             } else {
 
                                 say_text += stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
@@ -517,15 +534,14 @@ function run_trial(stim) {
 
                             }
 
-                            // TODO: readd speaker voice audio
-                            // remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
-                            // remark.play();
+                            sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/" + audio_file_name + ".wav");
+                            sound.play();
 
-                            agent_say(say_text, slide_num=stim.slide_num, bubble_width=200);
+                            agent_say(say_text, slide_num=stim.slide_num, width=200, duration=3500);
 
                             setTimeout (function() {
                                 deferred.resolve();
-                            }, delay_time);
+                            }, 3500);
 
                             return deferred.promise();
 
@@ -568,7 +584,10 @@ function run_trial(stim) {
 
         if (stim.item_presentation_condition == "pedagogical") {
 
-            agent_say("Watch this!", slide_num=stim.slide_num, bubble_width=90, duration=1500).then(
+            let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/watch_this.wav");
+            sound.play()
+
+            agent_say("Watch this!", slide_num=stim.slide_num, width=90, duration=2000).then(
 
                 function() {
 
@@ -588,18 +607,14 @@ function run_trial(stim) {
 
                                     let deferred = new $.Deferred();
 
-                                    // TODO: add speaker voice audio
-                                    let delay_time = 3000;
-                                    let audio_file_name = "see_"; // TODO
+                                    let audio_file_name = "see_";
                                     let bubble_width = 150;
 
                                     say_text = "See? ";
-                                    delay_time += 500;
 
                                     if (stim.object[0] == "artifact") {
                                         say_text += "Squeaking!";
                                         audio_file_name += "squeaking";
-                                        delay_time -= 500;
                                     } else {
 
                                         say_text += stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
@@ -614,15 +629,14 @@ function run_trial(stim) {
 
                                     }
 
-                                    // TODO: readd speaker voice audio
-                                    // remark = new Audio("audio/" + stim.speaker + "_recordings/" + audio_file_name + ".mp3");
-                                    // remark.play();
+                                    sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/" + audio_file_name + ".wav");
+                                    sound.play();
 
-                                    agent_say(say_text, slide_num=stim.slide_num, bubble_width=bubble_width);
+                                    agent_say(say_text, slide_num=stim.slide_num, width=bubble_width, duration=3000);
 
                                     setTimeout (function() {
                                         deferred.resolve();
-                                    }, delay_time);
+                                    }, 3000);
 
                                     return deferred.promise();
 
