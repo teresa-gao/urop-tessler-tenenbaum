@@ -24,7 +24,7 @@ var item_names =         _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", 
 var n_examples =        _.shuffle([1, 2]);
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
 
-var distractor_names = _.shuffle(["zobby", "vicket", "yem"])
+var distractor_names = _.shuffle(["zobby", "vicket", "yem", "blus", "nar"])
 var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_names[0][0]] ) );
 
 console.log(item_presentation_condition[0] + ", " + n_examples[0] + " " + objects[0][0] + " (\"" + item_names[0][0] + "\")");
@@ -35,6 +35,9 @@ console.log(agents[0] + ", voiced by " + speakers[0]);
 //////////////////////////////////////////
 // HELPER FUNCTIONS //////////////////////
 //////////////////////////////////////////
+
+let agent_from_right = 250; // agent's initial, intro slide distance from the right
+let agent_travel_distance = 140; // distance agent moves to the right to trigger object property reveal
 
 // Change all images of a given class to have the same source
 function change_image(class_name, source) {
@@ -89,8 +92,9 @@ function set_agent_object_scene(stim, fade=true) {
     $("#speech-bubble").css("left", "5px");
     $(".agent_intro, #background, #" + stim.agent).fadeOut(fade_out_duration, complete=function() {
 
-            $(".agent").css("right", "+=100px");
-            $(".agent").css("height", "-=25px");
+            let new_agent_from_right = agent_from_right + 200
+            $(".agent").css("right", new_agent_from_right + "px");
+            $(".agent").css("height", "250px");
 
             $(".speech").css("top", "+=25px");
             $("#speech-bubble-tail, #speech-bubble-outline").css("left", "-=85px");
@@ -283,9 +287,6 @@ function run_trial(stim) {
 
     $(".continue_button").hide();
 
-    let agent_from_right = 250; // agent's intro slide distance from the right
-    let agent_travel_distance = 140; // distance agent moves to the right to trigger object property reveal
-
     if (stim.type == "agent_intro") {
 
         $(".agent, .object, #tree, #dirt, #table, .label, #followup, #title, #trials_text").hide();
@@ -300,7 +301,7 @@ function run_trial(stim) {
             let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/just_arrived.wav");
             sound.play()
 
-            agent_say("Hello! I am a new researcher. I just arrived on this planet.", slide_num=stim.slide_num, width=425, duration=5500).then(
+            agent_say("Hello! I am a new researcher. I just arrived on this planet.", slide_num=stim.slide_num, width=425, duration=5550).then(
 
                 function() {
 
@@ -335,7 +336,7 @@ function run_trial(stim) {
             let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/been_while.wav");
             sound.play()
 
-            agent_say("Hello! I've been doing research on this planet for a while.", slide_num=stim.slide_num, width=425, duration=5500).then(
+            agent_say("Hello! I've been doing research on this planet for a while.", slide_num=stim.slide_num, width=425, duration=5550).then(
 
                 function() {
 
@@ -735,7 +736,7 @@ function run_trial(stim) {
             let temp_counter = 0;
             for (temp_counter = 0; temp_counter < stim.options.length; temp_counter++) {
                 $("#mc_choice" + (temp_counter + 1)).show();
-                $("#mc_choice" + (temp_counter + 1)).attr("value", stim.options[temp_counter][0]);
+                $("#mc_choice" + (temp_counter + 1)).attr("value", stim.options[temp_counter][1]);
                 $("#mc_choice" + (temp_counter + 1)).parent().show();
                 $("#mc_label" + (temp_counter + 1)).text(stim.options[temp_counter][0]);
             }
@@ -1018,19 +1019,24 @@ function make_slides(f) {
                 // collect response
                 if (this.stim.response_type == "slider") {
                     this.response = exp.sliderPost;
-                    if (this.stim.show_generic) {
-                        exp.streamlined_data["generic_slider"] = this.response;
-                        exp.streamlined_data["generic_slider_duration"] = this.duration;
-                    } else {
-                        exp.streamlined_data["next_encounter_slider"] = this.response;
-                        exp.streamlined_data["next_encounter_slider_duration"] = this.duration;
-                    }
+                    exp.streamlined_data["predicted_probability"] = this.response;
+                    exp.streamlined_data["predicted_probability_duration"] = this.duration;
 
                 } else if (this.stim.response_type == "grid") {
                     this.response = $("input[name=grid_choice]:checked").val();
 
                 } else if (this.stim.response_type == "mc") {
                     this.response = $("input[name=mc_choice]:checked").val();
+
+                    if (this.stim.show_generic) {
+                        exp.streamlined_data["generic_endorsement"] = this.response;
+                        exp.streamlined_data["generic_endorsement_duration"] = this.duration;
+                    }
+
+                    if ( (this.stim.show_scene) && ( (this.response == "yes") || (this.response == "no") ) ) {
+                        exp.streamlined_data["perceived_character_knowledge"] = this.response;
+                        exp.streamlined_data["perceived_character_knowledge_duration"] = this.duration;
+                    }
 
                 } else if (this.stim.response_type == "freeform") {
                     this.response = $("#freeform").val();
@@ -1043,19 +1049,14 @@ function make_slides(f) {
                 if (this.stim.correct_answer == "NA") {
                     this.is_correct = true; // For simplicity, slider and freeform responses are always considered "right"
                 } else {
-                    if (typeof(this.stim.correct_answer) == "object") {
-                        this.is_correct = (this.response[0] == this.stim.correct_answer[0]);
-                    } else {
-                        this.is_correct = (this.response == this.stim.correct_answer);
-                    }
-
+                    this.is_correct = (this.response == this.stim.correct_answer);
                 }
 
                 if (!(this.is_correct)) {
                     exp.streamlined_data["followup_fails"]++;
                 }
 
-                // Log followup duration and slider response to Prolific MTurk
+                // Log followup duration and slider response to Prolific
                 exp.full_response_data.push(
                     {
                         prompt: this.stim.prompt,
@@ -1063,7 +1064,7 @@ function make_slides(f) {
                         response_type: this.stim.response_type,
                         correct_answer: this.stim.correct_answer,
                         is_correct: this.is_correct,
-                        duration: (this.trials_endT - this.trials_startT) / 1000
+                        duration: this.duration
                     }
                 );
 
@@ -1171,10 +1172,10 @@ function init() {
         could_have_property_statement = "could squeak";
     }
 
-    // Set right answer for followup
-    let character_knowledge = "Yes";
+    // Set correct answer for attention check follow based on character arrival
+    let character_arrival = "been_while";
     if (item_presentation_condition[0] == "accidental") {
-        character_knowledge = "No";
+        character_arrival = "just_arrived";
     }
 
     // Create stim (~ slides) to run experiment
@@ -1217,38 +1218,7 @@ function init() {
             n_examples: n_examples[0]
         },
 
-        // Followup for learned object name recognition
-        {
-            slide_num: slide_num++,
-            type: "followup",
-            prompt: "What is the name of the item you learned about? Please select its name from the options below.",
-            correct_answer: item_names[0][0],
-            show_scene: false,
-            show_generic: false,
-            response_type: "grid",
-            grid_labels: grid_name_labels,
-            item_presentation_condition: item_presentation_condition[0]
-        },
-
-        // Followup for character knowledge before object encounter and property reveal
-        {
-            slide_num: slide_num++,
-            type: "followup",
-            prompt: "Please refer to the image below. Did this character know that " + item_names[0][1] + " " + could_have_property_statement + " before you observed it together?",
-            correct_answer: character_knowledge,
-            show_scene: true,
-            show_generic: false,
-            agent: agents[0],
-            background: back[0],
-            object: objects[0],
-            item_name: item_names[0],
-            n_examples: n_examples[0],
-            response_type: "mc",
-            options: [ ["Yes"], ["No"] ],
-            item_presentation_condition: item_presentation_condition[0]
-        },
-
-        // Followup for likelihood of next encountered object to have same property
+        // Followup for likelihood of next encountered object to have same property (predicted probability)
         {
             slide_num: slide_num++,
             type: "followup",
@@ -1263,7 +1233,20 @@ function init() {
             n_examples: n_examples[0]
         },
 
-        // Followup for perceived strength of inference for generic
+        // Followup for learned object name recognition from grid of distractors
+        {
+            slide_num: slide_num++,
+            type: "followup",
+            prompt: "What is the name of the item you learned about? Please select its name from the options below.",
+            correct_answer: item_names[0][0],
+            show_scene: false,
+            show_generic: false,
+            response_type: "grid",
+            grid_labels: grid_name_labels,
+            item_presentation_condition: item_presentation_condition[0]
+        },
+
+        // Followup for perceived strength of inference for generic (generic endorsement)
         {
             slide_num: slide_num++,
             type: "followup",
@@ -1273,10 +1256,44 @@ function init() {
             show_generic: true,
             property: objects[0][2],
             item_name: item_names[0],
-            response_type: "slider",
-            grid_labels: grid_name_labels,
-            slider_label_l: "0% (definitely false)",
-            slider_label_r: "100% (definitely true)",
+            response_type: "mc",
+            options: [ ["Yes", "yes"], ["No", "no"] ],
+            item_presentation_condition: item_presentation_condition[0]
+        },
+
+        // Followup for inferred character knowledge before object encounter and property reveal
+        {
+            slide_num: slide_num++,
+            type: "followup",
+            prompt: "Please refer to the image below. Did this character know that " + item_names[0][1] + " " + could_have_property_statement + " before you observed it together?",
+            correct_answer: "NA",
+            show_scene: true,
+            show_generic: false,
+            agent: agents[0],
+            background: back[0],
+            object: objects[0],
+            item_name: item_names[0],
+            n_examples: n_examples[0],
+            response_type: "mc",
+            options: [ ["Yes", "yes"], ["No", "no"] ],
+            item_presentation_condition: item_presentation_condition[0]
+        },
+
+        // Followup (~ attention check) for character arrival
+        {
+            slide_num: slide_num++,
+            type: "followup",
+            prompt: "Please refer to the image below. Is this character a new researcher who just arrived here, or have they been doing research on this planet for a while?",
+            correct_answer: character_arrival,
+            show_scene: true,
+            show_generic: false,
+            agent: agents[0],
+            background: back[0],
+            object: objects[0],
+            item_name: item_names[0],
+            n_examples: n_examples[0],
+            response_type: "mc",
+            options: [ ["This character is a new researcher who just arrived here", "just_arrived"], ["This character has been doing research on this planet for a while", "been_while"] ],
             item_presentation_condition: item_presentation_condition[0]
         },
 
@@ -1304,10 +1321,12 @@ function init() {
         speaker: speakers[0],
         catch_trial_fails: 0,
         followup_fails: 0,
-        next_encounter_slider: null,
-        next_encounter_slider_duration: 0,
-        generic_slider: null,
-        generic_slider_duration: 0,
+        predicted_probability: null,
+        predicted_probability_duration: 0,
+        generic_endorsement: null,
+        generic_endorsement_duration: 0,
+        perceived_character_knowledge: null,
+        perceived_character_knowledge_duration: 0,
         freeform_followup: "",
         freeform_followup_duration: 0
     };
