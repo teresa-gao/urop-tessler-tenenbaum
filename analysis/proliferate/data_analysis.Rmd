@@ -71,13 +71,24 @@ Compute bootstrapped means and confidence intervals of user slider response
 
 ```{r Compute boostrapped means and CIs}
 
-slider_CIs <- trials_data %>%
+predicted_probability_CIs <- trials_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = response)
 
 slider_response_time_CIs <- trials_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = response_time_in_seconds)
+
+generic_endorsement_CIs <- followup_data %>%
+  filter(response_type == "slider") %>%
+  group_by(proliferate.condition) %>%
+  type.convert() %>% # `chr` to `dbl`
+  tidyboot_mean(column = response, na.rm=TRUE)
+
+generic_endorsement_CIs
+
+trials_data %>%
+  group_by(item_presentation_condition, n_examples)
 
 freeform_followup_wordcount_CIs <- freeform_followup %>%
   group_by(proliferate.condition) %>%
@@ -88,26 +99,26 @@ freeform_followup_wordcount_CIs <- freeform_followup %>%
 
 Create data frame comparing slider responses in-trial vs. in-followup
 
-```{r Create df to compare trial/followup sliders}
+```{r Create df to compare trial/generic endorsements}
 
-trials_sliders <- trials_data %>%
-  select(workerid, response, response_time_in_seconds, item_presentation_condition, n_examples) %>%
+predicted_probabilitys <- trials_data %>%
+  select(workerid, response, response_time, item_presentation_condition, n_examples) %>%
   rename(
-    trials_response = response,
-    trials_response_time_in_seconds = response_time_in_seconds
+    predicted_probability = response,
+    predicted_probability_time = response_time
   )
 
-followup_sliders <- followup_data %>%
+generic_endorsements <- followup_data %>%
   filter(response_type == "slider") %>%
-  select(workerid, response, response_time_in_seconds) %>%
+  select(workerid, response, response_time) %>%
   rename(
-    followup_response = response,
-    followup_time_in_seconds = response_time_in_seconds
+    generic_endorsement = response,
+    generic_endorsement_time = response_time
   )
 
-all_sliders <- inner_join(trials_sliders, followup_sliders, by="workerid") %>%
-  mutate(followup_response = as.double(followup_response)) %>%
-  mutate(trials_minus_followup_sliders = trials_response - followup_response)
+all_sliders <- inner_join(predicted_probabilitys, generic_endorsements, by="workerid") %>%
+  mutate(generic_endorsement = as.double(generic_endorsement)) %>%
+  mutate(trials_minus_generic_endorsements = predicted_probability - generic_endorsement)
 
 ```
 
@@ -121,7 +132,7 @@ Gradient density ridges graph of slider response vs. item presentation condition
 
 ```{r Gradient plot of slider response vs. condition}
 
-slider_CIs <- slider_CIs %>%
+predicted_probability_CIs <- predicted_probability_CIs %>%
     mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ggplot(
   trials_data %>%
@@ -140,7 +151,7 @@ ggplot(
     stat = "binline", bins = 25, draw_baseline = F
   ) +
   ggstance::geom_linerangeh(
-    slider_CIs,
+    predicted_probability_CIs,
     inherit.aes = F,
     mapping = aes(
       xmin = ci_lower, xmax = ci_upper,
@@ -148,7 +159,7 @@ ggplot(
     ),
     size = 1.25, color = "black"
   ) + geom_point(
-    slider_CIs,
+    predicted_probability_CIs,
     inherit.aes = F,
     mapping = aes(
       x = mean,
@@ -186,7 +197,7 @@ ggplot(
   trials_data %>%
     mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
   mapping = aes(
-    x = response_time_in_seconds,
+    x = response_time,
     y = exp_cond, 
     fill = ..x..
   )
@@ -217,7 +228,7 @@ ggplot(
   ) +
   scale_x_continuous(
     expand = c(0.01, 0),
-    limits = c(0, max(trials_data$response_time_in_seconds)*1.1)
+    limits = c(0, max(trials_data$response_time)*1.1)
   ) +
   scale_y_discrete(expand = c(0.01, 0)) +
   viridis::scale_fill_viridis(
@@ -342,22 +353,32 @@ theme(legend.position = "none")
 
 
 
-Scatter plot of trials slider response to followup slider response
+Scatter plot of each condition's trials slider response to generic endorsement response
 
-```{r Trials slider response vs. followup slider response}
+```{r Conditions' slider responses vs. generic endorsement responses}
+
+# TODO
+
+```
+
+
+
+Scatter plot of all trials slider responses to generic endorsement response
+
+```{r All trials' slider responses vs. generic endorsement response}
 
 ggplot(
   all_sliders,
   mapping = aes(
-    x = trials_response,
-    y = followup_response,
+    x = predicted_probability,
+    y = generic_endorsement,
     color = item_presentation_condition
   )
 ) +
   labs(
-    title = "Trials slider response vs. followup slider response",
+    title = "Trials slider response vs. generic endorsement response",
     x = "Trials slider response",
-    y = "Followup slider response"
+    y = "generic endorsement response"
   ) +
   geom_point() +
   scale_color_manual(
@@ -373,14 +394,14 @@ ggplot(
 
 
 
-Facet grid of difference between trial and followup slider responses plotted on number of examples vs. item presentation condition
+Facet grid of difference between trial and generic endorsement responses plotted on number of examples vs. item presentation condition
 
 ```{r Slider diff. on num. examples vs. item presentation condition}
 
 ggplot(
   all_sliders,
   mapping = aes(
-    x = trials_minus_followup_sliders,
+    x = trials_minus_generic_endorsements,
     y = (..count..) / tapply(..count.., ..PANEL.., sum)[..PANEL..],
     fill = as.factor(item_presentation_condition)
   )
@@ -389,7 +410,7 @@ geom_histogram(
   color = "black",
   bins = 16) +
 labs(
-  x = "Trials slider response - followup slider response",
+  x = "Trials slider response - generic endorsement response",
   y = "Fraction of total count"
 ) +
 facet_grid(n_examples ~ item_presentation_condition) +
@@ -402,7 +423,7 @@ theme(legend.position = "none")
 
 
 
-Scatter plot of freeform followup word count vs. difference between trial and followup slider responses
+Scatter plot of freeform followup word count vs. difference between trial and generic endorsement responses
 
 ```{r Followup wordcount vs. slider diff.}
 
@@ -410,14 +431,14 @@ ggplot(
   merge(all_sliders, freeform_followup),
   mapping = aes(
     x = n_words,
-    y = trials_minus_followup_sliders,
+    y = trials_minus_generic_endorsements,
     color = item_presentation_condition
   )
 ) +
   labs(
-    title = "Freeform followup word count vs. trials-followup slider response diff",
+    title = "Freeform followup word count vs. trials generic endorsement response diff",
     x = "Num words in freeform followup",
-    y = "Trials slider response - followup slider response"
+    y = "Trials slider response - generic endorsement response"
   ) +
   geom_point() +
   scale_color_manual(
@@ -428,7 +449,7 @@ ggplot(
 
 
 
-Scatter plot of followup slider response word count vs. character count
+Scatter plot of generic endorsement response word count vs. character count
 
 ```{r Freeform followup word vs. char count}
 
@@ -478,64 +499,5 @@ ggplot(freeform_followup_frequency %>% top_n(10), aes(word, frequency)) +
   scale_fill_manual(
     values = c("indianred1", "indianred2", "lightgoldenrod1", "lightgoldenrod2", "darkolivegreen2", "darkolivegreen3", "cornflowerblue", "dodgerblue3")
   )
-
-```
-
-
-
-Gradient density ridges graph of freeform followup word count vs. item presentation condition
-
-```{r Gradient plot of freeform word count vs. condition}
-
-ggplot(
-  freeform_followup,
-
-  mapping = aes(
-    x = n_words,
-    y = proliferate.condition, 
-    fill = ..x..
-  )
-) +
-  ggridges::geom_density_ridges_gradient(
-    jittered_points = T, alpha = 0.8, scale = 0.95,
-    position = ggridges::position_points_jitter(width = 0.01, height = 0),
-    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
-    rel_min_height = 0.01, gradient_lwd = 1,
-    stat = "binline", bins = 25, draw_baseline = F
-  ) +
-  ggstance::geom_linerangeh(
-    freeform_followup_wordcount_CIs,
-    inherit.aes = F,
-    mapping = aes(
-      xmin = ci_lower, xmax = ci_upper,
-      y = as.numeric(proliferate.condition) + 0.8
-    ),
-    size = 1.25, color = "black"
-  ) + geom_point(
-    freeform_followup_wordcount_CIs,
-    inherit.aes = F,
-    mapping = aes(
-      x = mean,
-      y = as.numeric(proliferate.condition) + 0.8
-    ),
-    size = 3, color = "black", shape = 3
-  ) +
-  scale_x_continuous(
-    expand = c(0.01, 0)
-    
-    
-  ) +
-  scale_y_discrete(expand = c(0.01, 0)) +
-  viridis::scale_fill_viridis(
-    breaks = c(0, 1)
-  ) +
-  guides(fill = F) +
-  theme(
-    axis.title.y = element_blank(),
-    axis.title.x = element_text(hjust = 0.5, vjust = 0)
-  ) +
-  labs(x = "Freeform word count vs. condition")
-
-# TODO: resolve "NAs introduced by coercion", "Removed x rows containing missing values"
 
 ```
