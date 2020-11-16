@@ -12,7 +12,7 @@
 
 var back =              _.shuffle( [1,2,3,4,5,6,7,8,9,10] ); // Background images
 var agents =            _.shuffle( ["Elephant","Monkey","Dog","Bear","Tiger","Sheep"] );
-var speakers =          _.shuffle( ["mh", "tg", "sb"] );
+var speakers =          ["tg"]; // TODO _.shuffle( ["mh", "tg", "sb"] );
 var audio_version =     "fall-2020-v2";
 
 var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
@@ -301,7 +301,7 @@ function run_trial(stim) {
             let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/just_arrived.wav");
             sound.play()
 
-            agent_say("Hello! I am a new researcher. I just arrived on this planet.", slide_num=stim.slide_num, width=425, duration=5550).then(
+            agent_say("Hello! I am a new researcher. I just arrived on this planet.", slide_num=stim.slide_num, width=425, duration=5500).then(
 
                 function() {
 
@@ -336,13 +336,13 @@ function run_trial(stim) {
             let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/been_while.wav");
             sound.play()
 
-            agent_say("Hello! I've been doing research on this planet for a while.", slide_num=stim.slide_num, width=425, duration=5550).then(
+            agent_say("Hello! I've been doing research on this planet for a while.", slide_num=stim.slide_num, width=425, duration=5525).then(
 
                 function() {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("I know all about the animals, plants, and objects here.", slide_num=stim.slide_num, width=400, duration=6000);
+                    agent_say("I know all about the animals, plants, and objects here.", slide_num=stim.slide_num, width=400, duration=5550);
 
                     let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/i_know_all.wav");
                     sound.play()
@@ -378,7 +378,7 @@ function run_trial(stim) {
 
                     let deferred = new $.Deferred();
 
-                    agent_say("Hmm, I wonder what we have here.", slide_num=stim.slide_num, width=260, duration=4000);
+                    agent_say("Hmm, I wonder what we have here.", slide_num=stim.slide_num, width=260, duration=3500);
                     let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/hmm_i_wonder.wav");
                     sound.play()
 
@@ -1146,9 +1146,10 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        "i0",
-        "botcaptcha",
-        "sound_check",
+        // TODO: uncomment all chunks
+        // "i0",
+        // "botcaptcha",
+        // "sound_check",
         "introduction",
         "trials", // includes animations as well as followup questions
         "subj_info",
