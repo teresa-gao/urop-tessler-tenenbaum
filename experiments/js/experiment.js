@@ -12,7 +12,7 @@
 
 var back =              _.shuffle( [1,2,3,4,5,6,7,8,9,10] ); // Background images
 var agents =            _.shuffle( ["Elephant","Monkey","Dog","Bear","Tiger","Sheep"] );
-var speakers =          ["tg"]; // TODO _.shuffle( ["mh", "tg", "sb"] );
+var speakers =          _.shuffle( ["mh", "tg", "sb"] );
 var audio_version =     "fall-2020-v2";
 
 var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
@@ -1146,10 +1146,9 @@ function init() {
 
     // Blocks of the experiment:
     exp.structure=[
-        // TODO: uncomment all chunks
-        // "i0",
-        // "botcaptcha",
-        // "sound_check",
+        "i0",
+        "botcaptcha",
+        "sound_check",
         "introduction",
         "trials", // includes animations as well as followup questions
         "subj_info",
