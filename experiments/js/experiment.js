@@ -836,17 +836,24 @@ function make_slides(f) {
                 // If response is correct, log botcaptcha data to Prolific and continue to next slide
                 if (bot_response.toLowerCase() == listener.toLowerCase()) {
 
+                    this.duration = (Date.now() - this.botcaptcha_startT) / 1000;
+
                     // Log data to Prolific
                     exp.full_response_data.push({
                         type: "attention",
+                        name: "botcaptcha",
                         prompt: this.bot_utterance + " " + this.bot_question,
                         correct_answer: listener,
                         num_fails: this.bot_trials,
-                        responses: this.all_responses,
-                        duration: (Date.now() - this.botcaptcha_startT) / 1000
+                        response: this.all_responses,
+                        response_type: "freeform",
+                        duration: this.duration
                     });
 
-                    exp.streamlined_data["catch_trial_fails"] += this.bot_trials;
+                    exp.streamlined_data["botcaptcha_response"] = this.all_responses;
+                    exp.streamlined_data["botcaptcha_correct_answer"] = listener;
+                    exp.streamlined_data["botcaptcha_n_fails"] = this.bot_trials;
+                    exp.streamlined_data["botcaptcha_duration"] = this.duration;
 
                     // Continue to next slide
                     exp.go();
@@ -882,7 +889,6 @@ function make_slides(f) {
     slides.sound_check = slide({
         name: "sound_check",
         sound_trials: 0,
-        all_responses: [],
         start: function() {
             this.sound_startT = Date.now();
             this.sound_word = _.sample(["tiger", "shadow"]);
@@ -894,54 +900,38 @@ function make_slides(f) {
         },
         button: function() {
             // get the participants' input
-            sound_response = $("#sound_response").val();
+            this.sound_response = $("#sound_response").val();
 
             // Show error if no participant input
-            if (sound_response.toLowerCase() == "") {
+            if (this.sound_response.toLowerCase() == "") {
                 $(".error_incorrect").hide();
                 $(".write_something").show();
 
             // Evaluate participant input
             } else {
 
-                // Record participant response
-                this.all_responses.push(sound_response);
+                this.is_correct = (this.sound_word.toLowerCase() == this.sound_response.toLowerCase())
+                this.duration = (Date.now() - this.sound_startT) / 1000;
 
-                // If response is correct, log to Prolific and continue to next slide
-                if (sound_response.toLowerCase() == this.sound_word) {
+                // regardless of whether response is correct, log data to Prolific and continue to next slide
+                exp.full_response_data.push({
+                    type: "attention",
+                    name: "sound_check",
+                    prompt: "Please adjust your system volume to a comfortable level. When you are ready, click the Test button. You will hear a word like \"skyscraper\". Enter the word you hear into the box below and click Continue\ when you are finished.",
+                    correct_answer: this.sound_word,
+                    response: this.sound_response,
+                    response_type: "freeform",
+                    is_correct: this.is_correct,
+                    duration: this.duration
+                });
 
-                    // Log data to Prolific
-                    exp.full_response_data.push({
-                        type: "attention",
-                        prompt: "Please adjust your system volume to a comfortable level. When you are ready, click the Test button. You will hear a word like \"skyscraper\". Enter the word you hear into the box below and click Continue\ when you are finished.",
-                        correct_answer: this.sound_word,
-                        num_fails: this.sound_trials,
-                        responses: this.all_responses,
-                        duration: (Date.now() - this.sound_startT) / 1000
-                    });
+                exp.streamlined_data["sound_check_response"] = this.sound_response;
+                exp.streamlined_data["sound_check_correct_answer"] = this.sound_word;
+                exp.streamlined_data["sound_check_is_correct"] = this.is_correct;
+                exp.streamlined_data["sound_check_duration"] = this.duration;
 
-                    exp.streamlined_data["catch_trial_fails"] += this.sound_trials;
+                exp.go();
 
-                    exp.go();
-
-                // gives participant two more trials if the response was incorrect
-                } else {
-
-                    this.sound_trials++;
-
-                    $(".error").hide();
-                    $(".error_incorrect").show();
-                    if (this.sound_trials == 1) {
-                            $(".error_2more").show();
-                    } else if (this.sound_trials == 2) {
-                            $(".error_1more").show();
-                    } else {
-                        // if participant fails, they cannot proceed
-                            $(".error, #sound_button, #sound_test_button, .progress").hide();
-                            $('#sound_response').prop("disabled", true);
-                            $(".error_final").show();
-                    };
-                }
             }
         }
 
@@ -1019,8 +1009,6 @@ function make_slides(f) {
                 // collect response
                 if (this.stim.response_type == "slider") {
                     this.response = exp.sliderPost;
-                    exp.streamlined_data["predicted_probability"] = this.response;
-                    exp.streamlined_data["predicted_probability_duration"] = this.duration;
 
                 } else if (this.stim.response_type == "grid") {
                     this.response = $("input[name=grid_choice]:checked").val();
@@ -1028,20 +1016,8 @@ function make_slides(f) {
                 } else if (this.stim.response_type == "mc") {
                     this.response = $("input[name=mc_choice]:checked").val();
 
-                    if (this.stim.show_generic) {
-                        exp.streamlined_data["generic_endorsement"] = this.response;
-                        exp.streamlined_data["generic_endorsement_duration"] = this.duration;
-                    }
-
-                    if ( (this.stim.show_scene) && ( (this.response == "yes") || (this.response == "no") ) ) {
-                        exp.streamlined_data["perceived_character_knowledge"] = this.response;
-                        exp.streamlined_data["perceived_character_knowledge_duration"] = this.duration;
-                    }
-
                 } else if (this.stim.response_type == "freeform") {
                     this.response = $("#freeform").val();
-                    exp.streamlined_data["freeform_followup"] = this.response;
-                    exp.streamlined_data["freeform_followup_duration"] = this.duration;
 
                 }
 
@@ -1052,14 +1028,12 @@ function make_slides(f) {
                     this.is_correct = (this.response == this.stim.correct_answer);
                 }
 
-                if (!(this.is_correct)) {
-                    exp.streamlined_data["followup_fails"]++;
-                }
-
                 // Log followup duration and slider response to Prolific
                 exp.full_response_data.push(
                     {
+                        type: "followup",
                         prompt: this.stim.prompt,
+                        name: this.stim.followup_name,
                         response: this.response,
                         response_type: this.stim.response_type,
                         correct_answer: this.stim.correct_answer,
@@ -1067,6 +1041,11 @@ function make_slides(f) {
                         duration: this.duration
                     }
                 );
+
+                exp.streamlined_data[this.stim.followup_name + "_response"] = this.response;
+                exp.streamlined_data[this.stim.followup_name + "_correct_answer"] = this.stim.correct_answer;
+                exp.streamlined_data[this.stim.followup_name + "_is_correct"] = this.is_correct;
+                exp.streamlined_data[this.stim.followup_name + "_duration"] = this.duration;
 
                 _stream.apply(this);
 
@@ -1222,6 +1201,7 @@ function init() {
         {
             slide_num: slide_num++,
             type: "followup",
+            followup_name: "predicted_probability",
             prompt: "Imagine that you come across another " +item_names[0][0] + ". What are the chances that it " + has_property_statement + "?",
             correct_answer: "NA",
             show_scene: false,
@@ -1237,6 +1217,7 @@ function init() {
         {
             slide_num: slide_num++,
             type: "followup",
+            followup_name: "name_identification",
             prompt: "What is the name of the item you learned about? Please select its name from the options below.",
             correct_answer: item_names[0][0],
             show_scene: false,
@@ -1250,6 +1231,7 @@ function init() {
         {
             slide_num: slide_num++,
             type: "followup",
+            followup_name: "generic_endorsement",
             prompt: "Would you say the following is true?",
             correct_answer: "NA",
             show_scene: false,
@@ -1265,6 +1247,7 @@ function init() {
         {
             slide_num: slide_num++,
             type: "followup",
+            followup_name: "perceived_character_knowledge",
             prompt: "Please refer to the image below. Did this character know that " + item_names[0][1] + " " + could_have_property_statement + " before you observed it together?",
             correct_answer: "NA",
             show_scene: true,
@@ -1283,6 +1266,7 @@ function init() {
         {
             slide_num: slide_num++,
             type: "followup",
+            followup_name: "character_arrival",
             prompt: "Please refer to the image below. Is this character a new researcher who just arrived here, or have they been doing research on this planet for a while?",
             correct_answer: character_arrival,
             show_scene: true,
@@ -1301,6 +1285,7 @@ function init() {
         {
             slide_num: slide_num++,
             type: "followup",
+            followup_name: "freeform_followup",
             prompt: "In the text box below, please describe briefly what happened in this experiment.",
             correct_answer: "NA",
             show_scene: false,
@@ -1313,22 +1298,14 @@ function init() {
 
     // flattened file containing all info needed for data analysis
     exp.streamlined_data = {
+
         item_presentation_condition: item_presentation_condition[0],
         n_examples: n_examples[0],
         object: objects[0][0],
         item_name: item_names[0][0],
         agent: agents[0],
         speaker: speakers[0],
-        catch_trial_fails: 0,
-        followup_fails: 0,
-        predicted_probability: null,
-        predicted_probability_duration: 0,
-        generic_endorsement: null,
-        generic_endorsement_duration: 0,
-        perceived_character_knowledge: null,
-        perceived_character_knowledge_duration: 0,
-        freeform_followup: "",
-        freeform_followup_duration: 0
+
     };
 
     // Submitted to Prolific — very complete data, not flattened
