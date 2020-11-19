@@ -1,4 +1,4 @@
-// OUTLINE OF OF experiment.js FILE:
+// OUTLINE OF experiment.js FILE:
 // 1) Variable declarations
 // 2) Helper functions
 // 3) Main program
@@ -22,7 +22,7 @@ var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
 
 var item_names =         _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", "feps"] ]);
 var n_examples =        _.shuffle([1, 2]);
-var item_presentation_condition = _.shuffle(["accidental", "pedagogical"]);
+var item_presentation_condition = _.shuffle(["accidental", "pedagogical", "generic", "gen+ped"]);
 
 var distractor_names = _.shuffle(["zobby", "vicket", "yem", "blus", "nar"])
 var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_names[0][0]] ) );
@@ -38,6 +38,11 @@ console.log(agents[0] + ", voiced by " + speakers[0]);
 
 let agent_from_right = 250; // agent's initial, intro slide distance from the right
 let agent_travel_distance = 140; // distance agent moves to the right to trigger object property reveal
+
+let generic_statement = item_names[0][1][0].toUpperCase() + item_names[0][1].slice(1) + " have " + objects[0][2];
+if (objects[0][2] == "squeaking") {
+    generic_statement = item_names[0][1][0].toUpperCase() + item_names[0][1].slice(1) + " squeak";
+}
 
 // Change all images of a given class to have the same source
 function change_image(class_name, source) {
@@ -329,9 +334,7 @@ function run_trial(stim) {
 
             );
 
-        }
-
-        if (stim.item_presentation_condition == "pedagogical") {
+        } else {
 
             let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/been_while.wav");
             sound.play()
@@ -365,6 +368,35 @@ function run_trial(stim) {
             );
 
         }
+
+    }
+
+    if (stim.type == "state_generic") {
+
+        agent_say("I have something to tell you...", slide_num=stim.slide_num, width=225).then(  // TODO: add duration and speaker voice audio
+
+            function() {
+
+                let deferred = new $.Deferred();
+
+                agent_say(generic_statement + ".", slide_num=stim.slide_num, width=200); // TODO: add duration and speaker voice audio
+
+                setTimeout (function() {
+                    deferred.resolve();
+                }, 2000); // TODO: update duration
+
+                return deferred.promise();
+
+            }
+
+        ).then(
+
+            function() {
+                $(".speech").hide();
+                $("#continue_button").show();
+            }
+
+        );
 
     }
 
@@ -428,9 +460,7 @@ function run_trial(stim) {
 
             );
 
-        }
-
-        if (stim.item_presentation_condition == "pedagogical") {
+        } else {
 
             let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/show_you.wav");
             sound.play();
@@ -581,9 +611,7 @@ function run_trial(stim) {
 
             )
 
-        }
-
-        if (stim.item_presentation_condition == "pedagogical") {
+        } else {
 
             let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/watch_this.wav");
             sound.play()
@@ -701,11 +729,6 @@ function run_trial(stim) {
         if (stim.show_generic) {
 
             $(".agent, .object, .error, .speech, .blanket, .label, .table, .background, .slider, .continue_button").hide();
-
-            let generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " have " + stim.property;
-            if (stim.property == "squeaking") {
-                generic_statement = stim.item_name[1][0].toUpperCase() + stim.item_name[1].slice(1) + " squeak";
-            }
 
             $("#generic_text").text("\"" + generic_statement + ".\"");
             $("#generic_text").show();
@@ -1171,31 +1194,62 @@ function init() {
             speaker: speakers[0]
         },
 
-        // Animated agent encounters object(s)
-        {
-            slide_num: slide_num++,
-            type: "object_encounter",
-            item_presentation_condition: item_presentation_condition[0],
-            background: back[0],
-            agent: agents[0],
-            speaker: speakers[0],
-            object: objects[0],
-            item_name: item_names[0],
-            n_examples: n_examples[0]
-        },
+    ];
 
-        // Animated agent discovers property of object(s)s
-        {
-            slide_num: slide_num++,
-            type: "object_property",
-            item_presentation_condition: item_presentation_condition[0],
-            background: back[0],
-            agent: agents[0],
-            speaker: speakers[0],
-            object: objects[0],
-            item_name: item_names[0],
-            n_examples: n_examples[0]
-        },
+    if (item_presentation_condition[0] == "generic" || item_presentation_condition[0] == "gen+ped") {
+
+        exp.trials_stimuli.push(
+
+            // Animated agent speaks generic statement
+            {
+                slide_num: slide_num++,
+                type: "state_generic",
+                item_presentation_condition: item_presentation_condition[0],
+                background: back[0],
+                agent: agents[0],
+                speaker: speakers[0],
+                object: objects[0],
+                item_name: item_names[0],
+                n_examples: n_examples[0]
+            }
+
+        );
+
+    }
+
+    if (item_presentation_condition[0] != "generic") {
+
+        exp.trials_stimuli.push(
+
+            // Animated agent encounters object(s)
+            {
+                slide_num: slide_num++,
+                type: "object_encounter",
+                item_presentation_condition: item_presentation_condition[0],
+                background: back[0],
+                agent: agents[0],
+                speaker: speakers[0],
+                object: objects[0],
+                item_name: item_names[0],
+                n_examples: n_examples[0]
+            },
+
+            // Animated agent discovers property of object(s)s
+            {
+                slide_num: slide_num++,
+                type: "object_property",
+                item_presentation_condition: item_presentation_condition[0],
+                background: back[0],
+                agent: agents[0],
+                speaker: speakers[0],
+                object: objects[0],
+                item_name: item_names[0],
+                n_examples: n_examples[0]
+            }
+        );
+    }
+
+    exp.trials_stimuli.push(
 
         // Followup for likelihood of next encountered object to have same property (predicted probability)
         {
@@ -1294,7 +1348,7 @@ function init() {
             item_presentation_condition: item_presentation_condition[0]
         }
 
-    ];
+    );
 
     // flattened file containing all info needed for data analysis
     exp.streamlined_data = {
@@ -1335,6 +1389,7 @@ function init() {
             background: back[0],
             spoken_text: []
         }
+
     ];
 
     exp.full_trials_slides = [];
