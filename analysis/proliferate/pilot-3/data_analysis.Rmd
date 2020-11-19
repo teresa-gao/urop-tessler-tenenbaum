@@ -1,0 +1,255 @@
+---
+title: "Genex Analysis: Fall 2020 Prolific pilots"
+author: "Teresa Gao"
+date: "17 November 2020"
+output: rmarkdown::github_document
+---
+
+
+# About
+
+This R Notebook reports data from a second ("third") round of pilot experiments run during Fall 2020 on Prolific (via proliferate).
+
+
+
+# Setup
+
+Load required libraries
+
+```{r libraries}
+
+library("dplyr")
+library("tidyverse")
+library("ggplot2")
+library("gridExtra")
+library("tidyboot")
+library("ngram")
+library("readr")
+library("tidytext")
+library("stringr")
+library("readr")
+library("brms")
+
+```
+
+If running/editing in RStudio, go to **Session > Set Working Directory > To Source File Location**. This ensures that we can find and access the files we need!
+
+```{r import and filter data}
+
+streamlined_data <- read_csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-streamlined_data.csv")
+n_total_participants <- nrow(streamlined_data)
+
+# remove participants who failed attention and/or followup
+streamlined_data <- streamlined_data %>%
+  # filter(catch_trial_fails == 0) %>%
+  filter(followup_fails == 0)
+
+View(streamlined_data) # prints output; line may be omitted
+
+```
+
+Due to failure of attention checks and/or non-comprehension followup questions, `r n_total_participants - nrow(data)` participants were excluded from analysis.
+
+
+
+# Calculations and Relabeling
+
+Compute bootstrapped means and confidence intervals of user slider response
+
+```{r means and CIs}
+
+predicted_probability_CIs <- streamlined_data %>%
+  group_by(item_presentation_condition, n_examples) %>%
+  tidyboot_mean(column = predicted_probability)
+
+predicted_probability_duration_CIs <- streamlined_data %>%
+  group_by(item_presentation_condition, n_examples) %>%
+  tidyboot_mean(column = predicted_probability_duration)
+
+generic_endorsement_CIs <- streamlined_data %>%
+  group_by(item_presentation_condition, n_examples) %>%
+  mutate(generic_endorsement = ifelse(generic_endorsement == "yes",1,0)) %>%
+  tidyboot_mean(column = generic_endorsement)
+generic_endorsement_CIs # prints output; line may be omitted
+
+perceived_character_knowledge_CIs <- streamlined_data %>%
+  group_by(item_presentation_condition, n_examples) %>%
+  mutate(perceived_character_knowledge = ifelse(perceived_character_knowledge == "yes",1,0)) %>%
+  tidyboot_mean(column = perceived_character_knowledge)
+perceived_character_knowledge_CIs # prints output; line may be omitted
+
+```
+
+
+
+# Visualization
+
+## Predicted probability
+
+Gradient density ridges graph of predicted probability of next encountered object having same property vs. item presentation condition and number of examples
+
+```{r gradient density - predicted probability vs. condition}
+
+predicted_probability_CIs <- predicted_probability_CIs %>%
+    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
+
+ggplot(
+  streamlined_data %>%
+      mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
+  mapping = aes(
+    x = predicted_probability,
+    y = exp_cond,
+    fill = ..x..
+  )
+) +
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    predicted_probability_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(exp_cond) + 0.85
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    predicted_probability_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(exp_cond) + 0.85
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0),
+    limits = c(0, 1.02),
+    breaks = c(0, 0.25, 0.5, 0.75, 1)
+  ) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(x = "Predicted Probability of Future Instance having Property")
+```
+
+Gradient density ridges graph of *time taken to respond* to predicted probability of next encountered object having same property vs. item presentation condition and number of examples
+
+```{r gradient density - predicted probability time vs. condition}
+
+predicted_probability_duration_CIs <- predicted_probability_duration_CIs %>%
+    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
+
+ggplot(
+  streamlined_data %>%
+      mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
+  mapping = aes(
+    x = predicted_probability_duration,
+    y = exp_cond,
+    fill = ..x..
+  )
+) +
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    predicted_probability_duration_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(exp_cond) + 0.85
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    predicted_probability_duration_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(exp_cond) + 0.85
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0),
+    breaks = c(0, 0.25, 0.5, 0.75, 1)
+  ) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(x = "Response time for predicted probability of future instance having property")
+```
+
+Facet grid of predicted probability plotted on number of examples vs. item presentation condition
+
+```{r facet grid - predicted probability on num. examples vs. condition}
+ggplot(
+  streamlined_data,
+  mapping = aes(
+    x = predicted_probability,
+    y = (..count..) / tapply(..count.., ..PANEL.., sum)[..PANEL..],
+    fill = as.factor(item_presentation_condition)
+  )
+) +
+geom_histogram(
+  color = "black",
+  bins = 16
+) +
+labs(
+  x = "Slider response",
+  y = "Fraction of total count"
+) +
+facet_grid(n_examples ~ item_presentation_condition) +
+scale_fill_manual(
+  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
+) +
+theme(legend.position = "none")
+```
+
+Facet grid of predicted probability plotted on item presentation condition vs. speaker
+
+```{r facet grid - predicted probabiliy on condition vs. speaker}
+ggplot(
+  streamlined_data,
+  mapping = aes(
+    x = predicted_probability,
+    y = (..count..) / tapply(..count.., ..PANEL.., sum)[..PANEL..],
+    fill = as.factor(item_presentation_condition)
+  )
+) +
+geom_histogram(
+  color = "black",
+  bins = 16) +
+labs(
+  x = "Slider response",
+  y = "Fraction of total count"
+) +
+facet_grid(speaker ~ item_presentation_condition) +
+scale_fill_manual(
+  values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
+) +
+theme(legend.position = "none")
+```
+
+## Followup
+
+<!-- TODO -->
