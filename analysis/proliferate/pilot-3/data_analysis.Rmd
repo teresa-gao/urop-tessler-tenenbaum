@@ -36,15 +36,20 @@ If running/editing in RStudio, go to **Session > Set Working Directory > To Sour
 
 ```{r import and filter data}
 
-streamlined_data <- read_csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-streamlined_data.csv")
+streamlined_data <- read_csv("streamlined_data.csv")
+participant_demographics <- read_csv("participant_demographics.csv")
 n_total_participants <- nrow(streamlined_data)
+
+# append some streamlined data to demographic info
+participant_demographics <- merge(participant_demographics, subset(streamlined_data, select=c(workerid, catch_trial_fails, followup_fails)), by="workerid")
 
 # remove participants who failed attention and/or followup
 streamlined_data <- streamlined_data %>%
   # filter(catch_trial_fails == 0) %>%
   filter(followup_fails == 0)
 
-View(streamlined_data) # prints output; line may be omitted
+View(streamlined_data) # opens output in another window; line may be omitted
+View(participant_demographics) # opens output in another window; line may be omitted
 
 ```
 
@@ -253,3 +258,48 @@ theme(legend.position = "none")
 ## Followup
 
 <!-- TODO -->
+
+## Demographic information
+
+Participants' feedback
+
+```{r table - comments}
+
+View(participant_demographics %>% select(comments) %>% na.omit())
+
+```
+
+
+
+Bar chart of participants' reported native language(s)
+
+```{r bar chart - native languages frequency}
+
+native_languages <- with(participant_demographics %>% select(language) %>% na.omit(), paste0(language))
+
+native_languages <- native_languages %>%
+  sapply(tolower) %>%
+  str_replace(", ", " ") %>%
+  str_replace("and ", " ") %>%
+  str_squish() %>%
+  strsplit("\\s+") %>% # spilt by spaces
+  unlist() %>%
+  table() %>% # frequency counts
+  as.data.frame() # conver to dataframe
+
+native_languages
+
+ggplot(
+  native_languages,
+  aes(., Freq)
+  ) + geom_col(
+    aes(., Freq)
+  ) + xlab(
+    "Native language"
+  ) + ylab(
+    "Frequency"
+  ) + labs(
+    title="Frequency of participants' reported native language(s)"
+  )
+
+```

@@ -1,0 +1,81 @@
+"","workerid","proliferate.condition","age","assess","comments","education","fairprice","gender","language","problems","error"
+"1",162,"pedagogical-1",37,"Yes","",3,".50","Female","English","No",NA
+"2",158,"pedagogical-1",28,"Yes","N/A",2,"0.64","Female","English","N/A",NA
+"3",229,"pedagogical-1",21,"Yes","",2,"64","Male","English","No",NA
+"4",236,"pedagogical-1",54,"Yes","",2,"1.00","Male","","no",NA
+"5",203,"pedagogical-1",24,"Yes","N/a",4,"yes","Male","English and Spanish","No",NA
+"6",216,"pedagogical-1",43,"Yes","Interesting experiment. I've never done one like this before.",3,"50 cents","Female","English","No",NA
+"7",211,"pedagogical-1",51,"Yes","No, I don't. ",2,"$.25","Female","English","No I didn't. ",NA
+"8",195,"pedagogical-1",22,"Yes","",3,"75 cents","Female","English","No",NA
+"9",184,"pedagogical-1",50,"Yes","No",3,"yes","Male","English","no",NA
+"10",165,"pedagogical-1",22,"Yes","",2,"","Female","English ","no ",NA
+"11",199,"pedagogical-1",29,"Yes","No thank you",2,"1.00$","Male","English","No",NA
+"12",167,"pedagogical-1",21,"Yes","No",2,"0.64 ","Female","English","No",NA
+"13",226,"pedagogical-1",30,"Yes","",4,"£3","Male","English","No",NA
+"14",212,"pedagogical-1",49,"Yes","no",3,"yes","Female","English","no",NA
+"15",174,"pedagogical-1",22,"Yes","No",1,"1","Male","English","No",NA
+"16",190,"pedagogical-1",31,"Yes","",3,"not sure","Female","English, Spanish","No.",NA
+"17",207,"pedagogical-1",47,"Yes","Nice graphics!",2,"1.00 USD","Male","English","No",NA
+"18",178,"pedagogical-1",18,"Yes","Do Dax birds actually have green feathers? Enquiring minds want to know. ",2,"5 cents? ","Female","English ","No",NA
+"19",222,"pedagogical-1",38,"Yes","Very interesting and thought provoking. Makes me want to learn more about this planet! Thank you guys for the opportunity and good luck with your survey!",2,"Maybe","Male","English","No.",NA
+"20",161,"pedagogical-2",21,"Yes","nope!",2,"$1.00 USD","Male","English","no!",NA
+"21",219,"pedagogical-2",31,"Yes","",2,"","Male","English","No",NA
+"22",186,"pedagogical-2",30,"Yes","no",2,"1.00","Female","English","no",NA
+"23",234,"pedagogical-2",36,"Yes","very nice",3,"yes","Female","English","no",NA
+"24",238,"pedagogical-2",NA,"Yes","",-1,"","","","no",NA
+"25",202,"pedagogical-2",22,"Yes","",4,"","Male","english","",NA
+"26",194,"pedagogical-2",40,"Yes","no",2,"$2,000,000","Female","English","no",NA
+"27",210,"pedagogical-2",18,"Yes","",2,"$1","Male","Vietnamese","The audio was extremely loud",NA
+"28",225,"pedagogical-2",26,"Yes","",1,"1.00","Male","English","No",NA
+"29",157,"pedagogical-2",21,"Yes","Nothing, good luck with the study! :)",2,"$0.50","Male","English","Nope!",NA
+"30",206,"pedagogical-2",40,"Yes","No",4,"$2.00","Female","English","No",NA
+"31",173,"pedagogical-2",38,"Yes","",3,"30","Male","english","",NA
+"32",182,"pedagogical-2",NA,"Yes","",-1,"","","","",NA
+"33",189,"pedagogical-2",37,"Yes","",0,"One dollar","Male","English","No",NA
+"34",170,"pedagogical-2",21,"Yes","",2,"","Male","English","",NA
+"35",166,"pedagogical-2",22,"Yes","",3,"$5","Female","English","No",NA
+"36",198,"pedagogical-2",43,"Yes","",1,"0.75","Female","Mandarin","",NA
+"37",177,"pedagogical-2",44,"Yes","",3,".25","Female","Spanish and English","No",NA
+"38",230,"pedagogical-2",23,"Yes","",3,"","Other","English","",NA
+"39",205,"accidental-2",29,"Yes","no",4,"$5","Male","English, Malayalam","no",NA
+"40",176,"accidental-2",30,"Yes","",4,"0.50","Female","Chinese","No",NA
+"41",156,"accidental-2",18,"Yes","",2,"5$","Male","English","No",NA
+"42",220,"accidental-2",28,"Yes","",4,"0.50","Male","Gujarati","No",NA
+"43",181,"accidental-2",22,"Yes","",3,"Yes","Male","English","",NA
+"44",209,"accidental-2",30,"Yes","",3,"Yes","Male","English","No",NA
+"45",160,"accidental-2",18,"Yes","",1,"","Male","","",NA
+"46",218,"accidental-2",35,"Yes","",3,"1.00","Female","english","no",NA
+"47",214,"accidental-2",23,"Yes","",2,"$0.50","Male","English","No",NA
+"48",224,"accidental-2",38,"Yes","interesting at least, different than most surveys here",3,"2","Male","english","i tried to pay attention but may have missed a few things",NA
+"49",201,"accidental-2",26,"Yes","",4,".50","Female","English","no",NA
+"50",172,"accidental-2",22,"Yes","No",2,".60","Female","English","No",NA
+"51",188,"accidental-2",27,"Yes","",3,"1.00","Female","english","yes, the voice lagged quite a bit - on a different screen and the words from the screen before would be said ",NA
+"52",164,"accidental-2",30,"Yes","No",4,"5 US dollars","Other","Englsih","No",NA
+"53",197,"accidental-2",26,"Yes","",4,"0.40 Cents","Male","English","No",NA
+"54",191,"accidental-2",35,"Yes","No",3,"1.00","Male","English","No",NA
+"55",193,"accidental-2",33,"Yes","no ",3,"0.50","Female","english","no, thank goodness. some other studies are buggy",NA
+"56",232,"accidental-2",28,"Yes","",2,"","Female","English","No.",NA
+"57",228,"accidental-2",28,"Yes","",3,"What was paid","Female","English","No",NA
+"58",237,"accidental-2",54,"Yes",NA,3,"0.90","Male","English","No",NA
+"59",231,"accidental-1",20,"Yes","Nope.",1,"1 dollar","Male","English","Nope",NA
+"60",213,"accidental-1",33,"Yes","N/A",4,".25","Male","English","No",NA
+"61",163,"accidental-1",23,"Yes","",3,"yes","Female","English","No",NA
+"62",223,"accidental-1",22,"Yes","no",3,"0.60","Female","English and Korean","no",NA
+"63",204,"accidental-1",40,"Yes","no",3,"yes","Male","English","no",NA
+"64",183,"accidental-1",21,"Yes","I believe that the study was intended to express phonetic memorization. I am not entirely sure.  ",3,"$0.75","Male","English","No",NA
+"65",179,"accidental-1",50,"Yes","good survey",4,"yes","Male","einglish","no",NA
+"66",159,"accidental-1",25,"Yes","",2,"1.5 dollars","Male","spanish","no",NA
+"67",235,"accidental-1",22,"Yes","",1,"1.00","Male","english","no",NA
+"68",208,"accidental-1",23,"Yes","",1,"$1","Male","English","no",NA
+"69",240,"accidental-1",20,"Yes","I loved the other researcher. Very cute",1,"Yes","Female","English","No",NA
+"70",200,"accidental-1",22,"Yes","N/A",3,".50","Female","English","No",NA
+"71",239,"accidental-1",30,"Yes","none",4,"$1","Male","english","none",NA
+"72",175,"accidental-1",24,"Yes","",2,"0.50","Male","English","",NA
+"73",217,"accidental-1",54,"Yes","no",4,".50","Female","English","no",NA
+"74",155,"accidental-1",22,"Yes","None",3,"$0.25","Male","English","No",NA
+"75",168,"accidental-1",NA,"","",-1,"","","","",NA
+"76",192,"accidental-1",26,"Yes","N/A",3,"","Female","English","No.",NA
+"77",196,"accidental-1",33,"Yes","",3,"$0.70","Female","English","",NA
+"78",171,"accidental-1",18,"Yes","no",2,"$2","Female","English","No",NA
+"79",227,"accidental-1",31,"Yes","",3,"50 cents","Male","English","No",NA
+"80",187,"accidental-1",28,"Yes","",2,"any amount","Male","english","no",NA
