@@ -1,14 +1,14 @@
-*last updated 05 November 2020*
+*last updated 20 November 2020*
 
 # Overview
 
 ## To run the experiment...
 
-...open **experiment.html**; this should pop open in your browser window.
+...open **experiment.html**; this should pop open in your browser window. If you're on Chrome, you can hit `Ctrl+Shift+I` (Windows) to pull up the Inspector and see what's being logged. You can type `exp.go()` directly into the console to advance past slides.
 
 ## To edit the experiment...
 
-...open **experiment.js** in your favorite text editor.
+...open **experiment.js** in your favorite text editor. If you have Inspector pulled up as you run the experiment and add `console.log("your message here")` or `debugger;`, then you can keep track of where you are and what's going on. (Details about editing **experiment.js** are below.)
 
 # Files
 
@@ -34,68 +34,71 @@ Contains local style css; formats experiment.html in addition to css files in \_
 
 Contains agent, object, and background images as well as Adobe Illustrator files for SVGs.
 
-## js
-
-Contains experiment.js.
-
 ## version2
 
 Contains previous experiment version's code (prior to 2020-10-29). Note that only files and subdirectories which differ from the current ones are included.
 
-### Structure
+## js
+
+Contains experiment.js.
+
+### **experiment.js** structure
 
 * **Variable declarations.** Much of the experiment can be modified solely by changing these variable values
 * **Helper functions.** These are used primarily in `slides.trials` (trials slide).
-* **Main program.** These include intro slide, catch trials (attention checks), trial slides (animated experiment) and followup trials, optional personal info, and thank-you (data submission to Prolific).
-* **Init and setup.**  Here, we create the data frames which are passed as stim to the slides and/or used to collect data to be submitted to Prolific and declare exp.structure.
+* **Main program.** These include intro slide, catch trials (attention checks), trial slides (animated experiment and followup questions), optional demographic questions, and thank-you (data submission to Prolific/proliferate).
+* **Init and setup.**  Here, we create the data frames which are passed as stim to the slides and/or used to collect data to be submitted to Prolific and declare `exp.structure`. *If you're playing around with the experiment, start here: try commenting out parts of `exp.structure` to see what they do.*
 
-### How does everything work within the slides?
+#### How does everything work within the slides?
 
-#### slides.io
+##### slides.io
 Introduction slide. Basic experiment instructions, contact info, etc.
 
-#### slides.botcaptcha
+##### slides.botcaptcha
 "Botcaptcha", in which user must understand context ("Who is X talking to?") from situational ("X says to Y"). Confirms that user is not a bot and that user is capable of comprehending basic information given in English.
 
-#### slides.sound_check
+##### slides.sound_check
 Additional semi-botcaptcha, in which user must type the word that they hear. Checks that they are paying attention &mdash; the description contains slightly misleading instructions &mdash; and are capable of listening to spoken English. (While the narration and sound effects throughout accompany written text and visible cues, this check for a suitable sound system ensures consistency for all participants.)
 
-#### slides.introduction
+##### slides.introduction
 Provides context for following experimental task.
 
-#### slides.trials
+##### slides.trials
 Contains both experimental trials as well as followup comprehension checks.
 
-##### Scripts
-Currently, only pedagogical and accidental conditions are in use.
+###### Scripts
 
-| text (script) \| agent action                                                                            | duration in ms\* | accidental? | pedagogical? |
-| ---------------------------------------------------------------------------------------------------------| ---------------- | ----------- | ------------ |
-| *Agent appears on planet with background.*                                                               | TBD              | Y           | Y            |
-| "Hello! I am a new researcher. I just arrived on this planet."                                           | TBD              | Y           | N            |
-| "Hello! I've been doing research on this planet for a while."                                            | TBD              | N           | Y            |
-| "I don't know anything about the animals, plants, or objects here."                                      | TBD              | Y           | N            |
-| "I know all about the animals, plants, and objects here."                                                | TBD              | N           | Y            |
-| "I have something to show you. Follow me!"                                                               | TBD              | N           | Y            |
-| *Agent appears on planet with background and birds in tree, plants in dirt pile, or artifacts on table.* | TBD              | Y           | Y            |
-| "Hmm, I wonder what we have here."                                                                       | TBD              | Y           | N            |
-| "Oh, I see! This is a <sing. object name\>." \| "Oh, I see! These are <pl. object name\>."               | TBD              | Y           | N            |
-| "This is a <sing. object name\>." \| "These are <pl. object name\>."                                     | TBD              | N           | Y            |
-| "Watch this!"                                                                                            | TBD              | N           | Y            |
-| *Agent moves toward object(s): object(s) reveal property.*                                               | TBD              | Y           | Y            |
-| "Oh wow! <property\>!"                                                                                   | TBD              | Y           | N            |
-| "See? <property\>!"                                                                                      | TBD              | N           | Y            |
+| text (script) \| agent action                                                                            | duration in ms\* | accidental? | pedagogical? | generic? | gen+ped? |
+| ---------------------------------------------------------------------------------------------------------| ---------------- | ----------- | ------------ | -------- | -------- |
+| *Agent appears on planet with background.*                                                               |                  | Y           | Y            | Y        | Y        |
+| "Hello! I am a new researcher. I just arrived on this planet."                                           | 5500             | Y           | N            | N        | N        |
+| "Hello! I've been doing research on this planet for a while."                                            | 5525             | N           | Y            | Y        | Y        |
+| "I don't know anything about the animals, plants, or objects here."                                      | 6000             | Y           | N            | N        | N        |
+| "I know all about the animals, plants, and objects here."                                                | 5550             | N           | Y            | Y        | Y        |
+| "I have something to tell you..."                                                                        | TBD              | N           | N            | Y        | Y        |
+| "<property\>."                                                                                           | TBD              | N           | N            | Y        | Y        |
+| "I have something to show you. Follow me!"                                                               | 4250             | N           | Y            | N        | Y        |
+| *Agent appears on planet with background and birds in tree, plants in dirt pile, or artifacts on table.* |                  | Y           | Y            | N        | Y        |
+| "Hmm, I wonder what we have here."                                                                       | 3500             | Y           | N            | N        | N        |
+| "Oh, I see! This is a <sing. object name\>." \| "Oh, I see! These are <pl. object name\>."               | 4000             | Y           | N            | N        | N        |
+| "This is a <sing. object name\>." \| "These are <pl. object name\>."                                     | 2000             | N           | Y            | N        | Y        |
+| "Watch this!"                                                                                            | TBD              | N           | Y            | N        | Y        |
+| *Agent moves toward object(s): object(s) reveal property.*                                               |                  | Y           | Y            | N        | Y        |
+| "Oh wow! <property\>!"                                                                                   | 3500             | Y           | N            | N        | N        |
+| "See? <property\>!"                                                                                      | 3000             | N           | Y            | N        | Y        |
 
-\* After recording and clipping, the actual length of each MP3 should be 250-750 ms less than this value so the audio tracks don't seem clipped, especially when considering that some browsers may cause unpredictable delays.
+\* After recording and clipping, the actual length of each MP3 should be 250-750 ms less than this value so the audio tracks don't seem clipped, since some browsers may cause unpredictable delays.
 
-##### Followup (comprehension) checks
+###### Followup questions
 
-| prompt                                                                                                                                     | response type                  |
-| ------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
-| "What is the name of the item you learned about? Please select its name from the options below."                                           | grid (radio button)            |
-| "Please refer to the image below. Did this character know that <pl. object name\> could have <property\> before you observed it together?" | multiple choice (radio button) |
-| "Imagine that you come across another <sing. object name\>. What are the chances that it <has property\>?"                                 | slider (0% to 100%, labeled)   |
-| "Would you say the following is true? <generic statement\>."                                                                               | slider (0% to 100%, labeled)   |
-| "In the text box below, please describe briefly what happened in this experiment." \*                                                      | freeform (text box)            |
+| comprehension check?\* | prompt                                                                                                                                                    | response type                  |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
+| N                      | "Imagine that you come across another <sing. object name\>. What are the chances that it <has property\>?"                                                | slider (0% to 100%, labeled)   |
+| Y                      | "What is the name of the item you learned about? Please select its name from the options below."                                                          | grid (radio button)            |
+| N                      | "Would you say the following is true? <generic statement\>."                                                                                              | multiple choice (radio button) |
+| N                      | "Please refer to the image below. Did this character know that <pl. object name\> could have <property\> before you observed it together?"                | multiple choice (radio button) |
+| Y                      | "Please refer to the image below. Is this character a new researcher who just arrived here, or have they been doing research on this planet for a while?" | multiple choice (radio button) |
+| N                      | "In the text box below, please describe briefly what happened in this experiment." \*\*                                                                     | freeform (text box)            |
 
-\* included for data quality assessment purposes.
+\* Comprehension checks are objective facts used to gauge how well a participant is paying attention; other followups reflect the ambiguity this experiment aims to study.
+\*\* Included for data quality assessment purposes; responses should be individually, humanly reviewed
