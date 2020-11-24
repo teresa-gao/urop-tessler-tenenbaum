@@ -65,22 +65,28 @@ Compute bootstrapped means and confidence intervals of user slider response
 
 predicted_probability_CIs <- streamlined_data %>%
   group_by(item_presentation_condition, n_examples) %>%
-  tidyboot_mean(column = predicted_probability)
+  tidyboot_mean(column = predicted_probability) %>%
+  mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
+predicted_probability_CIs # prints output; line may be omitted
 
 predicted_probability_duration_CIs <- streamlined_data %>%
   group_by(item_presentation_condition, n_examples) %>%
-  tidyboot_mean(column = predicted_probability_duration)
+  tidyboot_mean(column = predicted_probability_duration) %>%
+  mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
+predicted_probability_duration_CIs # prints output; line may be omitted
 
 generic_endorsement_CIs <- streamlined_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   mutate(generic_endorsement = ifelse(generic_endorsement == "yes",1,0)) %>%
-  tidyboot_mean(column = generic_endorsement)
+  tidyboot_mean(column = generic_endorsement) %>%
+  mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 generic_endorsement_CIs # prints output; line may be omitted
 
 perceived_character_knowledge_CIs <- streamlined_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   mutate(perceived_character_knowledge = ifelse(perceived_character_knowledge == "yes",1,0)) %>%
-  tidyboot_mean(column = perceived_character_knowledge)
+  tidyboot_mean(column = perceived_character_knowledge) %>%
+  mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 perceived_character_knowledge_CIs # prints output; line may be omitted
 
 ```
@@ -94,9 +100,6 @@ perceived_character_knowledge_CIs # prints output; line may be omitted
 Gradient density ridges graph of predicted probability of next encountered object having same property vs. item presentation condition and number of examples
 
 ```{r gradient density - predicted probability vs. condition}
-
-predicted_probability_CIs <- predicted_probability_CIs %>%
-    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 
 ggplot(
   streamlined_data %>%
@@ -151,9 +154,6 @@ ggplot(
 Gradient density ridges graph of *time taken to respond* to predicted probability of next encountered object having same property vs. item presentation condition and number of examples
 
 ```{r gradient density - predicted probability time vs. condition}
-
-predicted_probability_duration_CIs <- predicted_probability_duration_CIs %>%
-    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 
 ggplot(
   streamlined_data %>%
@@ -257,7 +257,56 @@ theme(legend.position = "none")
 
 ## Followup
 
-<!-- TODO -->
+Predicted probability of future instance having property vs. endorsement of generic statement for each item presentation condition and number of examples
+
+```{r scatterplot with error bars - predicted probability vs. generic endorsement per condition}
+
+ggplot(
+  merge(
+    predicted_probability_CIs %>%
+      rename(
+        predicted_probability_mean = mean,
+        predicted_probability_ci_lower = ci_lower,
+        predicted_probability_ci_upper = ci_upper
+      ),
+    generic_endorsement_CIs %>%
+      rename(
+        generic_endorsement_mean = mean,
+        generic_endorsement_ci_lower = ci_lower,
+        generic_endorsement_ci_upper = ci_upper
+      ),
+    by="exp_cond"
+  ),
+  mapping = aes(
+    x=predicted_probability_mean,
+    y=generic_endorsement_mean,
+    color=exp_cond
+  )
+) + geom_errorbar(
+  mapping=aes(
+    x=predicted_probability_mean,
+    ymin=generic_endorsement_ci_lower,
+    ymax=generic_endorsement_ci_upper
+  ),
+  width=0.01, size=1
+) + geom_errorbar(
+  mapping=aes(
+    y=generic_endorsement_mean,
+    xmin=predicted_probability_ci_lower,
+    xmax=predicted_probability_ci_upper
+  ),
+  width=0.01, size=1
+) + geom_point(
+  mapping=aes(
+    x=predicted_probability_mean,
+    y=generic_endorsement_mean
+  ),
+  size=3, shape=15
+)
+
+```
+
+
 
 ## Demographic information
 

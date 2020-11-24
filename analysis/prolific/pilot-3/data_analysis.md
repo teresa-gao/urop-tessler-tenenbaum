@@ -31,14 +31,14 @@ library("dplyr")
 library("tidyverse")
 ```
 
-    ## -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
+    ## -- Attaching packages ------------------------------------------------------------------------------------------------------------- tidyverse 1.3.0 --
 
     ## v ggplot2 3.3.2     v purrr   0.3.4
     ## v tibble  3.0.3     v stringr 1.4.0
     ## v tidyr   1.1.2     v forcats 0.5.0
     ## v readr   1.3.1
 
-    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
+    ## -- Conflicts ---------------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -159,7 +159,8 @@ response
 ``` r
 predicted_probability_CIs <- streamlined_data %>%
   group_by(item_presentation_condition, n_examples) %>%
-  tidyboot_mean(column = predicted_probability)
+  tidyboot_mean(column = predicted_probability) %>%
+  mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ```
 
     ## Warning: Problem with `mutate()` input `strap`.
@@ -180,19 +181,49 @@ predicted_probability_CIs <- streamlined_data %>%
     ## Please use `cols = c(strap)`
 
 ``` r
+predicted_probability_CIs # prints output; line may be omitted
+```
+
+    ## # A tibble: 4 x 8
+    ## # Groups:   item_presentation_condition [2]
+    ##   item_presentati~ n_examples     n empirical_stat ci_lower  mean ci_upper
+    ##   <chr>                 <dbl> <int>          <dbl>    <dbl> <dbl>    <dbl>
+    ## 1 accidental                1    21          0.721    0.649 0.724    0.797
+    ## 2 accidental                2    18          0.769    0.715 0.769    0.814
+    ## 3 pedagogical               1    19          0.719    0.646 0.719    0.791
+    ## 4 pedagogical               2    18          0.859    0.777 0.857    0.928
+    ## # ... with 1 more variable: exp_cond <fct>
+
+``` r
 predicted_probability_duration_CIs <- streamlined_data %>%
   group_by(item_presentation_condition, n_examples) %>%
-  tidyboot_mean(column = predicted_probability_duration)
+  tidyboot_mean(column = predicted_probability_duration) %>%
+  mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ```
 
     ## Warning: `cols` is now required when using unnest().
     ## Please use `cols = c(strap)`
 
 ``` r
+predicted_probability_duration_CIs # prints output; line may be omitted
+```
+
+    ## # A tibble: 4 x 8
+    ## # Groups:   item_presentation_condition [2]
+    ##   item_presentati~ n_examples     n empirical_stat ci_lower  mean ci_upper
+    ##   <chr>                 <dbl> <int>          <dbl>    <dbl> <dbl>    <dbl>
+    ## 1 accidental                1    21           10.5     8.24  10.5     13.9
+    ## 2 accidental                2    18           11.7     9.43  11.7     14.2
+    ## 3 pedagogical               1    19           11.3     8.81  11.3     13.8
+    ## 4 pedagogical               2    18           10.5     8.12  10.5     13.3
+    ## # ... with 1 more variable: exp_cond <fct>
+
+``` r
 generic_endorsement_CIs <- streamlined_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   mutate(generic_endorsement = ifelse(generic_endorsement == "yes",1,0)) %>%
-  tidyboot_mean(column = generic_endorsement)
+  tidyboot_mean(column = generic_endorsement) %>%
+  mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ```
 
     ## Warning: `cols` is now required when using unnest().
@@ -202,20 +233,22 @@ generic_endorsement_CIs <- streamlined_data %>%
 generic_endorsement_CIs # prints output; line may be omitted
 ```
 
-    ## # A tibble: 4 x 7
+    ## # A tibble: 4 x 8
     ## # Groups:   item_presentation_condition [2]
-    ##   item_presentation_con~ n_examples     n empirical_stat ci_lower  mean ci_upper
-    ##   <chr>                       <dbl> <int>          <dbl>    <dbl> <dbl>    <dbl>
-    ## 1 accidental                      1    21          0.905    0.762 0.905        1
-    ## 2 accidental                      2    18          0.944    0.824 0.946        1
-    ## 3 pedagogical                     1    19          0.947    0.823 0.946        1
-    ## 4 pedagogical                     2    18          0.944    0.812 0.944        1
+    ##   item_presentati~ n_examples     n empirical_stat ci_lower  mean ci_upper
+    ##   <chr>                 <dbl> <int>          <dbl>    <dbl> <dbl>    <dbl>
+    ## 1 accidental                1    21          0.905    0.762 0.905        1
+    ## 2 accidental                2    18          0.944    0.812 0.944        1
+    ## 3 pedagogical               1    19          0.947    0.818 0.946        1
+    ## 4 pedagogical               2    18          0.944    0.824 0.943        1
+    ## # ... with 1 more variable: exp_cond <fct>
 
 ``` r
 perceived_character_knowledge_CIs <- streamlined_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   mutate(perceived_character_knowledge = ifelse(perceived_character_knowledge == "yes",1,0)) %>%
-  tidyboot_mean(column = perceived_character_knowledge)
+  tidyboot_mean(column = perceived_character_knowledge) %>%
+  mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
 ```
 
     ## Warning: `cols` is now required when using unnest().
@@ -225,14 +258,15 @@ perceived_character_knowledge_CIs <- streamlined_data %>%
 perceived_character_knowledge_CIs # prints output; line may be omitted
 ```
 
-    ## # A tibble: 4 x 7
+    ## # A tibble: 4 x 8
     ## # Groups:   item_presentation_condition [2]
-    ##   item_presentation_co~ n_examples     n empirical_stat ci_lower   mean ci_upper
-    ##   <chr>                      <dbl> <int>          <dbl>    <dbl>  <dbl>    <dbl>
-    ## 1 accidental                     1    21         0.0952    0     0.0950    0.235
-    ## 2 accidental                     2    18         0         0     0         0    
-    ## 3 pedagogical                    1    19         0.895     0.733 0.892     1    
-    ## 4 pedagogical                    2    18         0.889     0.722 0.891     1
+    ##   item_presentati~ n_examples     n empirical_stat ci_lower   mean ci_upper
+    ##   <chr>                 <dbl> <int>          <dbl>    <dbl>  <dbl>    <dbl>
+    ## 1 accidental                1    21         0.0952    0     0.0953    0.238
+    ## 2 accidental                2    18         0         0     0         0    
+    ## 3 pedagogical               1    19         0.895     0.737 0.897     1    
+    ## 4 pedagogical               2    18         0.889     0.727 0.892     1    
+    ## # ... with 1 more variable: exp_cond <fct>
 
 # Visualization
 
@@ -243,9 +277,6 @@ encountered object having same property vs. item presentation condition
 and number of examples
 
 ``` r
-predicted_probability_CIs <- predicted_probability_CIs %>%
-    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
-
 ggplot(
   streamlined_data %>%
       mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
@@ -303,9 +334,6 @@ probability of next encountered object having same property vs. item
 presentation condition and number of examples
 
 ``` r
-predicted_probability_duration_CIs <- predicted_probability_duration_CIs %>%
-    mutate(exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_")))
-
 ggplot(
   streamlined_data %>%
       mutate(exp_cond = paste(item_presentation_condition, n_examples, sep = "_")),
@@ -416,7 +444,56 @@ theme(legend.position = "none")
 
 ## Followup
 
-<!-- TODO -->
+Predicted probability of future instance having property vs. endorsement
+of generic statement for each item presentation condition and number of
+examples
+
+``` r
+ggplot(
+  merge(
+    predicted_probability_CIs %>%
+      rename(
+        predicted_probability_mean = mean,
+        predicted_probability_ci_lower = ci_lower,
+        predicted_probability_ci_upper = ci_upper
+      ),
+    generic_endorsement_CIs %>%
+      rename(
+        generic_endorsement_mean = mean,
+        generic_endorsement_ci_lower = ci_lower,
+        generic_endorsement_ci_upper = ci_upper
+      ),
+    by="exp_cond"
+  ),
+  mapping = aes(
+    x=predicted_probability_mean,
+    y=generic_endorsement_mean,
+    color=exp_cond
+  )
+) + geom_errorbar(
+  mapping=aes(
+    x=predicted_probability_mean,
+    ymin=generic_endorsement_ci_lower,
+    ymax=generic_endorsement_ci_upper
+  ),
+  width=0.01, size=1
+) + geom_errorbar(
+  mapping=aes(
+    y=generic_endorsement_mean,
+    xmin=predicted_probability_ci_lower,
+    xmax=predicted_probability_ci_upper
+  ),
+  width=0.01, size=1
+) + geom_point(
+  mapping=aes(
+    x=predicted_probability_mean,
+    y=generic_endorsement_mean
+  ),
+  size=3, shape=15
+)
+```
+
+![](data_analysis_files/figure-gfm/scatterplot%20with%20error%20bars%20-%20predicted%20probability%20vs.%20generic%20endorsement%20per%20condition-1.png)<!-- -->
 
 ## Demographic information
 
