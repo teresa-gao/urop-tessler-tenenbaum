@@ -379,7 +379,7 @@ function run_trial(stim) {
 
                 let deferred = new $.Deferred();
 
-                agent_say(generic_statement + ".", slide_num=stim.slide_num, width=200); // TODO: add duration and speaker voice audio
+                agent_say(generic_statement + ".", slide_num=stim.slide_num, width=195); // TODO: add duration and speaker voice audio
 
                 setTimeout (function() {
                     deferred.resolve();
@@ -510,6 +510,30 @@ function run_trial(stim) {
                 }
 
             ).then(
+
+                function() {
+
+                    let deferred = new $.Deferred();
+                    let delay_time = 0;
+
+                    if (stim.item_presentation_condition == "gen+ped") {
+
+                        delay_time = 3000; // TODO: adjust delay to accommodate speaker voice audio
+
+                        agent_say(generic_statement + ".", slide_num=stim.slide_num, width=195, duration=delay_time); // TODO: add speaker voice audio
+
+                    }
+
+                    setTimeout (function() {
+                        deferred.resolve();
+                    }, delay_time);
+
+                    return deferred.promise();
+
+                }
+
+            )
+            .then(
 
                 function() {
                     $(".speech").hide();
@@ -1196,7 +1220,7 @@ function init() {
 
     ];
 
-    if (item_presentation_condition[0] == "generic" || item_presentation_condition[0] == "gen+ped") {
+    if (item_presentation_condition[0] == "generic") {
 
         exp.trials_stimuli.push(
 
