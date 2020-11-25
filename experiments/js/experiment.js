@@ -373,17 +373,32 @@ function run_trial(stim) {
 
     if (stim.type == "state_generic") {
 
-        agent_say("I have something to tell you...", slide_num=stim.slide_num, width=225).then(  // TODO: add duration and speaker voice audio
+        let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/i_have_something_tell_you.wav");
+        sound.play();
+
+        agent_say("I have something to tell you...", slide_num=stim.slide_num, width=225, duration=2500).then(
 
             function() {
 
                 let deferred = new $.Deferred();
 
-                agent_say(generic_statement + ".", slide_num=stim.slide_num, width=195); // TODO: add duration and speaker voice audio
+                let statement_duration = 3000;
+                let bubble_width = 200;
+                let have_property_statement = stim.object[2].replace(" ", "_");
+                if (stim.object[2] == "squeaking") {
+                    have_property_statement = "squeak";
+                    statement_duration = 2500;
+                    bubble_width = 130;
+                }
+
+                agent_say(generic_statement + ".", slide_num=stim.slide_num, width=bubble_width, duration=statement_duration);
+
+                let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/" + stim.item_name[1] + "_" +have_property_statement + ".wav");
+                sound.play();
 
                 setTimeout (function() {
                     deferred.resolve();
-                }, 2000); // TODO: update duration
+                }, statement_duration);
 
                 return deferred.promise();
 
@@ -496,14 +511,14 @@ function run_trial(stim) {
                         bubble_width -= 25;
                     }
 
-                    agent_say(statement, slide_num=stim.slide_num, width=bubble_width, duration=2000);
+                    agent_say(statement, slide_num=stim.slide_num, width=bubble_width, duration=2250);
 
                     let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/" + audio_file_name + ".wav");
                     sound.play()
 
                     setTimeout (function() {
                         deferred.resolve();
-                    }, 2000);
+                    }, 2250);
 
                     return deferred.promise();
 
@@ -518,9 +533,23 @@ function run_trial(stim) {
 
                     if (stim.item_presentation_condition == "gen+ped") {
 
-                        delay_time = 3000; // TODO: adjust delay to accommodate speaker voice audio
+                        delay_time = 3000;
+                        let generic_statement = "have " + stim.object[2];
+                        let bubble_width = 200;
+                        let have_property_statement = stim.object[2].replace(" ", "_");
+                        if (stim.object[2] == "squeaking") {
+                            have_property_statement = "squeak";
+                            generic_statement = "squeak";
+                            statement_duration = 2500;
+                            bubble_width = 130;
+                        }
 
-                        agent_say(generic_statement + ".", slide_num=stim.slide_num, width=195, duration=delay_time); // TODO: add speaker voice audio
+                        generic_statement = stim.item_name[1].charAt(0).toUpperCase() + stim.item_name[1].slice(1) + " " + generic_statement;
+
+                        agent_say(generic_statement + ".", slide_num=stim.slide_num, width=bubble_width, duration=delay_time);
+
+                        let sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/" + stim.item_name[1] + "_" + have_property_statement + ".wav");
+                        sound.play();
 
                     }
 
@@ -570,24 +599,16 @@ function run_trial(stim) {
 
                             let deferred = new $.Deferred();
 
-                            say_text = "Oh wow! ";
-                            audio_file_name = "wow_";
+                            let say_text = stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
+                            let audio_file_name = stim.object[2].replace(" ", "_");
 
                             if (stim.object[0] == "artifact") {
-                                say_text += "Squeaking!";
-                                audio_file_name += "squeaking";
-                            } else {
-
-                                say_text += stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
-
-                                if (stim.object[2] == "purple petals") {
-                                    audio_file_name += "purple_petals";
-
-                                } else if (stim.object[2] == "green feathers") {
-                                    audio_file_name += "green_feathers";
-                                }
-
+                                say_text = "Squeaking!";
+                                audio_file_name = "squeaking";
                             }
+
+                            say_text = "Oh wow! " + say_text;
+                            audio_file_name = "wow_" + audio_file_name;
 
                             sound = new Audio("audio/" + stim.speaker + "_recordings/" + audio_version + "/" + audio_file_name + ".wav");
                             sound.play();
@@ -661,7 +682,7 @@ function run_trial(stim) {
                                     let deferred = new $.Deferred();
 
                                     let audio_file_name = "see_";
-                                    let bubble_width = 150;
+                                    let bubble_width = 135;
 
                                     say_text = "See? ";
 
