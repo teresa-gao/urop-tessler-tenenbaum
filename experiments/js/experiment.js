@@ -388,7 +388,7 @@ function run_trial(stim) {
                 if (stim.object[2] == "squeaking") {
                     have_property_statement = "squeak";
                     statement_duration = 2500;
-                    bubble_width = 130;
+                    bubble_width = 135;
                 }
 
                 agent_say(generic_statement + ".", slide_num=stim.slide_num, width=bubble_width, duration=statement_duration);
@@ -682,13 +682,14 @@ function run_trial(stim) {
                                     let deferred = new $.Deferred();
 
                                     let audio_file_name = "see_";
-                                    let bubble_width = 135;
+                                    let bubble_width = 175;
 
                                     say_text = "See? ";
 
                                     if (stim.object[0] == "artifact") {
                                         say_text += "Squeaking!";
                                         audio_file_name += "squeaking";
+                                        bubble_width = 130;
                                     } else {
 
                                         say_text += stim.object[2].charAt(0).toUpperCase() + stim.object[2].slice(1) + "!";
@@ -698,7 +699,6 @@ function run_trial(stim) {
 
                                         } else if (stim.object[2] == "green feathers") {
                                             audio_file_name += "green_feathers";
-                                            bubble_width += 25;
                                         }
 
                                     }
