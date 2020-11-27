@@ -1,0 +1,324 @@
+<html>
+
+    <head>
+        <title>Generics Exploration 2</title>
+
+        <!--CSS-->
+        <link href="_shared/full-projects/jquery-ui/jquery-ui.min.css" rel="stylesheet" type="text/css"/>
+        <link href="_shared/css/cocolab-style.css" rel="stylesheet" type="text/css"/>
+        <link href="css/local-style.css" rel="stylesheet" type="text/css"/>
+
+    </head>
+
+    <body onload="init();">
+        <noscript>This task requires JavaScript.</noscript>
+
+        <!-- Title page with general instructions and contact info -->
+        <div class="slide" id="i0">
+
+            <div id="logo_container">
+                <img src="images/BCS_logo.jpg" alt="MIT Brain and Cognitive Sciences" id="BCS_logo" class="logo"/>
+                <img src="images/cocosci.jpg" alt="MIT Computational Cognitive Science Group" id="cocosci_logo" class="logo"/>
+            </div>
+
+            <p id="instruct-text">
+                You will learn about new objects on an alien planet and be asked a few questions about them. The study should take ~5 minutes. Please pay attention, thanks!
+            </p>
+            <button id="start_button" onclick="_s.button()">Start Experiment</button>
+            <p id="legal">
+                Legal information: By answering the following questions, you are participating in a study being performed by cognitive scientists in the MIT Computational Cognitive Science Group. If you have questions about this research, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a> or tessler@mit.edu. You must be  at least 18 years old to participate. Your participation in this research is voluntary. You may decline to answer any or all of the following questions; you may decline further participation, at any time, without adverse consequences. Your anonymity is assured; the researchers who have requested your participation will not receive any personal information about you.
+            </p>
+
+        </div>
+
+        <!-- Botcaptcha slide, which blocks the user if they are clearly not paying attention -->
+        <div class="slide" id="botcaptcha">
+
+            <h3>Are you a bot?</h3>
+            <div id="bot_context"> </div>
+            <input type="text" id="botresponse" size="30"></input>
+            <button onclick="_s.button()" id="bot_button">Continue</button>
+
+            <!-- Errors -->
+            <p class="error write_something">Please write something in the text box before clicking <b>Continue</b>.</p>
+            <p class="error error_incorrect">This is incorrect.</p>
+            <p class="error error_2more">You have 2 more trials.</p>
+            <p class="error error_1more">You have 1 more trial.</p>
+            <p class="error error_final">
+                Error: You have failed this comprehension question too many times.
+                You are not permitted to continue the study.
+                <br/><br/>
+                If you believe you are receiving this message in error, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a> or tessler@mit.edu.
+            </p>
+
+        </div>
+
+        <!-- Sound check slide, which makes sure the user has a suitable system volume for the trials -->
+        <div class="slide" id="sound_check">
+            <h3>Sound Check</h3>
+
+            <p>Please adjust your system volume to a comfortable level. When you are ready, click the <b>Test</b> button. You will hear a word like "skyscraper". Enter the word you hear into the box below and click <b>Continue</b> when you are finished.</p>
+            <button onclick="_s.test_sound()" id="sound_test_button">Test</button><br>
+            <input type="text" id="sound_response"></input><br><br><br>
+            <button onclick="_s.button()" id="sound_button">Continue</button>
+
+            <!-- Errors -->
+            <p class="error write_something">Please write something in the text box before clicking <b>Continue</b>.</p>
+            <p class="error error_incorrect">This is incorrect.</p>
+            <p class="error error_2more">You have 2 more trials.</p>
+            <p class="error error_1more">You have 1 more trial.</p>
+            <p class="error error_final">
+                Error: You have failed the comprehension questions too many times.
+                You are not permitted to continue the study.
+                <br/><br/>
+                If you believe you are receiving this message in error, please email <a href="mailto:t_gao@mit.edu">t_gao@mit.edu</a> or tessler@mit.edu.
+            </p>
+
+        </div>
+
+        <!-- Background and instructions for "trial" -->
+        <div class="slide" id="introduction">
+            <h3>Introduction</h3>
+            <p>
+                You are a scientist being deployed to a remote field site on a faraway planet.
+            </p>
+            <p>
+                Your job is to catalogue and describe new kinds of animals, plants, and objects that have been discovered on the planet.
+            </p>
+            <p>
+                When you arrive at the field site, you meet another scientist there.
+            </p>
+            <button onclick="_s.button()">Continue</button>
+
+        </div>
+
+        <!-- Trials slides -->
+        <div class="slide" id="trials">
+
+            <h3 id="title">Follow-up Question</h3>
+
+            <p id="trials_text">{{}}</p>
+
+            <div id="animation_container">
+
+                <img id="background" class="agent_intro" src="">
+
+                <img id="Monkey" class="agent"  src="images/Monkey_straight.png">
+                <img id="Dog" class="agent"  src="images/Dog_straight.png">
+                <img id="Elephant" class="agent"  src="images/Elephant_straight.png">
+                <img id="Bear" class="agent"  src="images/Bear_straight.png">
+                <img id="Sheep" class="agent"  src="images/Sheep_straight.png">
+                <img id="Tiger" class="agent"  src="images/Tiger_straight.png">
+
+                <div id="speech-bubble" class="speech"></div>
+                <div id="speech-bubble-tail" class="speech"></div>
+                <div id="speech-bubble-outline" class="speech"></div>
+
+                <img class="object object1 closed" src="">
+                <img class="object object1 open" src="">
+                <img class="object object2 closed" src="">
+                <img class="object object2 open" src="">
+                <img class="object object3 closed" src="">
+                <img class="object object3 open" src="">
+                <img class="object object4 closed" src="">
+                <img class="object object4 open" src="">
+
+                <img id="tree" src="images/tree.svg">
+                <img id="dirt" src="images/dirt.svg">
+                <img id="table" src="images/table.svg">
+
+                <div id="label1" class="label">{{}}</div>
+                <div id="label2" class="label">{{}}</div>
+                <div id="label3" class="label">{{}}</div>
+                <div id="label4" class="label">{{}}</div>
+
+            </div>
+
+            <div id="followup">
+
+                <p id="generic_text">{{}}</p>
+
+                <!-- Slider -->
+                <div class="slider">
+                    <table class="slider slider_table">
+                        <tr>
+                            <td id="slider_label_l" class="slider_label_l"></td>
+                            <td id="slider_label_r" class="slider_label_r"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">
+                                <div id="trials_slider"></div>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Fixed "grid" for identification of item names and properties (separately) -->
+                <div class="grid">
+                    <table class="grid grid_table">
+                        <tr>
+                            <td>
+
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice1"/>
+                                <span id="grid_label1">1</span><br>
+
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice2"/>
+                                <span id="grid_label2">2</span><br>
+
+                            <td>
+
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice3"/>
+                                <span id="grid_label3">3</span><br>
+
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice4"/>
+                                <span id="grid_label4">4</span><br>
+
+                            </td>
+
+                            <td>
+
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice5"/>
+                                <span id="grid_label5">5</span><br>
+
+                                <input type="radio" name="grid_choice" class="grid_choice" id="grid_choice6"/>
+                                <span id="grid_label6">6</span><br>
+
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Multiple choice options (modified in experiment.js) -->
+                <div class="mc">
+                    <table>
+                        <tr>
+                            <td>
+                                <input type="radio" name="mc_choice" id="mc_choice1" class="multiple_choice"/>
+                                <span id="mc_label1">{{}}</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <input type="radio" name="mc_choice" id="mc_choice2" class="multiple_choice"/>
+                                <span id="mc_label2">{{}}</span>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!-- Freeform text response -->
+                <div>
+                    <textarea id="freeform"></textarea>
+                </div>
+
+                <!-- Error shown is the user does not provide a response with MC grid -->
+                <div id="grid_error" class="error">Please select exactly 1 item name before continuing.</div>
+
+                <!-- Error shown is the user does not provide a response with MC options -->
+                <div id="mc_error" class="error">Please select an option before continuing.</div>
+
+                <!-- Error shown if the user does not provide a response on the slider -->
+                <div id="slider_error" class="error">Please adjust the slider before continuing.</div>
+
+                <!-- Error shown if the user does not provide a response in the freeform text box -->
+                <div id="freeform_error" class="error">Please type something in the text box before continuing.</div>
+
+            </div>
+
+            <!-- Continues to next slide  -->
+            <button id="continue_button" class="continue_button" onclick="_s.continue_button()">Continue</button>
+
+            <!-- Submits user slider response and continues -->
+            <button id="submit_data_button" class="continue_button" onclick="_s.submit_data_button()">Continue</button>
+
+        </div>
+
+        <!-- Optional form to collect subject demographic information -->
+        <div class="slide"  id="subj_info">
+            <div class="long_form">
+                <h3>Post-Study Survey</h3>
+                <p class="info">Answering these questions is optional, but doing so will help us better understand your responses.</p>
+                <p>Did you read the instructions and do you think you did the study correctly?</p>
+                <label><input type="radio"  name="assess" value="No"/>No</label>
+                <label><input type="radio"  name="assess" value="Yes"/>Yes</label>
+                <label><input type="radio"  name="assess" value="Confused"/>I was confused</label>
+
+                <p>Did you experience any problems or bugs in the experiment?</p>
+                <textarea id="problems" rows="2" cols="50"></textarea>
+
+                <p>What do you think is a fair price for the work you did?</p>
+                <textarea id="fairprice" rows="1" cols="10"></textarea>
+
+                <p>Gender:
+                    <select id="gender">
+                        <label><option value=""/></label>
+                        <label><option value="Male"/>Male</label>
+                        <label><option value="Female"/>Female</label>
+                        <label><option value="Other"/>Other</label>
+                    </select>
+                </p>
+
+                <p>Age: <input type="text" id="age"/></p>
+
+                <p>Level Of Education:
+                    <select id="education">
+                        <label><option value="-1"/></label>
+                        <label><option value="0"/>Some High School</label>
+                        <label><option value="1"/>Graduated High School</label>
+                        <label><option value="2"/>Some College</label>
+                        <label><option value="3"/>Graduated College</label>
+                        <label><option value="4"/>Hold a higher degree</label>
+                    </select>
+                </p>
+
+                <p>Native Language: <input type="text" id="language"/></p>
+                <label>(the language(s) spoken at home when you were a child)</label>
+
+                <p>Do you have any additional comments to share about the experiment?</p>
+                <textarea id="comments" rows="3" cols="50"></textarea>
+                <br/>
+                <button id="submit_button" onclick="_s.submit()" style="margin-top:20px;" type="button">Submit</button>
+            </div>
+
+        </div>
+
+        <!-- Displays simple thank-you message -->
+        <div class="slide" id="thanks">
+            <h3>Thank you for your participation!</h3>
+
+        </div>
+
+        <!-- Displays black progress bar at top of screen throughout experiment -->
+        <div class="progress">
+            <div class="bar-wrapper" style="margin:auto">
+                <div class="bar" width="0%">
+                </div>
+            </div>
+
+        </div>
+
+
+        <!--JS-->
+
+        <!-- external general utilities -->
+        <script src="_shared/js/jquery-1.11.1.min.js "></script>
+        <script src="_shared/full-projects/jquery-ui/jquery-ui.min.js"></script>
+        <script src="_shared/js/underscore-min.js"></script>
+
+        <!-- cocolab experiment logic -->
+        <script src="_shared/js/exp-V2.js"></script>
+        <script src="_shared/js/stream-V2.js"></script>
+
+        <!-- cocolab general utilities -->
+        <script src="_shared/js/mmturkey.js "></script>
+        <script src="_shared/js/browserCheck.js"></script>
+        <script src="_shared/js/utils.js"></script>
+        <script src="_shared/js/uniqueturker.js"></script>
+
+        <!-- experiment file -->
+        <script type="text/javascript" src="js/experiment-gen+ped.js"></script>
+
+        <!-- Prolific/proliferate utilities -->
+        <script src="https://proliferate.alps.science/static/js/proliferate.js" type="text/javascript"></script>
+    </body>
+</html>
