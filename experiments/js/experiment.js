@@ -19,15 +19,19 @@ var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]);
 var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
-
 var item_names =         _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", "feps"] ]);
+
 var n_examples =        _.shuffle([1, 2]);
+var example_num = n_examples[0];
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical", "generic", "gen+ped"]);
+if (item_presentation_condition[0] == "gen+ped") {
+    example_num = 1;
+}
 
 var distractor_names = _.shuffle(["zobby", "vicket", "yem", "blus", "nar"])
 var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_names[0][0]] ) );
 
-console.log(item_presentation_condition[0] + ", " + n_examples[0] + " " + objects[0][0] + " (\"" + item_names[0][0] + "\")");
+console.log(item_presentation_condition[0] + ", " + example_num + " " + objects[0][0] + " (\"" + item_names[0][0] + "\")");
 console.log(agents[0] + ", voiced by " + speakers[0]);
 
 
@@ -79,6 +83,23 @@ function agent_say(display_text, slide_num, width=400, duration=2000) {
 
 }
 
+// Display scene with agent and no objects
+function set_agent_intro_scene(stim, hide_text=true) {
+
+    if (hide_text) {
+        $("#followup, #title, #trials_text").hide();
+    }
+
+    $(".agent").css("height", "300px");
+    $(".agent, .object, #tree, #dirt, #table, .label").hide();
+    $("#background").attr("src", "images/back" + stim.background + ".jpg");
+    $(".agent_intro, #" + stim.agent).show();
+
+    $(".agent").css("right", agent_from_right + "px");
+    $("#speech-bubble-tail, #speech-bubble-outline").css("left", 475 - agent_from_right + "px");
+
+}
+
 // Display scene with agent and objects
 function set_agent_object_scene(stim, fade=true) {
 
@@ -94,7 +115,7 @@ function set_agent_object_scene(stim, fade=true) {
     let fade_in_tags = "#background, #" + stim.agent;
 
     $(".speech").hide();
-    $("#speech-bubble").css("left", "5px");
+    $("#speech-bubble").css("left", "10px");
     $(".agent_intro, #background, #" + stim.agent).fadeOut(fade_out_duration, complete=function() {
 
             let new_agent_from_right = agent_from_right + 200
@@ -294,12 +315,7 @@ function run_trial(stim) {
 
     if (stim.type == "agent_intro") {
 
-        $(".agent, .object, #tree, #dirt, #table, .label, #followup, #title, #trials_text").hide();
-        $("#background").attr("src", "images/back" + stim.background + ".jpg");
-        $(".agent_intro, #" + stim.agent).show();
-
-        $(".agent").css("right", agent_from_right + "px");
-        $("#speech-bubble-tail, #speech-bubble-outline").css("left", 475 - agent_from_right + "px");
+        set_agent_intro_scene(stim);
 
         if (stim.item_presentation_condition == "accidental") {
 
@@ -388,7 +404,7 @@ function run_trial(stim) {
                 if (stim.object[2] == "squeaking") {
                     have_property_statement = "squeak";
                     statement_duration = 2500;
-                    bubble_width = 135;
+                    bubble_width = 145;
                 }
 
                 agent_say(generic_statement + ".", slide_num=stim.slide_num, width=bubble_width, duration=statement_duration);
@@ -541,7 +557,7 @@ function run_trial(stim) {
                             have_property_statement = "squeak";
                             generic_statement = "squeak";
                             statement_duration = 2500;
-                            bubble_width = 130;
+                            bubble_width = 145;
                         }
 
                         generic_statement = stim.item_name[1].charAt(0).toUpperCase() + stim.item_name[1].slice(1) + " " + generic_statement;
@@ -765,8 +781,13 @@ function run_trial(stim) {
 
         if (stim.show_scene) {
 
-            $("#" + stim.agent).css("right", agent_from_right);
-            set_agent_object_scene(stim, fade=false)
+            if (stim.show_object) {
+                $("#" + stim.agent).css("right", agent_from_right);
+                set_agent_object_scene(stim, fade=false)
+            } else {
+                set_agent_intro_scene(stim, hide_text=false);
+            }
+
             $("#animation_container").show();
 
         }
@@ -850,6 +871,7 @@ function make_slides(f) {
     slides.i0 = slide({
         name : "i0",
         button: function() {
+            exp.start_time = Date.now();
             $(".progress").show();
             exp.go();
         }
@@ -1153,6 +1175,18 @@ function make_slides(f) {
             // Hide progress bar
             $(".progress").hide();
 
+            followup_fails = 0
+            if (exp.streamlined_data["name_identification_is_correct"] == false) {
+                followup_fails += 1;
+            }
+            if (exp.streamlined_data["character_arrival_is_correct"] == false) {
+                followup_fails += 1
+            }
+
+            exp.streamlined_data["followup_fails"] = followup_fails;
+
+            exp.streamlined_data["total_time_taken"] = (Date.now() - exp.start_time) / 1000;
+
             // Logs data to Prolific
             exp.data = {
                 streamlined_data: exp.streamlined_data,
@@ -1255,7 +1289,7 @@ function init() {
                 speaker: speakers[0],
                 object: objects[0],
                 item_name: item_names[0],
-                n_examples: n_examples[0]
+                n_examples: example_num
             }
 
         );
@@ -1276,7 +1310,7 @@ function init() {
                 speaker: speakers[0],
                 object: objects[0],
                 item_name: item_names[0],
-                n_examples: n_examples[0]
+                n_examples: example_num
             },
 
             // Animated agent discovers property of object(s)s
@@ -1289,9 +1323,14 @@ function init() {
                 speaker: speakers[0],
                 object: objects[0],
                 item_name: item_names[0],
-                n_examples: n_examples[0]
+                n_examples: example_num
             }
         );
+    }
+
+    let article = "another";
+    if (item_presentation_condition[0] == "generic") {
+        article = "a";
     }
 
     exp.trials_stimuli.push(
@@ -1301,7 +1340,7 @@ function init() {
             slide_num: slide_num++,
             type: "followup",
             followup_name: "predicted_probability",
-            prompt: "Imagine that you come across another " +item_names[0][0] + ". What are the chances that it " + has_property_statement + "?",
+            prompt: "Imagine that you come across " + article + " " + item_names[0][0] + ". What are the chances that it " + has_property_statement + "?",
             correct_answer: "NA",
             show_scene: false,
             show_generic: false,
@@ -1309,7 +1348,7 @@ function init() {
             slider_label_l: "0% (impossible)",
             slider_label_r: "100% (certain)",
             item_presentation_condition: item_presentation_condition[0],
-            n_examples: n_examples[0]
+            n_examples: example_num
         },
 
         // Followup for learned object name recognition from grid of distractors
@@ -1340,26 +1379,37 @@ function init() {
             response_type: "mc",
             options: [ ["Yes", "yes"], ["No", "no"] ],
             item_presentation_condition: item_presentation_condition[0]
-        },
+        })
 
-        // Followup for inferred character knowledge before object encounter and property reveal
-        {
-            slide_num: slide_num++,
-            type: "followup",
-            followup_name: "perceived_character_knowledge",
-            prompt: "Please refer to the image below. Did this character know that " + item_names[0][1] + " " + could_have_property_statement + " before you observed it together?",
-            correct_answer: "NA",
-            show_scene: true,
-            show_generic: false,
-            agent: agents[0],
-            background: back[0],
-            object: objects[0],
-            item_name: item_names[0],
-            n_examples: n_examples[0],
-            response_type: "mc",
-            options: [ ["Yes", "yes"], ["No", "no"] ],
-            item_presentation_condition: item_presentation_condition[0]
-        },
+    if (item_presentation_condition[0] != "generic") {
+
+        exp.trials_stimuli.push(
+
+            // Followup for inferred character knowledge before object encounter and property reveal
+            {
+                slide_num: slide_num++,
+                type: "followup",
+                followup_name: "perceived_character_knowledge",
+                prompt: "Please refer to the image below. Did this character know that " + item_names[0][1] + " " + could_have_property_statement + " before you observed it together?",
+                correct_answer: "NA",
+                show_scene: true,
+                show_object: true,
+                show_generic: false,
+                agent: agents[0],
+                background: back[0],
+                object: objects[0],
+                item_name: item_names[0],
+                n_examples: example_num,
+                response_type: "mc",
+                options: [ ["Yes", "yes"], ["No", "no"] ],
+                item_presentation_condition: item_presentation_condition[0]
+            }
+
+        )
+
+    }
+
+    exp.trials_stimuli.push(
 
         // Followup (~ attention check) for character arrival
         {
@@ -1369,12 +1419,13 @@ function init() {
             prompt: "Please refer to the image below. Is this character a new researcher who just arrived here, or have they been doing research on this planet for a while?",
             correct_answer: character_arrival,
             show_scene: true,
+            show_object: false,
             show_generic: false,
             agent: agents[0],
             background: back[0],
             object: objects[0],
             item_name: item_names[0],
-            n_examples: n_examples[0],
+            n_examples: example_num,
             response_type: "mc",
             options: [ ["This character is a new researcher who just arrived here", "just_arrived"], ["This character has been doing research on this planet for a while", "been_while"] ],
             item_presentation_condition: item_presentation_condition[0]
@@ -1399,8 +1450,9 @@ function init() {
     exp.streamlined_data = {
 
         item_presentation_condition: item_presentation_condition[0],
-        n_examples: n_examples[0],
+        n_examples: example_num,
         object: objects[0][0],
+        property: objects[0][2],
         item_name: item_names[0][0],
         agent: agents[0],
         speaker: speakers[0],
@@ -1411,7 +1463,7 @@ function init() {
     exp.full_trials_stimuli = [
         {
             item_presentation_condition: item_presentation_condition[0],
-            n_examples: n_examples[0],
+            n_examples: example_num,
             agent: {
                 name: agents[0],
                 image: agents[0] + "_straight.png"
