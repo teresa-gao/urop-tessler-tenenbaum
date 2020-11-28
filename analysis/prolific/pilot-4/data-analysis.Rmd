@@ -1,0 +1,258 @@
+---
+title: "Genex Analysis: Fall 2020 Prolific pilots"
+author: "Teresa Gao"
+date: "28 November 2020"
+output: rmarkdown::github_document
+---
+
+
+# About
+
+This R Notebook reports data from a final round of pilot experiments run during Fall 2020 on Prolific (via proliferate).
+
+
+
+# Setup
+
+
+
+## Imports
+
+Load required libraries
+
+```{r libraries}
+
+library("tidyverse")
+library("gridExtra")
+library("tidyboot")
+library("ngram")
+library("readr")
+library("tidytext")
+library("readr")
+library("brms")
+
+```
+
+If running/editing in RStudio, go to **Session > Set Working Directory > To Source File Location**. This ensures that we can find and access the files we need!
+
+
+
+Import data from "pilot 3" (first, smaller part of pilots with this version of the experiment).
+
+```{r import "pilot 3" data}
+
+p3_streamlined_data <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-streamlined_data.csv")
+p3_participant_demographics <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-subject_information.csv")
+p3_response_data <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-full_response_data.csv") %>%
+  filter(type != "introduction")
+
+# number of total "pilot 3" participants
+p3_total_n_participants <- nrow(p3_streamlined_data)
+
+```
+
+"Pilot 3" had `r p3_total_n_participants` total participants.
+
+
+
+Import data from "pilot 4" (second, larger part of pilots with this version of the experiment)
+
+```{r import "pilot 4" data}
+
+p4_streamlined_data <- read.csv("../../../prolific/2020-fall/pilot-4/genex-pilot-4-streamlined_data.csv")
+p4_participant_demographics <- read.csv("../../../prolific/2020-fall/pilot-4/genex-pilot-4-subject_information.csv")
+
+# number of total "pilot 4" participants
+p4_total_n_participants <- nrow(p4_streamlined_data)
+
+```
+
+"Pilot 4" had `r p4_total_n_participants` total participants.
+
+
+
+## Reformatting
+
+```{r reformat "pilot 3" botcaptcha and sound check response data}
+
+# data frame for all catch trial attention checks before experiment
+p3_attention_data <- p3_response_data %>%
+  filter( type == "attention" ) %>%
+  select( workerid,
+          correct_answer,
+          duration,
+          responses,
+          prompt,
+          num_fails )
+
+# sound check
+p3_sound_check <- p3_attention_data %>%
+  filter( prompt == "Please adjust your system volume to a comfortable level. When you are ready, click the Test button. You will hear a word like \"skyscraper\". Enter the word you hear into the box below and click Continue when you are finished." ) %>%
+  rename( sound_check_correct_answer = correct_answer,
+          sound_check_duration = duration,
+          sound_check_response = responses ) %>%
+  subset( select=-c(prompt) )
+
+# botcaptcha
+p3_botcaptcha <- p3_attention_data %>%
+  filter( prompt != "Please adjust your system volume to a comfortable level. When you are ready, click the Test button. You will hear a word like \"skyscraper\". Enter the word you hear into the box below and click Continue when you are finished." ) %>%
+  rename( botcaptcha_n_fails = num_fails,
+          botcaptcha_correct_answer = correct_answer,
+          botcaptcha_duration = duration,
+          botcaptcha_response = responses ) %>%
+  subset( select=-c(prompt) )
+
+```
+
+```{r reformat "pilot 3" followup response data}
+
+# data frame for all followup responses after experiment
+p3_followup_data <- p3_response_data %>%
+  filter( type != "attention" ) %>%
+  select( workerid,
+          correct_answer,
+          duration,
+          is_correct,
+          response,
+          response_type,
+          prompt )
+
+# predicted probability followup
+p3_predicted_probability <- p3_followup_data %>%
+  filter( response_type == "slider" ) %>%
+  rename( predicted_probability_correct_answer = correct_answer,
+          predicted_probability_duration = duration,
+          predicted_probability_is_correct = is_correct,
+          predicted_probability_response = response ) %>%
+  subset(select=-c(response_type, prompt))
+
+# character arrival followup
+p3_character_arrival <- p3_followup_data %>%
+    filter( prompt == "Please refer to the image below. Is this character a new researcher who just arrived here, or have they been doing research on this planet for a while?" ) %>%
+  rename( character_arrival_correct_answer = correct_answer,
+          character_arrival_duration = duration,
+          character_arrival_is_correct = is_correct,
+          character_arrival_response = response ) %>%
+  subset( select=-c(response_type, prompt) )
+
+# freeform followup
+p3_freeform_followup <- p3_followup_data %>%
+  filter( response_type == "freeform" ) %>%
+  rename( freeform_followup_correct_answer = correct_answer,
+          freeform_followup_duration = duration,
+          freeform_followup_is_correct = is_correct,
+          freeform_followup_response = response ) %>%
+  subset( select=-c(response_type, prompt) )
+
+# name identification followup
+p3_name_identification <- p3_followup_data %>%
+  filter( response_type == "grid" ) %>%
+  rename( name_identification_correct_answer = correct_answer,
+          name_identification_duration = duration,
+          name_identification_is_correct = is_correct,
+          name_identification_response = response ) %>%
+  subset( select=-c(response_type, prompt) )
+
+# generic endorsement followup
+p3_generic_endorsement <- p3_followup_data %>%
+  filter( prompt == "Would you say the following is true?" ) %>%
+  rename( generic_endorsement_correct_answer = correct_answer,
+          generic_endorsement_duration = duration,
+          generic_endorsement_is_correct = is_correct,
+          generic_endorsement_response = response ) %>%
+  subset( select=-c(response_type, prompt) )
+
+```
+
+
+
+## Combination
+
+
+
+Add above data frames to "pilot 3" streamlined data
+
+```{r form new "pilot 3" streamlined}
+
+# TODO
+p3_streamlined_data <- Reduce( function(x, y) merge(x, y, all=TRUE, by="workerid"),
+                               list( p3_streamlined_data %>%
+                                       select( workerid,
+                                               proliferate.condition,
+                                               agent,
+                                               followup_fails,
+                                               item_name,
+                                               item_presentation_condition,
+                                               n_examples,
+                                               object,
+                                               speaker ),
+                                     p3_predicted_probability,
+                                     p3_character_arrival,
+                                     p3_freeform_followup,
+                                     p3_name_identification,
+                                     p3_generic_endorsement,
+                                     p3_botcaptcha,
+                                     p3_sound_check ) )
+
+```
+
+
+
+Join "pilot 3" and "pilot 4" data
+
+```{r combine all pilots' data}
+
+# TODO: set streamlined_data equal to the combination of p3_streamlined_data and p4_streamlined_data
+streamlined_data <- plyr::rbind.fill(p3_streamlined_data, p4_streamlined_data)
+
+View(streamlined_data)
+
+# TODO: create single participant_demographics data frame from pilot 3 and pilot 4 participant_demographics data frames
+
+# # append some streamlined data to demographic info
+# participant_demographics <- merge(participant_demographics, subset(streamlined_data, select=c(workerid, catch_trial_fails, followup_fails)), by="workerid")
+
+```
+
+
+
+Preprocess data by removing participants who failed sound check or followup attention check(s) and writing only predicted probability data to a CSV.
+
+```{r filter and view data for Bayesian analysis}
+
+n_total_participants <- nrow(streamlined_data)
+
+# TODO: remove participants who failed attention and/or followup
+  # TODO: for sound check, exclude participants who answered with "skyscraper", a distractor word on the screen
+    # TODO: add column for Boolean of whether participant response doesn't contain "skyscraper"
+    # TODO: remove these rows
+    # TODO: create a variable to report the number removed (subtract from the number of total p3 participants)
+  #TODO: for botcaptcha, manually compute n_fails and ignore fails with extra spaces
+
+# number of excluded participants
+n_total_participants
+nrow(streamlined_data)
+n_total_participants - nrow(data)
+
+# create preprocessed data frame for Bayesian analysis
+bayes_preprocessed <- p4_streamlined_data %>%
+  select( workerid,
+          item_presentation_condition,
+          n_examples,
+          object,
+          item_name,
+          property,
+          predicted_probability_response ) %>%
+  rename( kind_type = object,
+          kind_label = item_name,
+          feature_label = property,
+          response = predicted_probability_response ) %>%
+  mutate( condition = paste(n_examples, item_presentation_condition, sep="") ) %>%
+  mutate( avoided_endval = ifelse(response == 1, 0.999, ifelse(response == 0, 0.001, response)) ) %>%
+  subset( select=-c(item_presentation_condition, n_examples) )
+
+# View(streamlined_data) # opens output in another window; line may be omitted
+# View(participant_demographics) # opens output in another window; line may be omitted
+View(bayes_preprocessed) # opens output in another window; line may be omitted
+
+```
