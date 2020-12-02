@@ -1,78 +1,105 @@
----
-title: "Genex Analysis: Fall 2020 Prolific pilots"
-author: "Teresa Gao"
-date: "28 November 2020"
-output: rmarkdown::github_document
----
-
+Genex Analysis: Fall 2020 Prolific pilots
+================
+Teresa Gao
+28 November 2020
 
 # About
 
-This R Notebook reports data from a final round of pilot experiments run during Fall 2020 on Prolific (via proliferate).
-
-
+This R Notebook reports data from a final round of pilot experiments run
+during Fall 2020 on Prolific (via proliferate).
 
 # Setup
-
-
 
 ## Imports
 
 Load required libraries
 
-```{r libraries}
-
+``` r
 library("tidyverse")
+```
+
+    ## -- Attaching packages ------------------------------------------------------------------------------------------------------------- tidyverse 1.3.0 --
+
+    ## v ggplot2 3.3.2     v purrr   0.3.4
+    ## v tibble  3.0.3     v dplyr   1.0.2
+    ## v tidyr   1.1.2     v stringr 1.4.0
+    ## v readr   1.3.1     v forcats 0.5.0
+
+    ## -- Conflicts ---------------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
+    ## x dplyr::filter() masks stats::filter()
+    ## x dplyr::lag()    masks stats::lag()
+
+``` r
 library("gridExtra")
+```
+
+    ## 
+    ## Attaching package: 'gridExtra'
+
+    ## The following object is masked from 'package:dplyr':
+    ## 
+    ##     combine
+
+``` r
 library("tidyboot")
 library("ngram")
 library("readr")
 library("tidytext")
-library("readr")
-library("brms")
-
 ```
 
-If running/editing in RStudio, go to **Session > Set Working Directory > To Source File Location**. This ensures that we can find and access the files we need!
+    ## Warning: package 'tidytext' was built under R version 4.0.3
 
+``` r
+library("readr")
+library("brms")
+```
 
+    ## Warning: package 'brms' was built under R version 4.0.3
 
-Import data from "pilot 3" (first, smaller part of pilots with this version of the experiment).
+    ## Loading required package: Rcpp
 
-```{r import "pilot 3" data}
+    ## Loading 'brms' package (version 2.14.0). Useful instructions
+    ## can be found by typing help('brms'). A more detailed introduction
+    ## to the package is available through vignette('brms_overview').
 
+    ## 
+    ## Attaching package: 'brms'
+
+    ## The following object is masked from 'package:stats':
+    ## 
+    ##     ar
+
+If running/editing in RStudio, go to **Session \> Set Working Directory
+\> To Source File Location**. This ensures that we can find and access
+the files we need\!
+
+Import data from “pilot 3” (first, smaller part of pilots with this
+version of the experiment).
+
+``` r
 p3_streamlined_data <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-streamlined_data.csv")
 p3_participant_demographics <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-subject_information.csv")
 p3_response_data <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-full_response_data.csv") %>%
   filter(type != "introduction")
-
 ```
 
-"Pilot 3" had `r nrow(p3_streamlined_data)` total participants.
+“Pilot 3” had 80 total participants.
 
+Import data from “pilot 4” (second, larger part of pilots with this
+version of the experiment)
 
-
-Import data from "pilot 4" (second, larger part of pilots with this version of the experiment)
-
-```{r import "pilot 4" data}
-
+``` r
 p4_streamlined_data <- read.csv("../../../prolific/2020-fall/pilot-4/genex-pilot-4-streamlined_data.csv")
 p4_participant_demographics <- read.csv("../../../prolific/2020-fall/pilot-4/genex-pilot-4-subject_information.csv")
-
 ```
 
-"Pilot 4" had `r nrow(p4_streamlined_data)` total participants.
-
-
+“Pilot 4” had 170 total participants.
 
 ## Reformatting
 
+Reformat catch trial data (botcaptcha and sound check) from “pilot 3”
 
-
-Reformat catch trial data (botcaptcha and sound check) from "pilot 3"
-
-```{r reformat "pilot 3" botcaptcha and sound check response data}
-
+``` r
 # data frame for all catch trials before experiment
 p3_catch_data <- p3_response_data %>%
   filter( type == "attention" ) %>%
@@ -100,15 +127,13 @@ p3_botcaptcha <- p3_catch_data %>%
           botcaptcha_duration = duration,
           botcaptcha_response = responses ) %>%
   select(-prompt)
-
 ```
 
+Reformat followup response data (predicted probability, character
+arrival, freeform followup, name identification, generic endorsement)
+from “pilot 3”
 
-
-Reformat followup response data (predicted probability, character arrival, freeform followup, name identification, generic endorsement) from "pilot 3"
-
-```{r reformat "pilot 3" followup response data}
-
+``` r
 # data frame for all followup responses after experiment
 p3_followup_data <- p3_response_data %>%
   filter( type != "attention" ) %>%
@@ -164,19 +189,13 @@ p3_generic_endorsement <- p3_followup_data %>%
           generic_endorsement_is_correct = is_correct,
           generic_endorsement_response = response ) %>%
   subset( select=-c(response_type, prompt) )
-
 ```
-
-
 
 ## Combining
 
+Add above data frames to form “pilot 3” streamlined data.
 
-
-Add above data frames to form "pilot 3" streamlined data.
-
-```{r form new "pilot 3" streamlined}
-
+``` r
 p3_streamlined_data <- Reduce( function(x, y) merge(x, y, all=TRUE, by="workerid"),
                                
                                # select relevant columns from existing "pilot 3" streamlined data
@@ -204,15 +223,11 @@ p3_streamlined_data <- Reduce( function(x, y) merge(x, y, all=TRUE, by="workerid
                         mutate( property = ifelse(object == "bird", "green feathers",
                                                   ifelse(object == "artifact", "squeaking",
                                                          ifelse(object == "flower", "purple petals", NA))) )
-
 ```
 
+Join all “pilot 3” and “pilot 4” streamlined data.
 
-
-Join all "pilot 3" and "pilot 4" streamlined data.
-
-```{r combine all pilot data}
-
+``` r
 streamlined_data <- plyr::rbind.fill(p3_streamlined_data, p4_streamlined_data) %>%
   mutate( predicted_probability_response = as.numeric(as.character(predicted_probability_response))) %>% # convert string numbers to numbers
   mutate( name_identification_is_correct = as.logical(name_identification_is_correct) ) %>% # convert "True" to TRUE and "False" to FALSE
@@ -226,15 +241,12 @@ participant_demographics <- bind_rows(p3_participant_demographics, p4_participan
                                            sound_check_correct_answer,
                                            sound_check_response,
                                            followup_fails ) ), by="workerid" )
-
 ```
 
+Preprocess data by removing participants who failed botcaptcha or any
+followup attention checks.
 
-
-Preprocess data by removing participants who failed botcaptcha or any followup attention checks.
-
-```{r filter data}
-
+``` r
 # TODO: for sound check, exclude participants who answered with "skyscraper", a distractor word on the screen
 
 # TODO: for botcaptcha, ignore fails with extra spaces and recompute n_fails
@@ -243,17 +255,17 @@ Preprocess data by removing participants who failed botcaptcha or any followup a
 filtered_data <- streamlined_data %>%
   filter( botcaptcha_n_fails == 0 ) %>%
   filter( followup_fails == 0 )
-
 ```
 
-Out of `r nrow(streamlined_data)` total participants, `r nrow(streamlined_data) - nrow(filtered_data)` were excluded based on their responses to the botcaptcha and the followup attention checks. In these excluded participants, `r nrow( streamlined_data %>% filter( botcaptcha_n_fails != 0 ) )` failed the botcaptcha at least once, `r nrow( streamlined_data %>% filter( !name_identification_is_correct ) )` answered the name identification followup attention check incorrectly, and `r nrow( streamlined_data %>% filter( !character_arrival_is_correct ) )` answered the character arrival followup attention check incorrectly.
-
-
+Out of 250 total participants, 16 were excluded based on their responses
+to the botcaptcha and the followup attention checks. In these excluded
+participants, 6 failed the botcaptcha at least once, 1 answered the name
+identification followup attention check incorrectly, and 9 answered the
+character arrival followup attention check incorrectly.
 
 Writing only necessary predicted probability data to a clean CSV.
 
-```{r write CSV for Bayesian data analysis}
-
+``` r
 # create preprocessed data frame for Bayesian analysis
 bayes_preprocessed <- filtered_data %>%
   select( workerid,
@@ -272,56 +284,117 @@ bayes_preprocessed <- filtered_data %>%
   subset( select=-c(item_presentation_condition, n_examples) ) # remove unnecessary columns
 
 write.csv(bayes_preprocessed, "bayes_preprocessed.csv")
-
 ```
-
-
 
 # Calculations
 
-
-
 ## Calculations and Relabeling
 
-Compute bootstrapped means and confidence intervals of user slider response
+Compute bootstrapped means and confidence intervals of user slider
+response
 
-```{r means and CIs}
-
+``` r
 predicted_probability_CIs <- filtered_data %>%
   dplyr::group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = predicted_probability_response) %>%
   mutate( exp_cond = paste(item_presentation_condition, n_examples, sep="_") )
-predicted_probability_CIs # prints output; line may be omitted
+```
 
+    ## Warning: Problem with `mutate()` input `strap`.
+    ## i `as_data_frame()` is deprecated as of tibble 2.0.0.
+    ## Please use `as_tibble()` instead.
+    ## The signature and semantics have changed, see `?as_tibble`.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
+    ## i Input `strap` is `purrr::map(strap, dplyr::as_data_frame)`.
+
+    ## Warning: `as_data_frame()` is deprecated as of tibble 2.0.0.
+    ## Please use `as_tibble()` instead.
+    ## The signature and semantics have changed, see `?as_tibble`.
+    ## This warning is displayed once every 8 hours.
+    ## Call `lifecycle::last_warnings()` to see where this warning was generated.
+
+    ## Warning: `cols` is now required when using unnest().
+    ## Please use `cols = c(strap)`
+
+``` r
+predicted_probability_CIs # prints output; line may be omitted
+```
+
+    ## # A tibble: 6 x 8
+    ## # Groups:   item_presentation_condition [4]
+    ##   item_presentati~ n_examples     n empirical_stat ci_lower  mean ci_upper
+    ##   <chr>                 <int> <int>          <dbl>    <dbl> <dbl>    <dbl>
+    ## 1 accidental                1    48          0.719    0.669 0.720    0.772
+    ## 2 accidental                2    43          0.776    0.737 0.776    0.814
+    ## 3 gen+ped                   1    23          0.857    0.781 0.854    0.918
+    ## 4 generic                   1    25          0.950    0.907 0.949    0.979
+    ## 5 pedagogical               1    47          0.758    0.706 0.758    0.807
+    ## 6 pedagogical               2    48          0.831    0.780 0.830    0.873
+    ## # ... with 1 more variable: exp_cond <chr>
+
+``` r
 predicted_probability_duration_CIs <- filtered_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = predicted_probability_duration) %>%
   mutate( exp_cond = paste(item_presentation_condition, n_examples, sep="_") )
-predicted_probability_duration_CIs # prints output; line may be omitted
+```
 
+    ## Warning: `cols` is now required when using unnest().
+    ## Please use `cols = c(strap)`
+
+``` r
+predicted_probability_duration_CIs # prints output; line may be omitted
+```
+
+    ## # A tibble: 6 x 8
+    ## # Groups:   item_presentation_condition [4]
+    ##   item_presentati~ n_examples     n empirical_stat ci_lower  mean ci_upper
+    ##   <chr>                 <int> <int>          <dbl>    <dbl> <dbl>    <dbl>
+    ## 1 accidental                1    48          10.5      8.98 10.5      12.3
+    ## 2 accidental                2    43          10.8      9.46 10.7      12.1
+    ## 3 gen+ped                   1    23          11.5      9.03 11.6      14.2
+    ## 4 generic                   1    25           9.31     7.68  9.33     11.6
+    ## 5 pedagogical               1    47           9.85     8.59  9.86     11.3
+    ## 6 pedagogical               2    48          10.5      8.96 10.4      12.2
+    ## # ... with 1 more variable: exp_cond <chr>
+
+``` r
 generic_endorsement_CIs <- filtered_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   mutate(generic_endorsement = ifelse(generic_endorsement_response == "yes",1,0)) %>%
   tidyboot_mean(column = generic_endorsement) %>%
   mutate( exp_cond = paste(item_presentation_condition, n_examples, sep="_") )
-generic_endorsement_CIs # prints output; line may be omitted
-
 ```
 
+    ## Warning: `cols` is now required when using unnest().
+    ## Please use `cols = c(strap)`
 
+``` r
+generic_endorsement_CIs # prints output; line may be omitted
+```
+
+    ## # A tibble: 6 x 8
+    ## # Groups:   item_presentation_condition [4]
+    ##   item_presentati~ n_examples     n empirical_stat ci_lower  mean ci_upper
+    ##   <chr>                 <int> <int>          <dbl>    <dbl> <dbl>    <dbl>
+    ## 1 accidental                1    48          0.917    0.822 0.916    0.980
+    ## 2 accidental                2    43          0.953    0.881 0.954    1    
+    ## 3 gen+ped                   1    23          1        1     1        1    
+    ## 4 generic                   1    25          1        1     1        1    
+    ## 5 pedagogical               1    47          1        1     1        1    
+    ## 6 pedagogical               2    48          0.979    0.932 0.980    1    
+    ## # ... with 1 more variable: exp_cond <chr>
 
 # Visualization
 
-
-
 ## Predicted probability
 
+Gradient density ridges graph of predicted probability of next
+encountered object having same property vs. item presentation condition
+and number of examples
 
-
-Gradient density ridges graph of predicted probability of next encountered object having same property vs. item presentation condition and number of examples
-
-```{r gradient density - predicted probability vs. condition}
-
+``` r
 ggplot(
   filtered_data,
   mapping = aes(
@@ -369,15 +442,23 @@ ggplot(
     axis.title.x = element_text(hjust = 0.5, vjust = 0)
   ) +
   labs(x = "Predicted Probability of Future Instance having Property")
-
 ```
 
+    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
+    
+    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
 
+    ## Warning: Removed 6 rows containing missing values (geom_linerangeh).
 
-Gradient density ridges graph of *time taken to respond* to predicted probability of next encountered object having same property vs. item presentation condition and number of examples
+    ## Warning: Removed 6 rows containing missing values (geom_point).
 
-```{r gradient density - predicted probability time vs. condition}
+![](data-analysis_files/figure-gfm/gradient%20density%20-%20predicted%20probability%20vs.%20condition-1.png)<!-- -->
 
+Gradient density ridges graph of *time taken to respond* to predicted
+probability of next encountered object having same property vs. item
+presentation condition and number of examples
+
+``` r
 ggplot(
   filtered_data,
   mapping = aes(
@@ -424,15 +505,22 @@ ggplot(
     axis.title.x = element_text(hjust = 0.5, vjust = 0)
   ) +
   labs(x = "Response time for predicted probability of future instance having property")
-
 ```
 
+    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
+    
+    ## Warning in FUN(X[[i]], ...): NAs introduced by coercion
 
+    ## Warning: Removed 6 rows containing missing values (geom_linerangeh).
 
-Facet grid of predicted probability plotted on number of examples vs. item presentation condition
+    ## Warning: Removed 6 rows containing missing values (geom_point).
 
-```{r facet grid - predicted probability on num. examples vs. condition}
+![](data-analysis_files/figure-gfm/gradient%20density%20-%20predicted%20probability%20time%20vs.%20condition-1.png)<!-- -->
 
+Facet grid of predicted probability plotted on number of examples
+vs. item presentation condition
+
+``` r
 ggplot(
   filtered_data,
   mapping = aes(
@@ -456,15 +544,14 @@ scale_fill_manual(
   values = c("indianred1", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue")
 ) +
 theme(legend.position = "none")
-
 ```
 
+![](data-analysis_files/figure-gfm/facet%20grid%20-%20predicted%20probability%20on%20num.%20examples%20vs.%20condition-1.png)<!-- -->
 
+Facet grid of predicted probability plotted on item presentation
+condition vs. speaker
 
-Facet grid of predicted probability plotted on item presentation condition vs. speaker
-
-```{r facet grid - predicted probabiliy on condition vs. speaker}
-
+``` r
 ggplot(
   filtered_data,
   mapping = aes(
@@ -487,14 +574,15 @@ scale_fill_manual(
 theme(legend.position = "none")
 ```
 
-
+![](data-analysis_files/figure-gfm/facet%20grid%20-%20predicted%20probabiliy%20on%20condition%20vs.%20speaker-1.png)<!-- -->
 
 ## Followup
 
-Predicted probability of future instance having property vs. endorsement of generic statement for each item presentation condition and number of examples
+Predicted probability of future instance having property vs. endorsement
+of generic statement for each item presentation condition and number of
+examples
 
-```{r scatterplot with error bars - predicted probability vs. generic endorsement per condition}
-
+``` r
 ggplot(
   merge(
     predicted_probability_CIs %>%
@@ -539,27 +627,21 @@ ggplot(
 ) + scale_colour_manual(
   values = c("indianred1", "indianred3", "lightgoldenrod1", "darkolivegreen2", "cornflowerblue", "dodgerblue3")
 )
-
 ```
 
-
+![](data-analysis_files/figure-gfm/scatterplot%20with%20error%20bars%20-%20predicted%20probability%20vs.%20generic%20endorsement%20per%20condition-1.png)<!-- -->
 
 ## Demographic information
 
-Participants' feedback
+Participants’ feedback
 
-```{r table - comments}
-
+``` r
 View(participant_demographics %>% select(comments) %>% na.omit()) # opens responses in a new window
-
 ```
 
+Bar chart of participants’ reported native language(s)
 
-
-Bar chart of participants' reported native language(s)
-
-```{r bar chart - native languages frequency}
-
+``` r
 native_languages <- with(participant_demographics %>% select(language) %>% na.omit(), paste0(language))
 
 native_languages <- native_languages %>%
@@ -584,5 +666,6 @@ ggplot(
   ) + labs(
     title="Frequency of participants' reported native language(s)"
   ) + coord_flip()
-
 ```
+
+![](data-analysis_files/figure-gfm/bar%20chart%20-%20native%20languages%20frequency-1.png)<!-- -->
