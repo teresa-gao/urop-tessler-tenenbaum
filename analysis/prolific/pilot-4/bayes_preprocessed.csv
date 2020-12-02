@@ -1,0 +1,235 @@
+"","workerid","kind_type","kind_label","feature_label","response","condition","avoided_endval"
+"1",155,"bird","dax","green feathers",0.49,"1accidental",0.49
+"2",156,"artifact","fep","squeaking",0.84,"2accidental",0.84
+"3",157,"flower","fep","purple petals",0.89,"2pedagogical",0.89
+"4",158,"artifact","wug","squeaking",0.77,"1pedagogical",0.77
+"5",159,"bird","wug","green feathers",0.78,"1accidental",0.78
+"6",161,"flower","fep","purple petals",0.62,"2pedagogical",0.62
+"7",162,"artifact","dax","squeaking",0.86,"1pedagogical",0.86
+"8",163,"flower","wug","purple petals",0.36,"1accidental",0.36
+"9",165,"bird","wug","green feathers",0.55,"1pedagogical",0.55
+"10",166,"artifact","dax","squeaking",1,"2pedagogical",0.999
+"11",167,"artifact","wug","squeaking",0.99,"1pedagogical",0.99
+"12",168,"flower","dax","purple petals",1,"1accidental",0.999
+"13",170,"artifact","fep","squeaking",0.92,"2pedagogical",0.92
+"14",171,"flower","fep","purple petals",0.49,"1accidental",0.49
+"15",172,"bird","wug","green feathers",0.73,"2accidental",0.73
+"16",173,"flower","wug","purple petals",1,"2pedagogical",0.999
+"17",174,"flower","fep","purple petals",0.76,"1pedagogical",0.76
+"18",176,"bird","dax","green feathers",0.75,"2accidental",0.75
+"19",177,"bird","dax","green feathers",0.92,"2pedagogical",0.92
+"20",179,"artifact","wug","squeaking",0.73,"1accidental",0.73
+"21",181,"bird","wug","green feathers",0.49,"2accidental",0.49
+"22",182,"bird","dax","green feathers",0.48,"2pedagogical",0.48
+"23",183,"flower","wug","purple petals",0.71,"1accidental",0.71
+"24",184,"artifact","fep","squeaking",0.43,"1pedagogical",0.43
+"25",186,"bird","fep","green feathers",0.98,"2pedagogical",0.98
+"26",187,"bird","dax","green feathers",1,"1accidental",0.999
+"27",188,"flower","dax","purple petals",0.88,"2accidental",0.88
+"28",189,"bird","dax","green feathers",0.99,"2pedagogical",0.99
+"29",190,"bird","dax","green feathers",0.73,"1pedagogical",0.73
+"30",191,"bird","fep","green feathers",0.97,"2accidental",0.97
+"31",192,"artifact","fep","squeaking",0.51,"1accidental",0.51
+"32",193,"artifact","dax","squeaking",0.87,"2accidental",0.87
+"33",194,"artifact","wug","squeaking",1,"2pedagogical",0.999
+"34",195,"artifact","fep","squeaking",0.73,"1pedagogical",0.73
+"35",196,"artifact","fep","squeaking",0.72,"1accidental",0.72
+"36",197,"flower","dax","purple petals",0.81,"2accidental",0.81
+"37",198,"flower","wug","purple petals",0.89,"2pedagogical",0.89
+"38",199,"artifact","wug","squeaking",0.82,"1pedagogical",0.82
+"39",200,"artifact","fep","squeaking",0.62,"1accidental",0.62
+"40",201,"bird","wug","green feathers",0.76,"2accidental",0.76
+"41",202,"flower","wug","purple petals",0.87,"2pedagogical",0.87
+"42",203,"artifact","dax","squeaking",0.91,"1pedagogical",0.91
+"43",204,"artifact","wug","squeaking",0.68,"1accidental",0.68
+"44",205,"artifact","wug","squeaking",0.83,"2accidental",0.83
+"45",206,"artifact","dax","squeaking",0.51,"2pedagogical",0.51
+"46",207,"flower","fep","purple petals",0.5,"1pedagogical",0.5
+"47",208,"bird","dax","green feathers",0.8,"1accidental",0.8
+"48",211,"flower","wug","purple petals",1,"1pedagogical",0.999
+"49",212,"artifact","wug","squeaking",0.83,"1pedagogical",0.83
+"50",213,"bird","fep","green feathers",0.71,"1accidental",0.71
+"51",214,"artifact","dax","squeaking",0.71,"2accidental",0.71
+"52",216,"bird","dax","green feathers",0.49,"1pedagogical",0.49
+"53",217,"artifact","dax","squeaking",1,"1accidental",0.999
+"54",218,"bird","dax","green feathers",0.72,"2accidental",0.72
+"55",219,"bird","dax","green feathers",0.9,"2pedagogical",0.9
+"56",220,"artifact","fep","squeaking",0.72,"2accidental",0.72
+"57",222,"bird","dax","green feathers",0.86,"1pedagogical",0.86
+"58",223,"artifact","dax","squeaking",0.58,"1accidental",0.58
+"59",224,"artifact","dax","squeaking",0.61,"2accidental",0.61
+"60",225,"bird","fep","green feathers",0.85,"2pedagogical",0.85
+"61",226,"flower","wug","purple petals",0.6,"1pedagogical",0.6
+"62",227,"artifact","wug","squeaking",0.71,"1accidental",0.71
+"63",228,"artifact","wug","squeaking",0.78,"2accidental",0.78
+"64",229,"flower","dax","purple petals",0.63,"1pedagogical",0.63
+"65",230,"bird","fep","green feathers",0.91,"2pedagogical",0.91
+"66",231,"artifact","dax","squeaking",0.81,"1accidental",0.81
+"67",232,"artifact","wug","squeaking",0.83,"2accidental",0.83
+"68",234,"flower","wug","purple petals",0.76,"2pedagogical",0.76
+"69",235,"bird","wug","green feathers",0.63,"1accidental",0.63
+"70",236,"bird","fep","green feathers",0.72,"1pedagogical",0.72
+"71",237,"artifact","fep","squeaking",0.73,"2accidental",0.73
+"72",238,"flower","fep","purple petals",0.97,"2pedagogical",0.97
+"73",239,"artifact","wug","squeaking",0.84,"1accidental",0.84
+"74",240,"flower","dax","purple petals",0.98,"1accidental",0.98
+"75",441,"artifact","dax","squeaking",0.99,"1generic",0.99
+"76",364,"artifact","wug","squeaking",0.99,"1generic",0.99
+"77",419,"bird","dax","green feathers",0.86,"1generic",0.86
+"78",435,"flower","dax","purple petals",1,"1generic",0.999
+"79",381,"flower","wug","purple petals",1,"1generic",0.999
+"80",406,"bird","dax","green feathers",0.95,"1generic",0.95
+"81",326,"flower","fep","purple petals",0.82,"1generic",0.82
+"82",304,"bird","wug","green feathers",1,"1generic",0.999
+"83",346,"artifact","dax","squeaking",0.93,"1generic",0.93
+"84",310,"artifact","wug","squeaking",0.98,"1generic",0.98
+"85",321,"flower","fep","purple petals",0.86,"1generic",0.86
+"86",382,"bird","fep","green feathers",1,"1generic",0.999
+"87",339,"flower","wug","purple petals",0.92,"1generic",0.92
+"88",388,"flower","fep","purple petals",1,"1generic",0.999
+"89",399,"artifact","dax","squeaking",0.98,"1generic",0.98
+"90",444,"flower","fep","purple petals",1,"1generic",0.999
+"91",413,"artifact","dax","squeaking",0.58,"1generic",0.58
+"92",374,"bird","fep","green feathers",1,"1generic",0.999
+"93",450,"flower","fep","purple petals",1,"1generic",0.999
+"94",380,"artifact","fep","squeaking",0.98,"1generic",0.98
+"95",429,"bird","dax","green feathers",1,"1generic",0.999
+"96",354,"bird","fep","green feathers",0.9,"1generic",0.9
+"97",401,"artifact","wug","squeaking",1,"1generic",0.999
+"98",362,"flower","dax","purple petals",1,"1generic",0.999
+"99",333,"bird","dax","green feathers",1,"1generic",0.999
+"100",417,"bird","dax","green feathers",0.67,"2accidental",0.67
+"101",350,"bird","wug","green feathers",0.53,"2accidental",0.53
+"102",290,"flower","wug","purple petals",0.65,"2accidental",0.65
+"103",423,"artifact","fep","squeaking",0.88,"2accidental",0.88
+"104",356,"bird","fep","green feathers",0.72,"2accidental",0.72
+"105",447,"flower","fep","purple petals",0.6,"2accidental",0.6
+"106",327,"artifact","fep","squeaking",1,"2accidental",0.999
+"107",361,"bird","dax","green feathers",0.58,"2accidental",0.58
+"108",379,"bird","fep","green feathers",0.93,"2accidental",0.93
+"109",411,"flower","wug","purple petals",0.7,"2accidental",0.7
+"110",434,"flower","fep","purple petals",1,"2accidental",0.999
+"111",295,"artifact","wug","squeaking",0.7,"2accidental",0.7
+"112",338,"bird","fep","green feathers",0.69,"2accidental",0.69
+"113",405,"flower","wug","purple petals",0.78,"2accidental",0.78
+"114",453,"bird","dax","green feathers",1,"2accidental",0.999
+"115",368,"artifact","fep","squeaking",0.96,"2accidental",0.96
+"116",303,"artifact","wug","squeaking",0.87,"2accidental",0.87
+"117",309,"bird","fep","green feathers",0.88,"2accidental",0.88
+"118",343,"bird","dax","green feathers",0.77,"2accidental",0.77
+"119",387,"bird","dax","green feathers",0.5,"2accidental",0.5
+"120",373,"bird","dax","green feathers",0.84,"2accidental",0.84
+"121",440,"artifact","wug","squeaking",0.85,"2accidental",0.85
+"122",299,"bird","fep","green feathers",1,"2accidental",0.999
+"123",393,"flower","wug","purple petals",0.73,"2accidental",0.73
+"124",287,"bird","wug","green feathers",0.73,"2accidental",0.73
+"125",398,"artifact","fep","squeaking",0.77,"2accidental",0.77
+"126",367,"bird","dax","green feathers",0.95,"1pedagogical",0.95
+"127",416,"artifact","fep","squeaking",0.9,"1pedagogical",0.9
+"128",355,"flower","fep","purple petals",0.71,"1pedagogical",0.71
+"129",319,"flower","fep","purple petals",0.85,"1pedagogical",0.85
+"130",422,"flower","dax","purple petals",0.64,"1pedagogical",0.64
+"131",410,"bird","fep","green feathers",0.95,"1pedagogical",0.95
+"132",325,"bird","dax","green feathers",0.71,"1pedagogical",0.71
+"133",302,"artifact","dax","squeaking",0.93,"1pedagogical",0.93
+"134",308,"bird","dax","green feathers",0.94,"1pedagogical",0.94
+"135",292,"bird","dax","green feathers",0.48,"1pedagogical",0.48
+"136",337,"bird","wug","green feathers",0.85,"1pedagogical",0.85
+"137",314,"bird","wug","green feathers",1,"1pedagogical",0.999
+"138",294,"bird","dax","green feathers",0.67,"1pedagogical",0.67
+"139",378,"artifact","dax","squeaking",0.76,"1pedagogical",0.76
+"140",446,"flower","wug","purple petals",0.49,"1pedagogical",0.49
+"141",457,"flower","fep","purple petals",0.42,"1pedagogical",0.42
+"142",427,"flower","fep","purple petals",0.84,"1pedagogical",0.84
+"143",439,"flower","dax","purple petals",0.49,"1pedagogical",0.49
+"144",397,"artifact","wug","squeaking",0.95,"1pedagogical",0.95
+"145",433,"flower","fep","purple petals",0.77,"1pedagogical",0.77
+"146",298,"artifact","fep","squeaking",0.95,"1pedagogical",0.95
+"147",360,"artifact","dax","squeaking",0.87,"1pedagogical",0.87
+"148",289,"flower","dax","purple petals",0.66,"1pedagogical",0.66
+"149",386,"artifact","dax","squeaking",0.86,"1pedagogical",0.86
+"150",372,"artifact","fep","squeaking",0.9,"1pedagogical",0.9
+"151",331,"flower","fep","purple petals",0.48,"1pedagogical",0.48
+"152",349,"artifact","fep","squeaking",0.8,"1pedagogical",0.8
+"153",452,"artifact","fep","squeaking",0.63,"1pedagogical",0.63
+"154",404,"artifact","wug","squeaking",1,"1pedagogical",0.999
+"155",432,"flower","dax","purple petals",0.78,"1accidental",0.78
+"156",307,"flower","dax","purple petals",0.68,"1accidental",0.68
+"157",415,"bird","dax","green feathers",0.73,"1accidental",0.73
+"158",366,"flower","dax","purple petals",0.48,"1accidental",0.48
+"159",426,"flower","wug","purple petals",0.86,"1accidental",0.86
+"160",313,"flower","wug","purple petals",0.93,"1accidental",0.93
+"161",421,"bird","fep","green feathers",0.56,"1accidental",0.56
+"162",371,"bird","wug","green feathers",0.66,"1accidental",0.66
+"163",285,"artifact","fep","squeaking",0.98,"1accidental",0.98
+"164",409,"artifact","fep","squeaking",0.82,"1accidental",0.82
+"165",342,"artifact","fep","squeaking",0.5,"1accidental",0.5
+"166",318,"flower","wug","purple petals",0.8,"1accidental",0.8
+"167",391,"artifact","wug","squeaking",0.5,"1accidental",0.5
+"168",293,"artifact","dax","squeaking",0.92,"1accidental",0.92
+"169",456,"bird","fep","green feathers",0.83,"1accidental",0.83
+"170",396,"artifact","fep","squeaking",0.93,"1accidental",0.93
+"171",301,"bird","wug","green feathers",0.48,"1accidental",0.48
+"172",353,"bird","wug","green feathers",0.75,"1accidental",0.75
+"173",438,"flower","wug","purple petals",0.52,"1accidental",0.52
+"174",288,"flower","dax","purple petals",0.76,"1accidental",0.76
+"175",336,"flower","dax","purple petals",0.53,"1accidental",0.53
+"176",451,"flower","dax","purple petals",1,"1accidental",0.999
+"177",445,"flower","dax","purple petals",0.73,"1accidental",0.73
+"178",324,"artifact","dax","squeaking",0.92,"1accidental",0.92
+"179",330,"bird","dax","green feathers",0.76,"1accidental",0.76
+"180",455,"bird","fep","green feathers",0.48,"1accidental",0.48
+"181",359,"bird","wug","green feathers",0.49,"1accidental",0.49
+"182",347,"bird","wug","green feathers",0.82,"2pedagogical",0.82
+"183",370,"bird","dax","green feathers",0.81,"2pedagogical",0.81
+"184",384,"bird","dax","green feathers",0.99,"2pedagogical",0.99
+"185",394,"flower","wug","purple petals",1,"2pedagogical",0.999
+"186",341,"bird","fep","green feathers",0.83,"2pedagogical",0.83
+"187",312,"bird","fep","green feathers",0.87,"2pedagogical",0.87
+"188",323,"flower","wug","purple petals",0.87,"2pedagogical",0.87
+"189",296,"bird","wug","green feathers",1,"2pedagogical",0.999
+"190",431,"artifact","dax","squeaking",0.98,"2pedagogical",0.98
+"191",283,"artifact","fep","squeaking",0.97,"2pedagogical",0.97
+"192",390,"artifact","dax","squeaking",0.72,"2pedagogical",0.72
+"193",402,"artifact","dax","squeaking",0.89,"2pedagogical",0.89
+"194",376,"bird","fep","green feathers",0.99,"2pedagogical",0.99
+"195",300,"bird","wug","green feathers",0.65,"2pedagogical",0.65
+"196",420,"artifact","dax","squeaking",0.99,"2pedagogical",0.99
+"197",306,"bird","wug","green feathers",0.75,"2pedagogical",0.75
+"198",425,"flower","dax","purple petals",0.58,"2pedagogical",0.58
+"199",316,"flower","fep","purple petals",0.49,"2pedagogical",0.49
+"200",365,"flower","dax","purple petals",0.49,"2pedagogical",0.49
+"201",454,"artifact","fep","squeaking",0.71,"2pedagogical",0.71
+"202",284,"artifact","wug","squeaking",1,"2pedagogical",0.999
+"203",449,"bird","dax","green feathers",0.48,"2pedagogical",0.48
+"204",334,"bird","fep","green feathers",0.9,"2pedagogical",0.9
+"205",358,"flower","fep","purple petals",0.48,"2pedagogical",0.48
+"206",291,"artifact","dax","squeaking",0.78,"2pedagogical",0.78
+"207",352,"bird","wug","green feathers",0.91,"2pedagogical",0.91
+"208",408,"artifact","fep","squeaking",0.84,"2pedagogical",0.84
+"209",328,"bird","dax","green feathers",0.92,"2pedagogical",0.92
+"210",437,"bird","wug","green feathers",1,"2pedagogical",0.999
+"211",414,"bird","wug","green feathers",0.72,"2pedagogical",0.72
+"212",340,"bird","wug","green feathers",0.75,"1gen+ped",0.75
+"213",442,"flower","wug","purple petals",1,"1gen+ped",0.999
+"214",345,"flower","dax","purple petals",0.98,"1gen+ped",0.98
+"215",369,"artifact","wug","squeaking",0.74,"1gen+ped",0.74
+"216",335,"artifact","fep","squeaking",0.97,"1gen+ped",0.97
+"217",363,"flower","dax","purple petals",0.99,"1gen+ped",0.99
+"218",351,"flower","dax","purple petals",0.79,"1gen+ped",0.79
+"219",407,"flower","wug","purple petals",0.98,"1gen+ped",0.98
+"220",424,"bird","fep","green feathers",0.77,"1gen+ped",0.77
+"221",357,"bird","wug","green feathers",0.94,"1gen+ped",0.94
+"222",383,"bird","dax","green feathers",0.98,"1gen+ped",0.98
+"223",400,"flower","dax","purple petals",0.92,"1gen+ped",0.92
+"224",436,"artifact","fep","squeaking",1,"1gen+ped",0.999
+"225",305,"bird","dax","green feathers",0.82,"1gen+ped",0.82
+"226",412,"artifact","wug","squeaking",0.54,"1gen+ped",0.54
+"227",322,"artifact","fep","squeaking",0.5,"1gen+ped",0.5
+"228",418,"artifact","wug","squeaking",0.52,"1gen+ped",0.52
+"229",395,"bird","dax","green feathers",0.81,"1gen+ped",0.81
+"230",389,"flower","fep","purple petals",0.98,"1gen+ped",0.98
+"231",430,"artifact","fep","squeaking",0.92,"1gen+ped",0.92
+"232",311,"artifact","fep","squeaking",0.88,"1gen+ped",0.88
+"233",317,"artifact","dax","squeaking",1,"1gen+ped",0.999
+"234",375,"flower","wug","purple petals",0.92,"1gen+ped",0.92
