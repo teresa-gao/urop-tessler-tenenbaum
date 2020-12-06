@@ -217,7 +217,7 @@ streamlined_data <- plyr::rbind.fill(p3_streamlined_data, p4_streamlined_data) %
   mutate( predicted_probability_response = as.numeric(as.character(predicted_probability_response))) %>% # convert string numbers to numbers
   mutate( name_identification_is_correct = as.logical(name_identification_is_correct) ) %>% # convert "True" to TRUE and "False" to FALSE
   mutate( character_arrival_is_correct = as.logical(character_arrival_is_correct) ) %>% # convert "True" to TRUE and "False" to FALSE
-  mutate( exp_cond = paste(item_presentation_condition, n_examples, sep="_") )
+  mutate( exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_") ) )
 
 # append some streamlined data to demographic info to determine which to exclude
 participant_demographics <- bind_rows(p3_participant_demographics, p4_participant_demographics) %>%
@@ -290,20 +290,26 @@ Compute bootstrapped means and confidence intervals of user slider response
 predicted_probability_CIs <- filtered_data %>%
   dplyr::group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = predicted_probability_response) %>%
-  mutate( exp_cond = paste(item_presentation_condition, n_examples, sep="_") )
+  mutate( exp_cond = factor( paste( item_presentation_condition, n_examples, sep="_" ) ) )
 predicted_probability_CIs # prints output; line may be omitted
+
+predicted_probability_CIs.preprocessed_item <- bayes_preprocessed %>%
+  dplyr::group_by(condition, kind_type, feature_label) %>%
+  tidyboot_mean(column = response) %>%
+  mutate(condition = factor(condition),
+         kind_type = factor(kind_type, levels = c("bird", "flower", "artifact")))
 
 predicted_probability_duration_CIs <- filtered_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   tidyboot_mean(column = predicted_probability_duration) %>%
-  mutate( exp_cond = paste(item_presentation_condition, n_examples, sep="_") )
+  mutate( exp_cond = factor( paste ( item_presentation_condition, n_examples, sep="_" ) ) )
 predicted_probability_duration_CIs # prints output; line may be omitted
 
 generic_endorsement_CIs <- filtered_data %>%
   group_by(item_presentation_condition, n_examples) %>%
   mutate(generic_endorsement = ifelse(generic_endorsement_response == "yes",1,0)) %>%
   tidyboot_mean(column = generic_endorsement) %>%
-  mutate( exp_cond = paste(item_presentation_condition, n_examples, sep="_") )
+  mutate( exp_cond = factor( paste ( item_presentation_condition, n_examples, sep="_" ) ) )
 generic_endorsement_CIs # prints output; line may be omitted
 
 ```
@@ -356,10 +362,11 @@ ggplot(
   ) +
   scale_x_continuous(
     expand = c(0.01, 0),
-    limits = c(0, 1.02),
+    limits = c(0, 1.05),
     breaks = c(0, 0.25, 0.5, 0.75, 1)
   ) +
-  scale_y_discrete(expand = c(0.01, 0)) +
+  scale_y_discrete( expand = expand_scale( mult = c(0.01, 0),
+                                           add = c(0.01, 1) ) ) +
   viridis::scale_fill_viridis(
     breaks = c(0, 1)
   ) +
@@ -424,6 +431,34 @@ ggplot(
     axis.title.x = element_text(hjust = 0.5, vjust = 0)
   ) +
   labs(x = "Response time for predicted probability of future instance having property")
+
+```
+
+
+
+Combined bar plot with error bars for all conditions and item combinations
+
+```{r bar plot - all grouped by condition and colored by object}
+
+bar.width = 0.7
+predicted_probability_CIs.preprocessed_item %>%
+  ggplot(., aes(x = condition, fill = kind_type, 
+                y = mean, ymin = ci_lower,
+                ymax = ci_upper)) +
+  geom_hline(data = predicted_probability_CIs %>% filter(item_presentation_condition == "generic"),
+             linetype = 2, alpha = 0.4,
+             aes(yintercept = ci_lower))+
+  geom_hline(data = predicted_probability_CIs %>% filter(item_presentation_condition == "generic"),
+             linetype = 2, alpha = 0.4,
+             aes(yintercept = ci_upper))+
+  geom_col(color = 'black', width = bar.width, position = position_dodge(bar.width),
+           alpha = 0.5)+
+  geom_linerange( position = position_dodge(bar.width))+
+  coord_flip()+
+   guides(fill = guide_legend(reverse = T))+
+  labs(y = "Probability of Future Instance having Property", x = "",
+       fill = "item")+
+  theme(legend.position = 'bottom')
 
 ```
 
