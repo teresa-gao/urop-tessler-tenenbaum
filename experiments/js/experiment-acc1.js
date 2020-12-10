@@ -19,11 +19,11 @@ var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
 var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]);
 var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
-var item_names =         _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", "feps"] ]);
+var item_names =        _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", "feps"] ]);
 
-var n_examples =        _.shuffle([1]);
+var n_examples =        [1]; // _.shuffle([1, 2]);
 var example_num = n_examples[0];
-var item_presentation_condition = _.shuffle(["accidental"]);
+var item_presentation_condition = ["accidental"]; // _.shuffle(["accidental", "pedagogical", "generic", "gen+ped"]);
 if (item_presentation_condition[0] == "gen+ped") {
     example_num = 1;
 }
@@ -1000,7 +1000,7 @@ function make_slides(f) {
             // Evaluate participant input
             } else {
 
-                this.is_correct = (this.sound_word.toLowerCase() == this.sound_response.toLowerCase())
+                this.is_correct = (this.sound_word.toLowerCase() == this.sound_response.toLowerCase().trim())
                 this.duration = (Date.now() - this.sound_startT) / 1000;
 
                 // regardless of whether response is correct, log data to Prolific and continue to next slide
@@ -1456,6 +1456,12 @@ function init() {
         item_name: item_names[0][0],
         agent: agents[0],
         speaker: speakers[0],
+
+        // Included since generic condition does not fill field
+        perceived_character_knowledge_response: "NA",
+        perceived_character_knowledge_correct_answer: "NA",
+        perceived_character_knowledge_is_correct: "NA",
+        perceived_character_knowledge_duration: "NA"
 
     };
 

@@ -21,7 +21,7 @@ var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
 var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
 var item_names =        _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", "feps"] ]);
 
-var n_examples =        [2]; // _.shuffle([1, 2]);
+var n_examples =        [3]; // _.shuffle([1, 2]);
 var example_num = n_examples[0];
 var item_presentation_condition = ["pedagogical"]; // _.shuffle(["accidental", "pedagogical", "generic", "gen+ped"]);
 if (item_presentation_condition[0] == "gen+ped") {
