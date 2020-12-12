@@ -49,24 +49,24 @@ Contains experiment.js.
 * **Main program.** These include intro slide, catch trials (attention checks), trial slides (animated experiment and followup questions), optional demographic questions, and thank-you (data submission to Prolific/proliferate).
 * **Init and setup.**  Here, we create the data frames which are passed as stim to the slides and/or used to collect data to be submitted to Prolific and declare `exp.structure`. *If you're playing around with the experiment, start here: try commenting out parts of `exp.structure` to see what they do.*
 
-#### How does everything work within the slides?
+### How does everything work within the slides?
 
-##### slides.io
+#### slides.io
 Introduction slide. Basic experiment instructions, contact info, etc.
 
-##### slides.botcaptcha
+#### slides.botcaptcha
 "Botcaptcha", in which user must understand context ("Who is X talking to?") from situational ("X says to Y"). Confirms that user is not a bot and that user is capable of comprehending basic information given in English.
 
-##### slides.sound_check
+#### slides.sound_check
 Additional semi-botcaptcha, in which user must type the word that they hear. Checks that they are paying attention &mdash; the description contains slightly misleading instructions &mdash; and are capable of listening to spoken English. (While the narration and sound effects throughout accompany written text and visible cues, this check for a suitable sound system ensures consistency for all participants.)
 
-##### slides.introduction
+#### slides.introduction
 Provides context for following experimental task.
 
-##### slides.trials
+#### slides.trials
 Contains both experimental trials as well as followup comprehension checks.
 
-###### Scripts
+##### Scripts
 
 | text (script) \| agent action                                                                            | duration in ms\* | accidental? | pedagogical? | generic? | gen+ped? |
 | ---------------------------------------------------------------------------------------------------------| ---------------- | ----------- | ------------ | -------- | -------- |
@@ -89,16 +89,16 @@ Contains both experimental trials as well as followup comprehension checks.
 
 \* After recording and clipping, the actual length of each MP3 should be 250-750 ms less than this value so the audio tracks don't seem clipped, since some browsers may cause unpredictable delays.
 
-###### Followup questions
+##### Followup questions
 
-| comprehension check?\* | prompt                                                                                                                                                    | response type                  |
-| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ |
-| N                      | "Imagine that you come across another <sing. object name\>. What are the chances that it <has property\>?"                                                | slider (0% to 100%, labeled)   |
-| Y                      | "What is the name of the item you learned about? Please select its name from the options below."                                                          | grid (radio button)            |
-| N                      | "Would you say the following is true? <generic statement\>."                                                                                              | multiple choice (radio button) |
-| N                      | "Please refer to the image below. Did this character know that <pl. object name\> could have <property\> before you observed it together?"                | multiple choice (radio button) |
-| Y                      | "Please refer to the image below. Is this character a new researcher who just arrived here, or have they been doing research on this planet for a while?" | multiple choice (radio button) |
-| N                      | "In the text box below, please describe briefly what happened in this experiment." \*\*                                                                     | freeform (text box)            |
+| comprehension check?\* | prompt                                                                                                                                                    | response type                  | accidental? | pedagogical? | generic? | gen+ped? |
+| ---------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------------------ | ----------- | ------------ | -------- | -------- |
+| N                      | "Imagine that you come across a(nother) <sing. object name\>. What are the chances that it <has property\>?"                                              | slider (0% to 100%, labeled)   | Y           | Y            | Y        | Y        |
+| Y                      | "What is the name of the item you learned about? Please select its name from the options below."                                                          | grid (radio button)            | Y           | Y            | Y        | Y        |
+| N                      | "Would you say the following is true? <generic statement\>."                                                                                              | multiple choice (radio button) | Y           | Y            | Y        | Y        |
+| N                      | "Please refer to the image below. Did this character know that <pl. object name\> could have <property\> before you observed it together?"                | multiple choice (radio button) | Y           | Y            | N        | Y        |
+| Y                      | "Please refer to the image below. Is this character a new researcher who just arrived here, or have they been doing research on this planet for a while?" | multiple choice (radio button) | Y           | Y            | Y        | Y        |
+| N                      | "In the text box below, please describe briefly what happened in this experiment." \*\*                                                                   | freeform (text box)            | Y           | Y            | Y        | Y        |
 
 \* Comprehension checks are objective facts used to gauge how well a participant is paying attention; other followups reflect the ambiguity this experiment aims to study.
 \*\* Included for data quality assessment purposes; responses should be individually, humanly reviewed
