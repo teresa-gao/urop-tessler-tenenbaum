@@ -15,13 +15,17 @@ var agents =            _.shuffle( ["Elephant","Monkey","Dog","Bear","Tiger","Sh
 var speakers =          _.shuffle( ["mh", "tg", "sb"] );
 var audio_version =     "fall-2020-v2";
 
-var artifacts =         _.shuffle([ ["artifact", "artifact01", "squeaking"], ]);
-var flowers =           _.shuffle([ ["flower", "flower01", "purple petals"] ]);
-var birds =             _.shuffle([ ["bird", "bird02", "green feathers"] ]);
+var artifact_versions = _.shuffle( [ "artifact01", "artifact02", "artifact03", "artifact04", "artifact05" ] );
+var flower_versions =   _.shuffle( [ "flower01", "flower02", "flower03", "flower04", "flower05" ] );
+var bird_versions =     _.shuffle( [ "bird01", "bird02", "bird06", "bird08", "bird09" ] );
+
+var artifacts =         _.shuffle([ ["artifact", artifact_versions, "squeaking"], ]);
+var flowers =           _.shuffle([ ["flower", flower_versions, "purple petals"] ]);
+var birds =             _.shuffle([ ["bird", bird_versions, "green feathers"] ]);
 var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
 var item_names =        _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", "feps"] ]);
 
-var n_examples =        _.shuffle([1, 2]);
+var n_examples =        _.shuffle([1, 2, 3, 4]);
 var example_num = n_examples[0];
 var item_presentation_condition = _.shuffle(["accidental", "pedagogical", "generic", "gen+ped"]);
 if (item_presentation_condition[0] == "gen+ped") {
@@ -48,11 +52,11 @@ if (objects[0][2] == "squeaking") {
     generic_statement = item_names[0][1][0].toUpperCase() + item_names[0][1].slice(1) + " squeak";
 }
 
-// Change all images of a given class to have the same source
+// Change all images of a given class to have the same type of object source
 function change_image(class_name, source) {
     changing_images = document.getElementsByClassName(class_name);
     for (var i=0; i<changing_images.length; i+=1) {
-        changing_images[i].src = source;
+        changing_images[i].src = "images/" + source[i] + "_" + class_name + ".svg";
     }
 
 }
@@ -125,8 +129,8 @@ function set_agent_object_scene(stim, fade=true) {
             $(".speech").css("top", "+=25px");
             $("#speech-bubble-tail, #speech-bubble-outline").css("left", "-=85px");
 
-            change_image("closed", "images/" + stim.object[1] + "_closed.svg");
-            change_image("open", "images/" + stim.object[1] + "_open.svg");
+            change_image("closed", stim.object[1]);
+            change_image("open", stim.object[1]);
 
             let counter;
             for (counter = 1; counter <= stim.n_examples; counter++) {
@@ -1452,6 +1456,7 @@ function init() {
         item_presentation_condition: item_presentation_condition[0],
         n_examples: example_num,
         object: objects[0][0],
+        object_images: objects[0][1].slice(0, example_num),
         property: objects[0][2],
         item_name: item_names[0][0],
         agent: agents[0],
