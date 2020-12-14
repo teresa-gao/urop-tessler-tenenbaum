@@ -154,8 +154,21 @@ function set_agent_object_scene(stim, fade=true) {
                 $(".object").css("bottom", "35px");
 
                 // Shift artifacts and labels right
-                $(".label").css("left", "+=5px");
-                $(".object").css("right", "-=5px");
+
+                $("#label1").css("left", "335px");
+                $(".object1").css("right", "243px");
+
+                $("#label2").css("left", "405px");
+                $(".object2").css("right", "173px");
+
+                $("#label3").css("left", "475px");
+                $(".object3").css("right", "103px");
+
+                $("#label4").css("left", "545px");
+                $(".object4").css("right", "33px");
+
+                // $(".label").css("left", "+=5px");
+                // $(".object").css("right", "-=5px");
             }
 
             if (stim.object[0] == "artifact") {
@@ -165,8 +178,21 @@ function set_agent_object_scene(stim, fade=true) {
                 $(".object").css("height", "105px");
 
                 // Shift artifacts and labels right
-                $(".label").css("left", "+=12px");
-                $(".object").css("right", "-=12px");
+
+                $("#label1").css("left", "342px");
+                $(".object1").css("right", "236px");
+
+                $("#label2").css("left", "412px");
+                $(".object2").css("right", "166px");
+
+                $("#label3").css("left", "482px");
+                $(".object3").css("right", "96px");
+
+                $("#label4").css("left", "552px");
+                $(".object4").css("right", "26px");
+
+                // $(".label").css("left", "+=12px");
+                // $(".object").css("right", "-=12px");
             }
 
             $(fade_in_tags).fadeIn(fade_in_duration);
