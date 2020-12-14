@@ -32,7 +32,7 @@ if (item_presentation_condition[0] == "gen+ped") {
     example_num = 1;
 }
 
-var distractor_names = _.shuffle(["zobby", "vicket", "yem", "blus", "nar"])
+var distractor_names = _.shuffle(["zobby", "vicket", "yem", "blus", "nar"]);
 var grid_name_labels = _.shuffle( $.merge( distractor_names, [item_names[0][0]] ) );
 
 if (item_presentation_condition[0] == "generic") {
