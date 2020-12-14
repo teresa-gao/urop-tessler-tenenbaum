@@ -1,0 +1,640 @@
+---
+title: "Genex Analysis: Fall 2020 Prolific pilots"
+author: "Teresa Gao"
+date: "14 December 2020"
+output: rmarkdown::github_document
+---
+
+
+# About
+
+This R Notebook reports data from a final round of pilot experiments run during Fall 2020 on Prolific (via proliferate).
+
+
+
+# Setup
+
+
+
+## Imports
+
+Load required libraries
+
+```{r libraries}
+
+library("tidyverse")
+library("tidyboot")
+library("tidytext")
+library("brms")
+
+```
+
+If running/editing in RStudio, go to **Session > Set Working Directory > To Source File Location**. This ensures that we can find and access the files we need!
+
+
+
+Import data from "pilot 3" (first, smaller part of pilots with acc1, acc2, ped1, ped2, generic, and gen+ped)
+
+```{r import "pilot 3" data}
+
+p3_streamlined_data <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-streamlined_data.csv")
+p3_participant_demographics <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-subject_information.csv")
+p3_response_data <- read.csv("../../../prolific/2020-fall/pilot-3/genex-pilot-3-full_response_data.csv") %>%
+  filter(type != "introduction")
+
+```
+
+"Pilot 3" had `r nrow(p3_streamlined_data)` total participants.
+
+
+
+Import data from "pilot 4" (second, larger part of pilots with acc1, acc2, ped1, ped2, generic, and gen+ped) and "pilot 5" (ped3, ped4, gen, and gen+ped)
+
+```{r import "pilot 4" data}
+
+p4_streamlined_data <- read.csv("../../../prolific/2020-fall/pilot-4/genex-pilot-4-streamlined_data.csv")
+p4_participant_demographics <- read.csv("../../../prolific/2020-fall/pilot-4/genex-pilot-4-subject_information.csv")
+
+p5_streamlined_data <- read.csv("../../../prolific/2020-fall/pilot-5/genex-pilot-5-streamlined_data.csv")
+p5_participant_demographics <- read.csv("../../../prolific/2020-fall/pilot-5/genex-pilot-5-subject_information.csv")
+
+p6_streamlined_data <- read.csv("../../../prolific/2020-fall/pilot-6/genex-pilot-6-streamlined_data.csv")
+p6_participant_demographics <-read.csv("../../../prolific/2020-fall/pilot-6/genex-pilot-6-subject_information.csv")
+
+```
+
+"Pilot 4" had `r nrow(p4_streamlined_data)` total participants.
+
+
+
+## Reformatting
+
+
+
+Reformat catch trial data (botcaptcha and sound check) from "pilot 3"
+
+```{r reformat "pilot 3" botcaptcha and sound check response data}
+
+# data frame for all catch trials before experiment
+p3_catch_data <- p3_response_data %>%
+  filter( type == "attention" ) %>%
+  select( workerid,
+          correct_answer,
+          duration,
+          responses,
+          prompt,
+          num_fails )
+
+# data frame for sound check trials
+p3_sound_check <- p3_catch_data %>%
+  filter( prompt == "Please adjust your system volume to a comfortable level. When you are ready, click the Test button. You will hear a word like \"skyscraper\". Enter the word you hear into the box below and click Continue when you are finished." ) %>%
+  rename( sound_check_correct_answer = correct_answer,
+          sound_check_duration = duration,
+          sound_check_response = responses ) %>%
+  select(-prompt)
+  # TODO: extract first response in list of sound responses
+
+# data frame for botcaptcha trials
+p3_botcaptcha <- p3_catch_data %>%
+  filter( prompt != "Please adjust your system volume to a comfortable level. When you are ready, click the Test button. You will hear a word like \"skyscraper\". Enter the word you hear into the box below and click Continue when you are finished." ) %>%
+  rename( botcaptcha_n_fails = num_fails,
+          botcaptcha_correct_answer = correct_answer,
+          botcaptcha_duration = duration,
+          botcaptcha_response = responses ) %>%
+  select(-prompt)
+
+```
+
+
+
+Reformat followup response data (predicted probability, character arrival, freeform followup, name identification, generic endorsement) from "pilot 3"
+
+```{r reformat "pilot 3" followup response data}
+
+# data frame for all followup responses after experiment
+p3_followup_data <- p3_response_data %>%
+  filter( type != "attention" ) %>%
+  select( workerid,
+          correct_answer,
+          duration,
+          is_correct,
+          response,
+          response_type,
+          prompt )
+
+# data frame for predicted probability followup
+p3_predicted_probability <- p3_followup_data %>%
+  filter( response_type == "slider" ) %>%
+  rename( predicted_probability_correct_answer = correct_answer,
+          predicted_probability_duration = duration,
+          predicted_probability_is_correct = is_correct,
+          predicted_probability_response = response ) %>%
+  subset(select=-c(response_type, prompt))
+
+# data frame for character arrival followup
+p3_character_arrival <- p3_followup_data %>%
+    filter( prompt == "Please refer to the image below. Is this character a new researcher who just arrived here, or have they been doing research on this planet for a while?" ) %>%
+  rename( character_arrival_correct_answer = correct_answer,
+          character_arrival_duration = duration,
+          character_arrival_is_correct = is_correct,
+          character_arrival_response = response ) %>%
+  subset( select=-c(response_type, prompt) )
+
+# data frame for freeform followup
+p3_freeform_followup <- p3_followup_data %>%
+  filter( response_type == "freeform" ) %>%
+  rename( freeform_followup_correct_answer = correct_answer,
+          freeform_followup_duration = duration,
+          freeform_followup_is_correct = is_correct,
+          freeform_followup_response = response ) %>%
+  subset( select=-c(response_type, prompt) )
+
+# data frame for name identification followup
+p3_name_identification <- p3_followup_data %>%
+  filter( response_type == "grid" ) %>%
+  rename( name_identification_correct_answer = correct_answer,
+          name_identification_duration = duration,
+          name_identification_is_correct = is_correct,
+          name_identification_response = response ) %>%
+  subset( select=-c(response_type, prompt) )
+
+# data frame for generic endorsement followup
+p3_generic_endorsement <- p3_followup_data %>%
+  filter( prompt == "Would you say the following is true?" ) %>%
+  rename( generic_endorsement_correct_answer = correct_answer,
+          generic_endorsement_duration = duration,
+          generic_endorsement_is_correct = is_correct,
+          generic_endorsement_response = response ) %>%
+  subset( select=-c(response_type, prompt) )
+
+```
+
+
+
+Reformat "pilot 6" data; distinguish ped2 and ped4 conditions given use of diverse category stimuli
+
+```{r}
+
+p6_streamlined_data <- p6_streamlined_data %>%
+  mutate( item_presentation_condition = "pedagogical-diverse" )
+
+```
+
+
+
+## Combining
+
+
+
+Add above data frames to form "pilot 3" streamlined data.
+
+```{r form new "pilot 3" streamlined}
+
+p3_streamlined_data <- Reduce( function(x, y) merge(x, y, all=TRUE, by="workerid"),
+                               
+                               # select relevant columns from existing "pilot 3" streamlined data
+                               list( p3_streamlined_data %>%
+                                       select( workerid,
+                                               proliferate.condition,
+                                               agent,
+                                               followup_fails,
+                                               item_name,
+                                               item_presentation_condition,
+                                               n_examples,
+                                               object,
+                                               speaker ),
+                                     
+                                     # join previously created data frames from attention checks and followups by workerid
+                                     p3_predicted_probability,
+                                     p3_character_arrival,
+                                     p3_freeform_followup,
+                                     p3_name_identification,
+                                     p3_generic_endorsement,
+                                     p3_botcaptcha,
+                                     p3_sound_check ) ) %>%
+  
+                        # add object property given by object
+                        mutate( property = ifelse(object == "bird", "green feathers",
+                                                  ifelse(object == "artifact", "squeaking",
+                                                         ifelse(object == "flower", "purple petals", NA))) )
+
+```
+
+
+
+Join all streamlined data
+
+```{r combine all pilot data}
+
+streamlined_data <- plyr::rbind.fill(p3_streamlined_data, p4_streamlined_data, p5_streamlined_data, p6_streamlined_data) %>%
+  mutate( predicted_probability_response = as.numeric(as.character(predicted_probability_response))) %>% # convert string numbers to numbers
+  mutate( name_identification_is_correct = as.logical(name_identification_is_correct) ) %>% # convert "True" to TRUE and "False" to FALSE
+  mutate( character_arrival_is_correct = as.logical(character_arrival_is_correct) ) %>% # convert "True" to TRUE and "False" to FALSE
+  mutate( exp_cond = factor(paste(item_presentation_condition, n_examples, sep = "_") ) )
+
+write.csv(streamlined_data, "streamlined_data.csv")
+
+# append some streamlined data to demographic info to determine which to exclude
+participant_demographics <- bind_rows(p3_participant_demographics, p4_participant_demographics, p5_participant_demographics, p6_participant_demographics) %>%
+  merge( subset( streamlined_data, select=c( workerid,
+                                             botcaptcha_n_fails,
+                                             sound_check_correct_answer,
+                                             sound_check_response,
+                                             followup_fails ) ), by="workerid" )
+
+```
+
+
+
+Preprocess data by removing participants who failed botcaptcha or any followup attention checks.
+
+```{r filter data}
+
+# TODO: for sound check, exclude participants who answered with "skyscraper", a distractor word on the screen
+
+# TODO: for botcaptcha, ignore fails with extra spaces and recompute n_fails
+
+# remove participants who failed the botcaptcha or any followup attention checks
+filtered_data <- streamlined_data %>%
+  filter( botcaptcha_n_fails == 0 ) %>%
+  filter( followup_fails == 0 )
+
+```
+
+Out of `r nrow(streamlined_data)` total participants, `r nrow(streamlined_data) - nrow(filtered_data)` were excluded based on their responses to the botcaptcha and the followup attention checks. In these excluded participants, `r nrow( streamlined_data %>% filter( botcaptcha_n_fails != 0 ) )` failed the botcaptcha at least once, `r nrow( streamlined_data %>% filter( !name_identification_is_correct ) )` answered the name identification followup attention check incorrectly, and `r nrow( streamlined_data %>% filter( !character_arrival_is_correct ) )` answered the character arrival followup attention check incorrectly.
+
+
+
+Writing only necessary predicted probability data to a clean CSV.
+
+```{r write CSV for Bayesian data analysis}
+
+# create preprocessed data frame for Bayesian analysis
+bayes_preprocessed <- filtered_data %>%
+  select( workerid,
+          item_presentation_condition,
+          n_examples,
+          object,
+          item_name,
+          property,
+          predicted_probability_response ) %>%
+  rename( kind_type = object,
+          kind_label = item_name,
+          feature_label = property,
+          response = predicted_probability_response ) %>%
+  mutate( condition = factor( paste(n_examples, item_presentation_condition, sep="") ) ) %>%
+  mutate( avoided_endval = ifelse(response == 1, 0.999, ifelse(response == 0, 0.001, response)) ) %>% # avoid 1 and 0 values via reassignment
+  subset( select=-c(item_presentation_condition, n_examples) ) # remove unnecessary columns
+
+write.csv(bayes_preprocessed, "bayes_preprocessed.csv")
+
+```
+
+
+
+# Calculations
+
+
+
+## Calculations and Relabeling
+
+Compute bootstrapped means and confidence intervals of user slider response
+
+```{r means and CIs}
+
+predicted_probability_CIs <- filtered_data %>%
+  dplyr::group_by(exp_cond, item_presentation_condition, n_examples) %>%
+  tidyboot_mean(column = predicted_probability_response)
+predicted_probability_CIs # prints output; line may be omitted
+
+predicted_probability_CIs.preprocessed_item <- bayes_preprocessed %>%
+  dplyr::group_by(condition, kind_type, feature_label) %>%
+  tidyboot_mean(column = response) %>%
+  mutate(kind_type = factor(kind_type, levels = c("bird", "flower", "artifact")))
+
+predicted_probability_duration_CIs <- filtered_data %>%
+  group_by(exp_cond, item_presentation_condition, n_examples) %>%
+  tidyboot_mean(column = predicted_probability_duration)
+predicted_probability_duration_CIs # prints output; line may be omitted
+
+generic_endorsement_CIs <- filtered_data %>%
+  group_by(exp_cond, item_presentation_condition, n_examples) %>%
+  mutate(generic_endorsement = ifelse(generic_endorsement_response == "yes",1,0)) %>%
+  tidyboot_mean(column = generic_endorsement)
+generic_endorsement_CIs # prints output; line may be omitted
+
+```
+
+
+
+# Visualization
+
+
+
+## Predicted probability
+
+
+
+Gradient density ridges graph of predicted probability of next encountered object having same property vs. item presentation condition and number of examples
+
+```{r gradient density - predicted probability vs. condition}
+
+ggplot(
+  filtered_data,
+  mapping = aes(
+    x = predicted_probability_response,
+    y = exp_cond,
+    fill = ..x..
+  )
+) +
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    predicted_probability_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(exp_cond) + 0.85
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    predicted_probability_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(exp_cond) + 0.85
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0),
+    limits = c(0, 1.05),
+    breaks = c(0, 0.25, 0.5, 0.75, 1)
+  ) +
+  scale_y_discrete( expand = expand_scale( mult = c(0.01, 0),
+                                           add = c(0.01, 1) )
+  ) + viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(
+    x = "Predicted Probability of Future Instance having Property"
+  )
+
+```
+
+
+
+Gradient density ridges graph of *time taken to respond* to predicted probability of next encountered object having same property vs. item presentation condition and number of examples
+
+```{r gradient density - predicted probability time vs. condition}
+
+ggplot(
+  filtered_data,
+  mapping = aes(
+    x = predicted_probability_duration,
+    y = exp_cond,
+    fill = ..x..
+  )
+) +
+  ggridges::geom_density_ridges_gradient(
+    jittered_points = T, alpha = 0.8, scale = 0.95,
+    position = ggridges::position_points_jitter(width = 0.01, height = 0),
+    point_shape = "|", point_size = 2.5, point_alpha = 0.3,
+    rel_min_height = 0.01, gradient_lwd = 1,
+    stat = "binline", bins = 25, draw_baseline = F
+  ) +
+  ggstance::geom_linerangeh(
+    predicted_probability_duration_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      xmin = ci_lower, xmax = ci_upper,
+      y = as.numeric(exp_cond) + 0.85
+    ),
+    size = 1.25, color = "black"
+  ) + geom_point(
+    predicted_probability_duration_CIs,
+    inherit.aes = F,
+    mapping = aes(
+      x = mean,
+      y = as.numeric(exp_cond) + 0.85
+    ),
+    size = 3, color = "black", shape = 3
+  ) +
+  scale_x_continuous(
+    expand = c(0.01, 0),
+    breaks = c(0, 0.25, 0.5, 0.75, 1)
+  ) +
+  scale_y_discrete(expand = c(0.01, 0)) +
+  viridis::scale_fill_viridis(
+    breaks = c(0, 1)
+  ) +
+  guides(fill = F) +
+  theme(
+    axis.title.y = element_blank(),
+    axis.title.x = element_text(hjust = 0.5, vjust = 0)
+  ) +
+  labs(x = "Response time for predicted probability of future instance having property")
+
+```
+
+
+
+Combined bar plot with error bars for all conditions and item combinations
+
+```{r bar plot - all grouped by condition and colored by object}
+
+bar.width = 0.7
+predicted_probability_CIs.preprocessed_item %>%
+  ggplot(., aes(x = condition, fill = kind_type, 
+                y = mean, ymin = ci_lower,
+                ymax = ci_upper)) +
+  geom_hline(data = predicted_probability_CIs %>% filter(item_presentation_condition == "generic"),
+             linetype = 2, alpha = 0.4,
+             aes(yintercept = ci_lower))+
+  geom_hline(data = predicted_probability_CIs %>% filter(item_presentation_condition == "generic"),
+             linetype = 2, alpha = 0.4,
+             aes(yintercept = ci_upper))+
+  geom_col(color = 'black', width = bar.width, position = position_dodge(bar.width),
+           alpha = 0.5)+
+  geom_linerange( position = position_dodge(bar.width))+
+  coord_flip()+
+   guides(fill = guide_legend(reverse = T))+
+  labs(y = "Probability of Future Instance having Property", x = "",
+       fill = "item")+
+  theme(legend.position = 'bottom')
+
+```
+
+
+
+Facet grid of predicted probability plotted on number of examples vs. item presentation condition
+
+```{r facet grid - predicted probability on num. examples vs. condition}
+
+ggplot(
+  filtered_data,
+  mapping = aes(
+    x = predicted_probability_response,
+    y = (..count..) / tapply(..count.., ..PANEL.., sum)[..PANEL..],
+    fill = as.factor(item_presentation_condition)
+  )
+) +
+geom_histogram(
+  color = "black",
+  bins = 16
+) +
+labs(
+  x = "Slider response",
+  y = "Fraction of total count"
+) +
+facet_grid(
+  n_examples ~ item_presentation_condition
+) +
+scale_fill_manual(
+  values = c("indianred2", "lightgoldenrod1", "darkolivegreen2", "#7ad1ff", "mediumorchid1")
+) +
+theme(legend.position = "none")
+
+```
+
+
+
+Facet grid of predicted probability plotted on item presentation condition vs. speaker
+
+```{r facet grid - predicted probabiliy on condition vs. speaker}
+
+ggplot(
+  filtered_data,
+  mapping = aes(
+    x = predicted_probability_response,
+    y = (..count..) / tapply(..count.., ..PANEL.., sum)[..PANEL..],
+    fill = as.factor(item_presentation_condition)
+  )
+) +
+geom_histogram(
+  color = "black",
+  bins = 16) +
+labs(
+  x = "Slider response",
+  y = "Fraction of total count"
+) +
+facet_grid(speaker ~ item_presentation_condition) +
+scale_fill_manual(
+  values = c("indianred2", "lightgoldenrod1", "darkolivegreen2", "#7ad1ff", "mediumorchid1")
+) +
+theme(legend.position = "none")
+```
+
+
+
+## Followup
+
+Predicted probability of future instance having property vs. endorsement of generic statement for each item presentation condition and number of examples
+
+```{r scatterplot with error bars - predicted probability vs. generic endorsement per condition}
+
+ggplot(
+  merge(
+    predicted_probability_CIs %>%
+      rename(
+        predicted_probability_mean = mean,
+        predicted_probability_ci_lower = ci_lower,
+        predicted_probability_ci_upper = ci_upper
+      ),
+    generic_endorsement_CIs %>%
+      rename(
+        generic_endorsement_mean = mean,
+        generic_endorsement_ci_lower = ci_lower,
+        generic_endorsement_ci_upper = ci_upper
+      ),
+    by="exp_cond"
+  ),
+  mapping = aes(
+    x=predicted_probability_mean,
+    y=generic_endorsement_mean,
+    color=exp_cond
+  )
+) + geom_errorbar(
+  mapping=aes(
+    x=predicted_probability_mean,
+    ymin=generic_endorsement_ci_lower,
+    ymax=generic_endorsement_ci_upper
+  ),
+  width=0.01, size=1
+) + geom_errorbar(
+  mapping=aes(
+    y=generic_endorsement_mean,
+    xmin=predicted_probability_ci_lower,
+    xmax=predicted_probability_ci_upper
+  ),
+  width=0.01, size=1
+) + geom_point(
+  mapping=aes(
+    x=predicted_probability_mean,
+    y=generic_endorsement_mean
+  ),
+  size=3, shape=15
+) + scale_colour_manual(
+values = c( "indianred2", "indianred3", # accidental 1 and 2
+            "lightgoldenrod1", # gen+ped
+            "darkolivegreen2", # generic
+            "mediumorchid1", "mediumorchid3", # pedagogical-diverse 2 and 4
+            "#7ad1ff", "#3dafeb", "#1a7cc7", "#3d6980") # pedagogical 1–4
+)
+
+```
+
+
+
+## Demographic information
+
+Participants' feedback
+
+```{r table - comments}
+
+knitr::kable(participant_demographics %>% select(comments) %>% na.omit(), caption="Participant freeform feedback")
+
+```
+
+
+
+Bar chart of participants' reported native language(s)
+
+```{r bar chart - native languages frequency}
+
+native_languages <- with(participant_demographics %>% select(language) %>% na.omit(), paste0(language))
+
+native_languages <- native_languages %>%
+  sapply(tolower) %>%
+  str_replace(", ", " ") %>%
+  str_replace("and ", " ") %>%
+  str_squish() %>%
+  strsplit("\\s+") %>% # split by spaces
+  unlist() %>%
+  table() %>% # frequency counts
+  as.data.frame() # convert to dataframe
+
+ggplot(
+  native_languages,
+  aes(., Freq)
+  ) + geom_col(
+    aes(., Freq)
+  ) + xlab(
+    "Native language"
+  ) + ylab(
+    "Frequency"
+  ) + labs(
+    title="Frequency of participants' reported native language(s)"
+  ) + coord_flip()
+
+```
