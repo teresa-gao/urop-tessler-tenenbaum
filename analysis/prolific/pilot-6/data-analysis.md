@@ -18,14 +18,14 @@ Load required libraries
 library("tidyverse")
 ```
 
-    ## -- Attaching packages ------------------------------------------------------------------------------------------------------------- tidyverse 1.3.0 --
+    ## -- Attaching packages --------------------------------------- tidyverse 1.3.0 --
 
     ## v ggplot2 3.3.2     v purrr   0.3.4
     ## v tibble  3.0.3     v dplyr   1.0.2
     ## v tidyr   1.1.2     v stringr 1.4.0
     ## v readr   1.3.1     v forcats 0.5.0
 
-    ## -- Conflicts ---------------------------------------------------------------------------------------------------------------- tidyverse_conflicts() --
+    ## -- Conflicts ------------------------------------------ tidyverse_conflicts() --
     ## x dplyr::filter() masks stats::filter()
     ## x dplyr::lag()    masks stats::lag()
 
@@ -251,12 +251,28 @@ followup attention checks.
 filtered_data <- streamlined_data %>%
   filter( botcaptcha_n_fails == 0 ) %>%
   filter( followup_fails == 0 )
+
+# display participant count per condition
+knitr::kable(table(filtered_data$exp_cond))
 ```
 
-Out of 460 total participants, 31 were excluded based on their responses
+| Var1                   | Freq |
+| :--------------------- | ---: |
+| accidental\_1          |   48 |
+| accidental\_2          |   43 |
+| gen+ped\_1             |   47 |
+| generic\_1             |   50 |
+| pedagogical-diverse\_2 |   54 |
+| pedagogical-diverse\_4 |   54 |
+| pedagogical\_1         |   47 |
+| pedagogical\_2         |   48 |
+| pedagogical\_3         |   47 |
+| pedagogical\_4         |   45 |
+
+Out of 520 total participants, 37 were excluded based on their responses
 to the botcaptcha and the followup attention checks. In these excluded
-participants, 10 failed the botcaptcha at least once, 4 answered the
-name identification followup attention check incorrectly, and 19
+participants, 11 failed the botcaptcha at least once, 5 answered the
+name identification followup attention check incorrectly, and 24
 answered the character arrival followup attention check incorrectly.
 
 Writing only necessary predicted probability data to a clean CSV.
@@ -320,16 +336,16 @@ predicted_probability_CIs # prints output; line may be omitted
     ## # Groups:   exp_cond, item_presentation_condition [10]
     ##    exp_cond item_presentati~ n_examples     n empirical_stat ci_lower  mean
     ##    <fct>    <chr>                 <int> <int>          <dbl>    <dbl> <dbl>
-    ##  1 acciden~ accidental                1    48          0.719    0.672 0.718
-    ##  2 acciden~ accidental                2    43          0.776    0.735 0.775
-    ##  3 gen+ped~ gen+ped                   1    47          0.849    0.801 0.849
-    ##  4 generic~ generic                   1    50          0.926    0.896 0.927
-    ##  5 pedagog~ pedagogical-div~          2    27          0.850    0.787 0.850
-    ##  6 pedagog~ pedagogical-div~          4    27          0.874    0.813 0.874
-    ##  7 pedagog~ pedagogical               1    47          0.758    0.713 0.759
-    ##  8 pedagog~ pedagogical               2    48          0.831    0.780 0.831
-    ##  9 pedagog~ pedagogical               3    47          0.867    0.805 0.867
-    ## 10 pedagog~ pedagogical               4    45          0.877    0.840 0.878
+    ##  1 acciden~ accidental                1    48          0.719    0.672 0.719
+    ##  2 acciden~ accidental                2    43          0.776    0.735 0.776
+    ##  3 gen+ped~ gen+ped                   1    47          0.849    0.798 0.850
+    ##  4 generic~ generic                   1    50          0.926    0.897 0.926
+    ##  5 pedagog~ pedagogical-div~          2    54          0.807    0.759 0.805
+    ##  6 pedagog~ pedagogical-div~          4    54          0.864    0.815 0.864
+    ##  7 pedagog~ pedagogical               1    47          0.758    0.704 0.758
+    ##  8 pedagog~ pedagogical               2    48          0.831    0.786 0.831
+    ##  9 pedagog~ pedagogical               3    47          0.867    0.811 0.867
+    ## 10 pedagog~ pedagogical               4    45          0.877    0.833 0.876
     ## # ... with 1 more variable: ci_upper <dbl>
 
 ``` r
@@ -359,16 +375,16 @@ predicted_probability_duration_CIs # prints output; line may be omitted
     ## # Groups:   exp_cond, item_presentation_condition [10]
     ##    exp_cond item_presentati~ n_examples     n empirical_stat ci_lower  mean
     ##    <fct>    <chr>                 <int> <int>          <dbl>    <dbl> <dbl>
-    ##  1 acciden~ accidental                1    48          10.5      9.01 10.5 
-    ##  2 acciden~ accidental                2    43          10.8      9.43 10.8 
-    ##  3 gen+ped~ gen+ped                   1    47           9.79     8.40  9.75
-    ##  4 generic~ generic                   1    50          12.1      7.88 12.2 
-    ##  5 pedagog~ pedagogical-div~          2    27          10.9      8.09 11.0 
-    ##  6 pedagog~ pedagogical-div~          4    27          11.1      8.25 11.2 
-    ##  7 pedagog~ pedagogical               1    47           9.85     8.54  9.85
-    ##  8 pedagog~ pedagogical               2    48          10.5      8.87 10.5 
-    ##  9 pedagog~ pedagogical               3    47           8.68     7.84  8.67
-    ## 10 pedagog~ pedagogical               4    45           7.88     7.06  7.89
+    ##  1 acciden~ accidental                1    48          10.5      9.11 10.6 
+    ##  2 acciden~ accidental                2    43          10.8      9.47 10.8 
+    ##  3 gen+ped~ gen+ped                   1    47           9.79     8.46  9.81
+    ##  4 generic~ generic                   1    50          12.1      8.05 12.2 
+    ##  5 pedagog~ pedagogical-div~          2    54          10.3      8.66 10.3 
+    ##  6 pedagog~ pedagogical-div~          4    54          11.5      8.85 11.4 
+    ##  7 pedagog~ pedagogical               1    47           9.85     8.68  9.89
+    ##  8 pedagog~ pedagogical               2    48          10.5      8.83 10.5 
+    ##  9 pedagog~ pedagogical               3    47           8.68     7.87  8.69
+    ## 10 pedagog~ pedagogical               4    45           7.88     7.01  7.87
     ## # ... with 1 more variable: ci_upper <dbl>
 
 ``` r
@@ -389,15 +405,15 @@ generic_endorsement_CIs # prints output; line may be omitted
     ## # Groups:   exp_cond, item_presentation_condition [10]
     ##    exp_cond item_presentati~ n_examples     n empirical_stat ci_lower  mean
     ##    <fct>    <chr>                 <int> <int>          <dbl>    <dbl> <dbl>
-    ##  1 acciden~ accidental                1    48          0.917    0.833 0.918
-    ##  2 acciden~ accidental                2    43          0.953    0.88  0.953
+    ##  1 acciden~ accidental                1    48          0.917    0.827 0.920
+    ##  2 acciden~ accidental                2    43          0.953    0.878 0.954
     ##  3 gen+ped~ gen+ped                   1    47          1        1     1    
     ##  4 generic~ generic                   1    50          1        1     1    
-    ##  5 pedagog~ pedagogical-div~          2    27          0.963    0.879 0.964
-    ##  6 pedagog~ pedagogical-div~          4    27          0.963    0.875 0.962
+    ##  5 pedagog~ pedagogical-div~          2    54          0.963    0.907 0.963
+    ##  6 pedagog~ pedagogical-div~          4    54          0.981    0.94  0.982
     ##  7 pedagog~ pedagogical               1    47          1        1     1    
-    ##  8 pedagog~ pedagogical               2    48          0.979    0.927 0.979
-    ##  9 pedagog~ pedagogical               3    47          0.979    0.932 0.979
+    ##  8 pedagog~ pedagogical               2    48          0.979    0.933 0.980
+    ##  9 pedagog~ pedagogical               3    47          0.979    0.930 0.978
     ## 10 pedagog~ pedagogical               4    45          1        1     1    
     ## # ... with 1 more variable: ci_upper <dbl>
 
@@ -1135,6 +1151,66 @@ knitr::kable(participant_demographics %>% select(comments) %>% na.omit(), captio
 | 460 | no                                                                                                                                                          |
 | 461 |                                                                                                                                                             |
 | 462 | The voice sounded like a guy trying to lure a kid into his van.                                                                                             |
+| 463 |                                                                                                                                                             |
+| 464 |                                                                                                                                                             |
+| 465 | I have no additional comments.                                                                                                                              |
+| 466 |                                                                                                                                                             |
+| 467 |                                                                                                                                                             |
+| 468 |                                                                                                                                                             |
+| 469 | No                                                                                                                                                          |
+| 470 |                                                                                                                                                             |
+| 471 |                                                                                                                                                             |
+| 472 |                                                                                                                                                             |
+| 473 |                                                                                                                                                             |
+| 474 | This was fun, thanks\!                                                                                                                                      |
+| 475 | Interesting study\! Love the animation                                                                                                                      |
+| 476 |                                                                                                                                                             |
+| 477 |                                                                                                                                                             |
+| 478 |                                                                                                                                                             |
+| 479 |                                                                                                                                                             |
+| 480 | no                                                                                                                                                          |
+| 481 |                                                                                                                                                             |
+| 482 |                                                                                                                                                             |
+| 483 |                                                                                                                                                             |
+| 484 | no                                                                                                                                                          |
+| 485 | n/a                                                                                                                                                         |
+| 486 |                                                                                                                                                             |
+| 487 | n/a                                                                                                                                                         |
+| 488 | thank you                                                                                                                                                   |
+| 489 |                                                                                                                                                             |
+| 490 |                                                                                                                                                             |
+| 491 |                                                                                                                                                             |
+| 492 |                                                                                                                                                             |
+| 493 | No                                                                                                                                                          |
+| 494 |                                                                                                                                                             |
+| 495 | Nope                                                                                                                                                        |
+| 496 |                                                                                                                                                             |
+| 497 | none                                                                                                                                                        |
+| 498 | nope thank you                                                                                                                                              |
+| 499 | No                                                                                                                                                          |
+| 500 |                                                                                                                                                             |
+| 501 | The ability to initiate replay of scenery.                                                                                                                  |
+| 502 |                                                                                                                                                             |
+| 503 |                                                                                                                                                             |
+| 504 | no                                                                                                                                                          |
+| 505 |                                                                                                                                                             |
+| 506 | No                                                                                                                                                          |
+| 507 | No                                                                                                                                                          |
+| 508 | Fun                                                                                                                                                         |
+| 509 | No                                                                                                                                                          |
+| 510 |                                                                                                                                                             |
+| 511 | Thank you\!                                                                                                                                                 |
+| 512 | where can i buy some daxes                                                                                                                                  |
+| 513 | none                                                                                                                                                        |
+| 514 |                                                                                                                                                             |
+| 515 | no.                                                                                                                                                         |
+| 516 |                                                                                                                                                             |
+| 517 | N/A                                                                                                                                                         |
+| 518 |                                                                                                                                                             |
+| 519 | Thank you.                                                                                                                                                  |
+| 520 | good                                                                                                                                                        |
+| 521 |                                                                                                                                                             |
+| 522 | no                                                                                                                                                          |
 
 Participant freeform feedback
 

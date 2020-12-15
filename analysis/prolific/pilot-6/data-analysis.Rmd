@@ -259,6 +259,9 @@ filtered_data <- streamlined_data %>%
   filter( botcaptcha_n_fails == 0 ) %>%
   filter( followup_fails == 0 )
 
+# display participant count per condition
+knitr::kable(table(filtered_data$exp_cond))
+
 ```
 
 Out of `r nrow(streamlined_data)` total participants, `r nrow(streamlined_data) - nrow(filtered_data)` were excluded based on their responses to the botcaptcha and the followup attention checks. In these excluded participants, `r nrow( streamlined_data %>% filter( botcaptcha_n_fails != 0 ) )` failed the botcaptcha at least once, `r nrow( streamlined_data %>% filter( !name_identification_is_correct ) )` answered the name identification followup attention check incorrectly, and `r nrow( streamlined_data %>% filter( !character_arrival_is_correct ) )` answered the character arrival followup attention check incorrectly.

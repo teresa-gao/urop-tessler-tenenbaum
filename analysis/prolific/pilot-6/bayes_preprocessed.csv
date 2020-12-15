@@ -374,57 +374,111 @@
 "373",573,"bird","wug","green feathers",1,"1gen+ped",0.999
 "374",561,"bird","dax","green feathers",1,"1gen+ped",0.999
 "375",632,"flower","wug","purple petals",0.54,"1gen+ped",0.54
-"376",698,"artifact","wug","squeaking",0.99,"2pedagogical-diverse",0.99
-"377",702,"artifact","wug","squeaking",0.98,"2pedagogical-diverse",0.98
-"378",691,"bird","fep","green feathers",0.99,"2pedagogical-diverse",0.99
-"379",719,"artifact","wug","squeaking",0.79,"2pedagogical-diverse",0.79
-"380",733,"bird","fep","green feathers",0.84,"2pedagogical-diverse",0.84
-"381",681,"bird","dax","green feathers",0.96,"2pedagogical-diverse",0.96
-"382",687,"artifact","dax","squeaking",0.49,"2pedagogical-diverse",0.49
-"383",729,"artifact","dax","squeaking",0.94,"2pedagogical-diverse",0.94
-"384",700,"artifact","fep","squeaking",0.89,"2pedagogical-diverse",0.89
-"385",721,"flower","dax","purple petals",0.5,"2pedagogical-diverse",0.5
-"386",727,"bird","wug","green feathers",1,"2pedagogical-diverse",0.999
-"387",725,"flower","fep","purple petals",1,"2pedagogical-diverse",0.999
-"388",731,"bird","dax","green feathers",1,"2pedagogical-diverse",0.999
-"389",704,"bird","wug","green feathers",0.94,"2pedagogical-diverse",0.94
-"390",677,"artifact","wug","squeaking",0.88,"2pedagogical-diverse",0.88
-"391",697,"bird","fep","green feathers",0.71,"2pedagogical-diverse",0.71
-"392",715,"flower","wug","purple petals",0.72,"2pedagogical-diverse",0.72
-"393",693,"flower","fep","purple petals",0.98,"2pedagogical-diverse",0.98
-"394",723,"artifact","wug","squeaking",0.81,"2pedagogical-diverse",0.81
-"395",713,"bird","dax","green feathers",0.83,"2pedagogical-diverse",0.83
-"396",679,"artifact","wug","squeaking",0.82,"2pedagogical-diverse",0.82
-"397",706,"bird","dax","green feathers",0.89,"2pedagogical-diverse",0.89
-"398",717,"bird","fep","green feathers",0.49,"2pedagogical-diverse",0.49
-"399",689,"flower","wug","purple petals",0.9,"2pedagogical-diverse",0.9
-"400",735,"artifact","dax","squeaking",0.61,"2pedagogical-diverse",0.61
-"401",708,"artifact","dax","squeaking",0.99,"2pedagogical-diverse",0.99
-"402",675,"artifact","dax","squeaking",1,"2pedagogical-diverse",0.999
-"403",722,"artifact","fep","squeaking",1,"4pedagogical-diverse",0.999
-"404",710,"flower","wug","purple petals",0.68,"4pedagogical-diverse",0.68
-"405",732,"flower","wug","purple petals",1,"4pedagogical-diverse",0.999
-"406",674,"flower","fep","purple petals",0.9,"4pedagogical-diverse",0.9
-"407",696,"flower","wug","purple petals",1,"4pedagogical-diverse",0.999
-"408",678,"bird","dax","green feathers",1,"4pedagogical-diverse",0.999
-"409",690,"bird","fep","green feathers",1,"4pedagogical-diverse",0.999
-"410",730,"artifact","wug","squeaking",1,"4pedagogical-diverse",0.999
-"411",726,"flower","wug","purple petals",0.92,"4pedagogical-diverse",0.92
-"412",682,"bird","wug","green feathers",0.99,"4pedagogical-diverse",0.99
-"413",712,"artifact","wug","squeaking",0.93,"4pedagogical-diverse",0.93
-"414",734,"artifact","dax","squeaking",0.67,"4pedagogical-diverse",0.67
-"415",736,"flower","fep","purple petals",0.68,"4pedagogical-diverse",0.68
-"416",707,"bird","dax","green feathers",0.74,"4pedagogical-diverse",0.74
-"417",686,"flower","fep","purple petals",1,"4pedagogical-diverse",0.999
-"418",718,"bird","dax","green feathers",0.79,"4pedagogical-diverse",0.79
-"419",703,"bird","dax","green feathers",0.57,"4pedagogical-diverse",0.57
-"420",676,"artifact","wug","squeaking",0.83,"4pedagogical-diverse",0.83
-"421",705,"artifact","wug","squeaking",0.97,"4pedagogical-diverse",0.97
-"422",688,"artifact","wug","squeaking",0.78,"4pedagogical-diverse",0.78
-"423",716,"bird","dax","green feathers",0.61,"4pedagogical-diverse",0.61
-"424",694,"bird","wug","green feathers",0.95,"4pedagogical-diverse",0.95
-"425",680,"flower","dax","purple petals",1,"4pedagogical-diverse",0.999
-"426",724,"artifact","wug","squeaking",0.61,"4pedagogical-diverse",0.61
-"427",709,"bird","dax","green feathers",1,"4pedagogical-diverse",0.999
-"428",701,"artifact","wug","squeaking",1,"4pedagogical-diverse",0.999
-"429",720,"artifact","wug","squeaking",0.99,"4pedagogical-diverse",0.99
+"376",756,"bird","wug","green feathers",0.56,"2pedagogical-diverse",0.56
+"377",746,"flower","fep","purple petals",0.7,"2pedagogical-diverse",0.7
+"378",754,"flower","fep","purple petals",0.77,"2pedagogical-diverse",0.77
+"379",740,"bird","fep","green feathers",1,"2pedagogical-diverse",0.999
+"380",780,"artifact","dax","squeaking",0.34,"2pedagogical-diverse",0.34
+"381",698,"artifact","wug","squeaking",0.99,"2pedagogical-diverse",0.99
+"382",702,"artifact","wug","squeaking",0.98,"2pedagogical-diverse",0.98
+"383",792,"flower","dax","purple petals",0.52,"2pedagogical-diverse",0.52
+"384",691,"bird","fep","green feathers",0.99,"2pedagogical-diverse",0.99
+"385",719,"artifact","wug","squeaking",0.79,"2pedagogical-diverse",0.79
+"386",733,"bird","fep","green feathers",0.84,"2pedagogical-diverse",0.84
+"387",681,"bird","dax","green feathers",0.96,"2pedagogical-diverse",0.96
+"388",770,"artifact","fep","squeaking",0.99,"2pedagogical-diverse",0.99
+"389",687,"artifact","dax","squeaking",0.49,"2pedagogical-diverse",0.49
+"390",729,"artifact","dax","squeaking",0.94,"2pedagogical-diverse",0.94
+"391",793,"artifact","dax","squeaking",0.62,"2pedagogical-diverse",0.62
+"392",774,"flower","dax","purple petals",0.75,"2pedagogical-diverse",0.75
+"393",700,"artifact","fep","squeaking",0.89,"2pedagogical-diverse",0.89
+"394",721,"flower","dax","purple petals",0.5,"2pedagogical-diverse",0.5
+"395",758,"flower","wug","purple petals",0.76,"2pedagogical-diverse",0.76
+"396",786,"flower","wug","purple petals",1,"2pedagogical-diverse",0.999
+"397",742,"bird","dax","green feathers",0.52,"2pedagogical-diverse",0.52
+"398",727,"bird","wug","green feathers",1,"2pedagogical-diverse",0.999
+"399",725,"flower","fep","purple petals",1,"2pedagogical-diverse",0.999
+"400",776,"artifact","dax","squeaking",0.81,"2pedagogical-diverse",0.81
+"401",738,"flower","wug","purple petals",0.97,"2pedagogical-diverse",0.97
+"402",731,"bird","dax","green feathers",1,"2pedagogical-diverse",0.999
+"403",704,"bird","wug","green feathers",0.94,"2pedagogical-diverse",0.94
+"404",760,"artifact","fep","squeaking",0.92,"2pedagogical-diverse",0.92
+"405",772,"bird","wug","green feathers",0.51,"2pedagogical-diverse",0.51
+"406",677,"artifact","wug","squeaking",0.88,"2pedagogical-diverse",0.88
+"407",697,"bird","fep","green feathers",0.71,"2pedagogical-diverse",0.71
+"408",715,"flower","wug","purple petals",0.72,"2pedagogical-diverse",0.72
+"409",693,"flower","fep","purple petals",0.98,"2pedagogical-diverse",0.98
+"410",752,"bird","fep","green feathers",0.78,"2pedagogical-diverse",0.78
+"411",750,"flower","fep","purple petals",0.57,"2pedagogical-diverse",0.57
+"412",723,"artifact","wug","squeaking",0.81,"2pedagogical-diverse",0.81
+"413",713,"bird","dax","green feathers",0.83,"2pedagogical-diverse",0.83
+"414",784,"bird","dax","green feathers",0.98,"2pedagogical-diverse",0.98
+"415",679,"artifact","wug","squeaking",0.82,"2pedagogical-diverse",0.82
+"416",790,"artifact","dax","squeaking",1,"2pedagogical-diverse",0.999
+"417",744,"artifact","wug","squeaking",0.99,"2pedagogical-diverse",0.99
+"418",768,"bird","wug","green feathers",0.86,"2pedagogical-diverse",0.86
+"419",706,"bird","dax","green feathers",0.89,"2pedagogical-diverse",0.89
+"420",717,"bird","fep","green feathers",0.49,"2pedagogical-diverse",0.49
+"421",778,"flower","dax","purple petals",0.95,"2pedagogical-diverse",0.95
+"422",689,"flower","wug","purple petals",0.9,"2pedagogical-diverse",0.9
+"423",788,"flower","dax","purple petals",0.62,"2pedagogical-diverse",0.62
+"424",735,"artifact","dax","squeaking",0.61,"2pedagogical-diverse",0.61
+"425",708,"artifact","dax","squeaking",0.99,"2pedagogical-diverse",0.99
+"426",675,"artifact","dax","squeaking",1,"2pedagogical-diverse",0.999
+"427",764,"flower","dax","purple petals",0.94,"2pedagogical-diverse",0.94
+"428",762,"flower","fep","purple petals",0.47,"2pedagogical-diverse",0.47
+"429",748,"bird","wug","green feathers",0.72,"2pedagogical-diverse",0.72
+"430",753,"artifact","fep","squeaking",0.99,"4pedagogical-diverse",0.99
+"431",739,"bird","wug","green feathers",0.96,"4pedagogical-diverse",0.96
+"432",737,"bird","wug","green feathers",0.83,"4pedagogical-diverse",0.83
+"433",769,"flower","dax","purple petals",0.66,"4pedagogical-diverse",0.66
+"434",722,"artifact","fep","squeaking",1,"4pedagogical-diverse",0.999
+"435",791,"artifact","wug","squeaking",0.89,"4pedagogical-diverse",0.89
+"436",710,"flower","wug","purple petals",0.68,"4pedagogical-diverse",0.68
+"437",732,"flower","wug","purple petals",1,"4pedagogical-diverse",0.999
+"438",674,"flower","fep","purple petals",0.9,"4pedagogical-diverse",0.9
+"439",696,"flower","wug","purple petals",1,"4pedagogical-diverse",0.999
+"440",678,"bird","dax","green feathers",1,"4pedagogical-diverse",0.999
+"441",765,"flower","fep","purple petals",1,"4pedagogical-diverse",0.999
+"442",690,"bird","fep","green feathers",1,"4pedagogical-diverse",0.999
+"443",779,"flower","wug","purple petals",0.99,"4pedagogical-diverse",0.99
+"444",730,"artifact","wug","squeaking",1,"4pedagogical-diverse",0.999
+"445",755,"bird","wug","green feathers",0.77,"4pedagogical-diverse",0.77
+"446",781,"bird","dax","green feathers",1,"4pedagogical-diverse",0.999
+"447",749,"artifact","fep","squeaking",0.89,"4pedagogical-diverse",0.89
+"448",726,"flower","wug","purple petals",0.92,"4pedagogical-diverse",0.92
+"449",682,"bird","wug","green feathers",0.99,"4pedagogical-diverse",0.99
+"450",743,"flower","fep","purple petals",0.84,"4pedagogical-diverse",0.84
+"451",785,"bird","fep","green feathers",0.98,"4pedagogical-diverse",0.98
+"452",712,"artifact","wug","squeaking",0.93,"4pedagogical-diverse",0.93
+"453",795,"bird","wug","green feathers",1,"4pedagogical-diverse",0.999
+"454",761,"artifact","wug","squeaking",0.73,"4pedagogical-diverse",0.73
+"455",759,"flower","wug","purple petals",0.81,"4pedagogical-diverse",0.81
+"456",787,"bird","fep","green feathers",0.78,"4pedagogical-diverse",0.78
+"457",734,"artifact","dax","squeaking",0.67,"4pedagogical-diverse",0.67
+"458",751,"flower","dax","purple petals",0.89,"4pedagogical-diverse",0.89
+"459",771,"artifact","dax","squeaking",0.75,"4pedagogical-diverse",0.75
+"460",736,"flower","fep","purple petals",0.68,"4pedagogical-diverse",0.68
+"461",789,"flower","fep","purple petals",0.92,"4pedagogical-diverse",0.92
+"462",783,"flower","wug","purple petals",0.99,"4pedagogical-diverse",0.99
+"463",747,"bird","dax","green feathers",0.86,"4pedagogical-diverse",0.86
+"464",767,"bird","wug","green feathers",0.99,"4pedagogical-diverse",0.99
+"465",763,"flower","wug","purple petals",0.69,"4pedagogical-diverse",0.69
+"466",707,"bird","dax","green feathers",0.74,"4pedagogical-diverse",0.74
+"467",686,"flower","fep","purple petals",1,"4pedagogical-diverse",0.999
+"468",718,"bird","dax","green feathers",0.79,"4pedagogical-diverse",0.79
+"469",775,"bird","fep","green feathers",0.94,"4pedagogical-diverse",0.94
+"470",777,"flower","fep","purple petals",0.04,"4pedagogical-diverse",0.04
+"471",799,"flower","fep","purple petals",0.86,"4pedagogical-diverse",0.86
+"472",703,"bird","dax","green feathers",0.57,"4pedagogical-diverse",0.57
+"473",773,"bird","wug","green feathers",0.98,"4pedagogical-diverse",0.98
+"474",676,"artifact","wug","squeaking",0.83,"4pedagogical-diverse",0.83
+"475",705,"artifact","wug","squeaking",0.97,"4pedagogical-diverse",0.97
+"476",688,"artifact","wug","squeaking",0.78,"4pedagogical-diverse",0.78
+"477",716,"bird","dax","green feathers",0.61,"4pedagogical-diverse",0.61
+"478",694,"bird","wug","green feathers",0.95,"4pedagogical-diverse",0.95
+"479",680,"flower","dax","purple petals",1,"4pedagogical-diverse",0.999
+"480",724,"artifact","wug","squeaking",0.61,"4pedagogical-diverse",0.61
+"481",709,"bird","dax","green feathers",1,"4pedagogical-diverse",0.999
+"482",701,"artifact","wug","squeaking",1,"4pedagogical-diverse",0.999
+"483",720,"artifact","wug","squeaking",0.99,"4pedagogical-diverse",0.99

@@ -36,6 +36,8 @@ with open("genex-pilot-6-workerids.csv") as csv_file:
 
 # print("\npilot_5", pilot_5_ids)
 
+# print("\npilot_6", pilot_6_ids)
+
 current_round_ids = pilot_6_ids
 duplicate_ids = { (workerid, "pilot-2") for workerid in current_round_ids if workerid in pilot_2_ids } \
         .union( { (workerid, "pilot-3") for workerid in current_round_ids if workerid in pilot_3_ids } ) \
