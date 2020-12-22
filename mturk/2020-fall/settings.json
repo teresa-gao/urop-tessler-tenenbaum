@@ -1,0 +1,30 @@
+{
+ "_cosubSpecVersion": 2,
+ "Url": "https://www.mit.edu/~t_gao/projects/genex/experiments/experiment.html",
+ "Title": "Language study - Genex 22",
+ "Description": "Learn about new objects from a faraway planet (~5 minutes)",
+ "Keywords": "language, research, mit, fun, cognitive science, experiment, study",
+ "Batch": true,
+ "FrameHeight": 1000,
+ "AssignmentDuration": "30 minutes",
+ "AutoApprovalDelay": "5 minutes",
+ "Reward": "1.00",
+ "QualificationRequirements": [
+  {
+   "Name": "Worker_Locale",
+   "Comparator": "EqualTo",
+   "LocaleValues": [
+    {
+     "Country": "US"
+    }
+   ]
+  },
+  {
+   "Name": "Worker_PercentAssignmentsApproved",
+   "Comparator": "GreaterThanOrEqualTo",
+   "IntegerValues": [
+    95
+   ]
+  }
+ ]
+}

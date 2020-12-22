@@ -19,9 +19,11 @@ var artifact_versions = _.shuffle( [ "artifact01", "artifact02", "artifact03", "
 var flower_versions =   _.shuffle( [ "flower01", "flower02", "flower03", "flower04", "flower05" ] );
 var bird_versions =     _.shuffle( [ "bird01", "bird02", "bird06", "bird08", "bird09" ] );
 
+// TODO: remove these three unnecessary (redundant?) variables
 var artifacts =         _.shuffle([ ["artifact", artifact_versions, "squeaking"], ]);
 var flowers =           _.shuffle([ ["flower", flower_versions, "purple petals"] ]);
 var birds =             _.shuffle([ ["bird", bird_versions, "green feathers"] ]);
+
 var objects =           _.shuffle([ birds[0], flowers[0], artifacts[0] ]);
 var item_names =        _.shuffle([ ["wug", "wugs"], ["dax", "daxes"], ["fep", "feps"] ]);
 
