@@ -17,17 +17,23 @@ Using the online crowdsourcing research platforms Amazon Mechanical Turk (MTurk)
 https://www.mit.edu/~t_gao/projects/genex/experiments/experiment.html
 
 
-# Repository Structure
+# Setup
 
-## analysis
+## UROP Guide
+
+[Genex UROP Guide](https://docs.google.com/document/d/1Vj1X9szuJ8bSeeGLqxQsmtwFxmgUSnO8iieXK2_ZcX4/edit)
+
+## Repository Structure
+
+### analysis
 
 The analysis folder contains files used to extract and visualize the experiment data.
 
-## experiments
+### experiments
 
 The experiments folder contains the files needed to run experiments. The js, cs, audio, and images folders contain files needed to run experiment.html; the \_shared directory contains js and css files from the original experiment template.
 
-## mturk
+### mturk
 
 Formerly used to run experiments on MTurk. Contains nosub configuration and raw downloaded results.
 
